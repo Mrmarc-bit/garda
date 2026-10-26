@@ -1,204 +1,224 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import {
-  FileText,
-  Download,
-  Printer,
-  ShieldCheck,
-  CheckCircle2,
-  Calendar,
-  User,
-  Hash,
-} from "lucide-react";
 import { AppLayout } from "@/components/layout/app-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import {
-  SYNTHETIC_INCIDENT,
-  CANDIDATE_STRATEGIES,
-  VIRTUAL_ASSETS,
-} from "@/lib/synthetic-data";
 
 export default function ReportsPage() {
-  const [downloadSuccess, setDownloadSuccess] = React.useState<string | null>(null);
-
-  const selectedStrategy = CANDIDATE_STRATEGIES[1]; // Strategy B
-
-  const handleDownloadJson = () => {
-    const reportData = {
-      report_id: "REP-2026-0042-B",
-      generated_at: new Date().toISOString(),
-      scenario: SYNTHETIC_INCIDENT,
-      selected_strategy: selectedStrategy,
-      evaluated_assets: VIRTUAL_ASSETS,
-      safety_rules_passed: 5,
-      integrity_hash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      environment: "SYNTHETIC_SIMULATION_ONLY",
-    };
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "garda-sim-report-INC-2026-0042.json";
-    a.click();
-    setDownloadSuccess("JSON exported successfully");
-    setTimeout(() => setDownloadSuccess(null), 3000);
-  };
-
-  const handleDownloadMarkdown = () => {
-    const mdContent = `# GARDA-SIM AI — Incident Response Simulation Report
-**Report ID:** REP-2026-0042-B  
-**Scenario ID:** ${SYNTHETIC_INCIDENT.id}  
-**Target Asset:** ${SYNTHETIC_INCIDENT.targetAsset}  
-**Selected Strategy:** ${selectedStrategy.name} (${selectedStrategy.code})  
-**Security Benefit:** ${selectedStrategy.securityBenefitScore}% Risk Reduction  
-**Estimated Downtime:** ${selectedStrategy.simulatedDowntimeMinutes} Minutes  
-**Deterministic Safety Invariants:** 5/5 PASSED  
-**Operator Sign-Off:** analyst-demo-03  
-**Integrity Hash:** e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  
-**Notice:** DEFENSIVE SIMULATION ONLY. NO REAL CONTAINMENT COMMANDS EXECUTED.
-`;
-    const blob = new Blob([mdContent], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "garda-sim-report-INC-2026-0042.md";
-    a.click();
-    setDownloadSuccess("Markdown exported successfully");
-    setTimeout(() => setDownloadSuccess(null), 3000);
-  };
+  const [activeTab, setActiveTab] = React.useState<"all" | "incident" | "strategy" | "evaluation">("all");
 
   return (
-    <AppLayout
-      title="Incident & Simulation Reports"
-      subtitle="Auditable decision-support documentation, comparative records, and verified compliance exports"
-    >
-      {/* Action controls header */}
-      <div className="p-4 rounded-xl border border-border bg-surface-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">
-            Simulation Report Preview · REP-2026-0042-B
-          </h2>
-          <p className="text-xs text-text-muted">
-            Formatted export of evaluated response strategy for incident {SYNTHETIC_INCIDENT.id}
-          </p>
+    <AppLayout breadcrumb="Workspace / Reports">
+      {/* Top metadata tags */}
+      <div className="space-y-1">
+        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+          SIMULATION ONLY
         </div>
-        <div className="flex items-center gap-2">
-          {downloadSuccess && (
-            <span className="text-xs text-status-success font-medium mr-2">
-              ✓ {downloadSuccess}
-            </span>
-          )}
-          <Button variant="outline" size="sm" onClick={handleDownloadJson} className="gap-1.5 text-xs">
-            <Download className="w-3.5 h-3.5" />
-            <span>Export JSON</span>
-          </Button>
-          <Button variant="primary" size="sm" onClick={handleDownloadMarkdown} className="gap-1.5 text-xs">
-            <Download className="w-3.5 h-3.5" />
-            <span>Download Report (MD)</span>
-          </Button>
+        <div className="text-xs text-[#A3A3A3]">
+          Synthetic design/demo environment — not live
+        </div>
+        <div className="text-xs font-mono text-[#737373]">
+          /app/reports
         </div>
       </div>
 
-      {/* Formatted Report Document View */}
-      <Card className="max-w-4xl mx-auto border-border bg-[#1A1A1A] text-text-primary shadow-xl">
-        <CardContent className="p-8 space-y-8 text-xs">
-          {/* Document Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-4 pb-6 border-b border-border">
-            <div>
-              <div className="font-mono text-xs text-accent font-bold">GARDA-SIM AI DEFENSE LAB</div>
-              <h1 className="text-xl font-bold text-text-primary mt-1">
-                Incident Response Evaluation Report
-              </h1>
-              <div className="text-text-muted mt-1">
-                Scenario: <span className="font-mono text-text-primary">{SYNTHETIC_INCIDENT.id}</span> — {SYNTHETIC_INCIDENT.title}
-              </div>
-            </div>
-            <div className="text-right space-y-1">
-              <Badge variant="simulation">DEFENSIVE SIMULATION ONLY</Badge>
-              <div className="text-[11px] font-mono text-text-muted">ID: REP-2026-0042-B</div>
-              <div className="text-[11px] text-text-muted">Date: 2026-10-26 15:40 UTC</div>
-            </div>
-          </div>
+      {/* Heading & Subtitle */}
+      <div className="mt-6">
+        <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
+          Reports
+        </h1>
+        <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
+          Report types and sample structure. No report has been generated or persisted.
+        </p>
+      </div>
 
-          {/* Section 1: Executive Overview */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-accent">
-              1. Executive Evaluation Summary
-            </h3>
-            <p className="text-text-secondary leading-relaxed">
-              This report documents the deterministic simulation of candidate response strategies for incident{" "}
-              <strong>{SYNTHETIC_INCIDENT.id}</strong> targeting edge asset <strong>{SYNTHETIC_INCIDENT.targetAsset}</strong>.
-              Strategy candidate <strong>STRAT-B ({selectedStrategy.name})</strong> has been verified against deterministic safety invariants and approved for demonstration.
-            </p>
-          </div>
+      {/* Export requirement text */}
+      <div className="text-xs text-[#737373] mt-4">
+        Export — integration required
+      </div>
 
-          {/* Section 2: Key Evaluation Metrics */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-accent">
-              2. Deterministic Quantitative Impact
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl bg-surface-card border border-border">
-              <div>
-                <span className="text-text-muted text-[10px] block">Security Risk Reduction</span>
-                <span className="font-bold text-text-primary text-base">{selectedStrategy.securityBenefitScore}%</span>
-              </div>
-              <div>
-                <span className="text-text-muted text-[10px] block">Estimated Downtime</span>
-                <span className="font-bold text-text-primary text-base">{selectedStrategy.simulatedDowntimeMinutes} Minutes</span>
-              </div>
-              <div>
-                <span className="text-text-muted text-[10px] block">Recovery Overhead</span>
-                <span className="font-bold text-text-primary text-base">{selectedStrategy.recoveryEffort}</span>
-              </div>
-              <div>
-                <span className="text-text-muted text-[10px] block">Safety Policy Checks</span>
-                <span className="font-bold text-status-success text-base">5/5 PASSED</span>
-              </div>
-            </div>
-          </div>
+      {/* Navigation Filter Tabs */}
+      <div className="mt-6 flex items-center gap-6 border-b border-[#383838] text-xs">
+        <button
+          type="button"
+          onClick={() => setActiveTab("all")}
+          className={`pb-2.5 transition-colors ${
+            activeTab === "all"
+              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+          }`}
+        >
+          All reports · 0
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("incident")}
+          className={`pb-2.5 transition-colors ${
+            activeTab === "incident"
+              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+          }`}
+        >
+          Incident summary
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("strategy")}
+          className={`pb-2.5 transition-colors ${
+            activeTab === "strategy"
+              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+          }`}
+        >
+          Strategy comparison
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("evaluation")}
+          className={`pb-2.5 transition-colors ${
+            activeTab === "evaluation"
+              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+          }`}
+        >
+          Evaluation
+        </button>
+      </div>
 
-          {/* Section 3: Safety Invariants Compliance */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-accent">
-              3. Deterministic Safety Verification
-            </h3>
-            <div className="p-4 rounded-xl bg-surface-card border border-border space-y-2 text-text-secondary leading-relaxed">
-              <div className="flex items-center gap-2 text-status-success font-semibold">
-                <ShieldCheck className="w-4 h-4" />
-                <span>All 5 Deterministic Safety Invariants Enforced and Verified</span>
-              </div>
-              <p className="text-[11px] text-text-muted">
-                Unlike naive isolation approaches (STRAT-A which severed vital OT telemetry violating Rule SEC-OT-04),
-                STRAT-B selectively neutralizes external perimeter routing while preserving critical internal Modbus telemetry feeds to OT-CONTROLLER-SIM-01.
-              </p>
-            </div>
-          </div>
+      {/* Empty State Banner */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-8 text-center mt-6">
+        <h2 className="text-base font-semibold text-[#F5F5F5]">
+          No generated reports
+        </h2>
+        <p className="text-xs text-[#A3A3A3] mt-2 max-w-lg mx-auto">
+          A report list will appear only after recorded data and report generation exist. The preview below is not a saved report.
+        </p>
+      </div>
 
-          {/* Section 4: Audit Metadata and Integrity Signature */}
-          <div className="pt-6 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-4 text-text-muted text-[11px]">
-            <div>
-              <span className="block font-semibold text-text-primary mb-1">Authorizing SOC Operator</span>
-              <div className="flex items-center gap-1.5 font-mono">
-                <User className="w-3.5 h-3.5 text-accent" />
-                <span>analyst-demo-03 (SOC Tier 2)</span>
-              </div>
-            </div>
-            <div>
-              <span className="block font-semibold text-text-primary mb-1">Cryptographic Integrity Hash</span>
-              <div className="flex items-center gap-1.5 font-mono text-[10px] truncate text-status-success">
-                <Hash className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</span>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Report Types Table */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] font-medium tracking-wider uppercase">
+                <th className="pb-3 font-medium">REPORT TYPE</th>
+                <th className="pb-3 font-medium">INTENDED CONTENT</th>
+                <th className="pb-3 font-medium">STATE</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#383838]/40">
+              <tr>
+                <td className="py-3.5 text-[#F5F5F5] font-medium">Incident summary</td>
+                <td className="py-3.5 text-[#A3A3A3]">Context, evidence and analyst notes</td>
+                <td className="py-3.5 text-[#737373]">Not generated</td>
+              </tr>
+              <tr>
+                <td className="py-3.5 text-[#F5F5F5] font-medium">Strategy comparison</td>
+                <td className="py-3.5 text-[#A3A3A3]">Candidates, assumptions and policy context</td>
+                <td className="py-3.5 text-[#737373]">Not generated</td>
+              </tr>
+              <tr>
+                <td className="py-3.5 text-[#F5F5F5] font-medium">Evaluation report</td>
+                <td className="py-3.5 text-[#A3A3A3]">Methods, protocol and recorded metrics</td>
+                <td className="py-3.5 text-[#737373]">No experiment run yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Report Layout Preview — Sample Only */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
+        <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+          NOT GENERATED / NOT EXPORTED
+        </div>
+        <h2 className="text-sm font-semibold text-[#A3A3A3] mt-1">
+          Report layout preview — sample only
+        </h2>
+        <h3 className="text-xl font-bold font-mono text-[#F5F5F5] mt-2">
+          INC-2026-0042 · Response review
+        </h3>
+        <div className="text-xs text-[#FF6B35] font-mono mt-1">
+          · Illustrative comparison — not a recorded run
+        </div>
+
+        {/* Structured Specimen Table */}
+        <div className="mt-4 border border-[#383838] rounded-lg overflow-hidden">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] tracking-wider uppercase bg-[#1E1E1E]">
+                <th className="py-2.5 px-4 font-medium w-40">SECTION</th>
+                <th className="py-2.5 px-4 font-medium">SAMPLE CONTENT</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#383838]/40 bg-[#1D1D1D]">
+              <tr>
+                <td className="py-3 px-4 text-[#A3A3A3] font-medium align-top">Summary</td>
+                <td className="py-3 px-4 text-[#F5F5F5]">
+                  Suspicious Privilege Escalation · High · Awaiting Review
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 text-[#A3A3A3] font-medium align-top">Configuration</td>
+                <td className="py-3 px-4 font-mono text-[#F5F5F5]">
+                  Simulation Lab · analyst-demo-03 · APP-GW-02
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 text-[#A3A3A3] font-medium align-top">Evidence</td>
+                <td className="py-3 px-4 font-mono text-[#F5F5F5]">
+                  EV-0042-01 / EV-0042-02 / EV-0042-03 · 26 Oct 2026 UTC
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 text-[#A3A3A3] font-medium align-top">Strategies</td>
+                <td className="py-3 px-4 text-[#F5F5F5]">
+                  Session revocation / access restriction / verification / optional isolation
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 text-[#A3A3A3] font-medium align-top">Policy</td>
+                <td className="py-3 px-4 font-mono text-[#F5F5F5]">
+                  POL-01–03 definitions; illustrative pass/fail only
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 text-[#A3A3A3] font-medium align-top">Review</td>
+                <td className="py-3 px-4 text-[#F5F5F5]">
+                  Pending Review; no decision saved
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3 px-4 text-[#A3A3A3] font-medium align-top">Limitations</td>
+                <td className="py-3 px-4 text-[#A3A3A3]">
+                  Synthetic data; unknown authorization; no calibrated model
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p className="text-xs text-[#A3A3A3] mt-5 leading-relaxed">
+          Sample narrative: examine a narrow session response before broad simulated isolation. This explanation is not a measured conclusion or operational recommendation.
+        </p>
+        <div className="text-xs text-[#737373] mt-2">
+          Results are simulated estimates, not guarantees of real-world outcomes.
+        </div>
+      </div>
+
+      {/* Export Not Connected Alert Box */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-5 mt-4">
+        <h2 className="text-xs font-semibold text-[#F5F5F5]">
+          Export not connected
+        </h2>
+        <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+          PDF, CSV and evidence bundles require generation, authorization, storage and download implementation. No export success is shown.
+        </p>
+      </div>
+
+      {/* Persistent Disclaimer */}
+      <div className="text-xs text-[#737373] mt-8 mb-4">
+        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
+      </div>
     </AppLayout>
   );
 }

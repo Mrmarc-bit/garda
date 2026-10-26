@@ -6,22 +6,21 @@ import { AppHeader } from "./app-header";
 
 interface AppLayoutProps {
   children: React.ReactNode;
-  title?: string;
-  subtitle?: string;
+  breadcrumb?: string;
 }
 
-export const AppLayout: React.FC<AppLayoutProps> = ({ children, title, subtitle }) => {
+export const AppLayout: React.FC<AppLayoutProps> = ({ children, breadcrumb }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   return (
-    <div className="min-h-screen flex bg-bg-primary text-text-primary">
-      {/* Sidebar for desktop & slide-out for mobile */}
+    <div className="min-h-screen flex bg-[#171717] text-[#F5F5F5] font-sans antialiased selection:bg-[#FF6B35]/30 selection:text-white">
+      {/* Sidebar matching Figma */}
       <AppSidebar isMobileOpen={mobileMenuOpen} onCloseMobile={() => setMobileMenuOpen(false)} />
 
       {/* Backdrop overlay for mobile drawer */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity"
+          className="fixed inset-0 z-30 bg-black/70 backdrop-blur-sm lg:hidden transition-opacity"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
@@ -29,12 +28,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title, subtitle 
       {/* Main application column */}
       <div className="flex-1 flex flex-col min-w-0">
         <AppHeader
-          title={title}
-          subtitle={subtitle}
+          breadcrumb={breadcrumb}
           onOpenMobile={() => setMobileMenuOpen(true)}
         />
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto">
-          <div className="max-w-[1440px] mx-auto space-y-6">
+        <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+          <div className="max-w-[1440px] mx-auto">
             {children}
           </div>
         </main>

@@ -1,235 +1,221 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import {
-  Sparkles,
-  ShieldCheck,
-  ShieldAlert,
-  CheckCircle2,
-  XCircle,
-  HelpCircle,
-  FileText,
-  AlertTriangle,
-  Send,
-} from "lucide-react";
 import { AppLayout } from "@/components/layout/app-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import {
-  SYNTHETIC_INCIDENT,
-  CANDIDATE_STRATEGIES,
-  CandidateStrategy,
-} from "@/lib/synthetic-data";
 
 export default function RecommendationsPage() {
-  const [reviewStatus, setReviewStatus] = React.useState<
-    Record<string, "Pending Review" | "Approved for Demonstration" | "Rejected" | "Requires More Evidence">
-  >({
-    "strat-02": "Pending Review",
-    "strat-03": "Pending Review",
-    "strat-01": "Rejected",
-  });
-
-  const [analystNotes, setAnalystNotes] = React.useState(
-    "Verified against virtual topology. Strategy B preserves uninterrupted Modbus telemetry for OT Controller."
-  );
-  const [isSaved, setIsSaved] = React.useState(false);
-
-  const handleUpdateStatus = (
-    stratId: string,
-    status: "Pending Review" | "Approved for Demonstration" | "Rejected" | "Requires More Evidence"
-  ) => {
-    setReviewStatus((prev) => ({ ...prev, [stratId]: status }));
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2000);
-  };
+  const [reviewDecision, setReviewDecision] = React.useState<
+    "Pending Review" | "Approved for Demonstration" | "Rejected" | "Requires More Evidence"
+  >("Pending Review");
 
   return (
-    <AppLayout
-      title="AI Recommendations & Review"
-      subtitle="Explainable decision-support synthesis with mandatory human-in-the-loop validation"
-    >
-      {/* Defensive Boundary & Human Review Gate */}
-      <div className="p-4 rounded-xl border border-accent/40 bg-accent/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-accent/20 border border-accent/40 flex items-center justify-center text-accent shrink-0">
-            <Sparkles className="w-5 h-5 text-accent" />
-          </div>
-          <div>
-            <div className="text-xs font-semibold text-accent uppercase tracking-wider">
-              Human-in-the-Loop Review Authority
+    <AppLayout breadcrumb="Workspace / AI Recommendations">
+      {/* Top metadata tags */}
+      <div className="space-y-1">
+        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+          SIMULATION ONLY
+        </div>
+        <div className="text-xs text-[#A3A3A3]">
+          Synthetic design/demo environment — not live
+        </div>
+        <div className="text-xs font-mono text-[#737373]">
+          /app/recommendations
+        </div>
+      </div>
+
+      {/* Heading & Subtitle */}
+      <div className="mt-6">
+        <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
+          AI Recommendations
+        </h1>
+        <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
+          Explanation specimens support review. They are not source evidence, policy decisions or permission to act.
+        </p>
+      </div>
+
+      {/* Status Filter Tabs */}
+      <div className="mt-6 flex items-center gap-6 border-b border-[#383838] text-xs">
+        <button
+          type="button"
+          className="pb-2.5 text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+        >
+          Pending Review · 1
+        </button>
+        <button
+          type="button"
+          className="pb-2.5 text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors"
+        >
+          Reviewed · 0
+        </button>
+        <button
+          type="button"
+          className="pb-2.5 text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors"
+        >
+          All · 1
+        </button>
+      </div>
+
+      {/* Main 2-Column Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mt-6">
+        {/* Left Column (4 cols) */}
+        <div className="lg:col-span-4 space-y-4">
+          {/* Card 1: Selected recommendation list item */}
+          <div className="bg-[#252525] border border-[#FF6B35] rounded-xl p-5">
+            <div className="text-xs text-[#FF6B35] font-mono">
+              · Pending Review
             </div>
-            <div className="text-sm font-semibold text-text-primary">
-              AI provides explainable trade-offs. The human operator retains exclusive review authority.
+            <div className="text-xs font-mono text-[#A3A3A3] mt-2">
+              REC-0042-01
+            </div>
+            <h2 className="text-sm font-bold text-[#F5F5F5] mt-1 leading-snug">
+              Review the synthetic session before broad isolation
+            </h2>
+            <div className="text-xs font-mono text-[#737373] mt-3">
+              INC-2026-0042 · APP-GW-02
+            </div>
+            <div className="text-xs text-[#A3A3A3] mt-4 pt-3 border-t border-[#383838]">
+              0.82 illustrative confidence Not calibrated probability
+            </div>
+          </div>
+
+          {/* Card 2: Provider integration unverified */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-5">
+            <h2 className="text-xs font-semibold text-[#F5F5F5]">
+              Provider integration unverified
+            </h2>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              This is a locally authored explanation specimen, not a response from an integrated AI service.
+            </p>
+          </div>
+        </div>
+
+        {/* Right Column: Detailed Explanation & Review Decisions (8 cols) */}
+        <div className="lg:col-span-8 space-y-4">
+          {/* Card 1: Recommendation Header */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase font-mono">
+              REC-0042-01 / PENDING REVIEW
+            </div>
+            <h2 className="text-lg font-bold text-[#F5F5F5] mt-1">
+              Review the synthetic session before broad isolation
+            </h2>
+            <div className="flex items-center gap-2 text-xs text-[#A3A3A3] mt-2">
+              <span>· INC-2026-0042</span>
+              <span>· Awaiting Review</span>
+            </div>
+            <p className="text-xs text-[#A3A3A3] mt-4 leading-relaxed">
+              A human must inspect context and choose a demonstration decision. No recommendation has been approved or executed.
+            </p>
+          </div>
+
+          {/* Card 2: Source facts */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+              SYNTHETIC EVIDENCE
+            </div>
+            <h2 className="text-base font-semibold text-[#F5F5F5] mt-1 mb-3">
+              Source facts
+            </h2>
+            <div className="font-mono text-xs text-[#A3A3A3] leading-relaxed break-words">
+              EV-0042-01 · 09:14:00 UTC · elevation request EV-0042-02 · 09:14:08 UTC · privileged token issued EV-0042-03 · 09:15:10 UTC · privileged route access
+            </div>
+            <p className="text-xs text-[#737373] mt-3">
+              All records: 2026-10-26 UTC, analyst-demo-03, APP-GW-02. The authorization basis is absent.
+            </p>
+          </div>
+
+          {/* Card 3: Interpretation and uncertainty */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+              DERIVED ASSESSMENT
+            </div>
+            <h2 className="text-base font-semibold text-[#F5F5F5] mt-1 mb-2">
+              Interpretation and uncertainty
+            </h2>
+            <p className="text-xs text-[#A3A3A3] leading-relaxed">
+              The sequence may indicate privilege misuse, but does not establish intent. Illustrative confidence 0.82 is not a calibrated probability. Service impact depends on the virtual topology assumptions.
+            </p>
+          </div>
+
+          {/* Card 4: Why examine a narrow response first? */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+              AI-GENERATED EXPLANATION / SPECIMEN
+            </div>
+            <h2 className="text-base font-semibold text-[#F5F5F5] mt-1 mb-3">
+              Why examine a narrow response first?
+            </h2>
+            <blockquote className="text-xs text-[#F5F5F5] italic leading-relaxed pl-3 border-l-2 border-[#FF6B35]">
+              “Review whether revoking the synthetic elevated session can limit access while preserving the gateway and monitoring dependencies. Request more verification if authorization context is unresolved.”
+            </blockquote>
+            <p className="text-xs text-[#737373] mt-4 leading-relaxed">
+              Narrative specimen linked to EV-0042-01–03. Not an additional fact, computed conclusion or policy approval.
+            </p>
+          </div>
+
+          {/* Card 5: Tradeoffs & policy specimen */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <h2 className="text-base font-semibold text-[#F5F5F5] mb-2">
+              Tradeoffs & policy specimen
+            </h2>
+            <p className="text-xs text-[#A3A3A3] leading-relaxed">
+              Session revocation may narrow exposure with low assumed service impact. Virtual access restriction may affect OPS-DASH-01. More verification delays a decision. Broad simulated isolation may impair MONITOR-01.
+            </p>
+            <div className="text-xs text-[#FF6B35] mt-4 font-mono">
+              · Illustrative comparison — not a recorded run
+            </div>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              Policy Validation: POL-01 / POL-02 / POL-03 shown as illustrative pass for session review; isolation shown as illustrative fail under POL-01. No actual evaluation occurred.
+            </p>
+            <div className="text-xs text-[#737373] mt-3">
+              Results are simulated estimates, not guarantees of real-world outcomes.
+            </div>
+          </div>
+
+          {/* Card 6: Human review decision */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <h2 className="text-base font-semibold text-[#F5F5F5]">
+              Human review decision
+            </h2>
+            <div className="text-xs text-[#FF6B35] font-mono mt-1">
+              · {reviewDecision}
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setReviewDecision("Approved for Demonstration")}
+                className="bg-[#FF6B35] text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-[#FF8255] transition-colors"
+              >
+                Approve for Demonstration
+              </button>
+              <button
+                type="button"
+                onClick={() => setReviewDecision("Rejected")}
+                className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
+              >
+                Reject
+              </button>
+              <button
+                type="button"
+                onClick={() => setReviewDecision("Requires More Evidence")}
+                className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
+              >
+                Request More Evidence
+              </button>
+            </div>
+
+            <div className="text-xs text-[#737373] mt-4">
+              Resulting labels: Approved for Demonstration / Rejected / Requires More Evidence. Saving and authorization require implementation.
             </div>
           </div>
         </div>
-        <Badge variant="simulation">Simulation Approval Only</Badge>
       </div>
 
-      {/* Recommendations Cards Grid */}
-      <div className="space-y-6">
-        {CANDIDATE_STRATEGIES.map((strat) => {
-          const currentStatus = reviewStatus[strat.id] || "Pending Review";
-          const isPassed = strat.safetyPolicyStatus === "PASSED";
-
-          return (
-            <Card
-              key={strat.id}
-              className={`border transition-all ${
-                strat.isAiRecommended
-                  ? "border-accent/40 bg-surface-card shadow-lg"
-                  : "border-border bg-surface-card/60"
-              }`}
-            >
-              <CardHeader className="border-b border-border/60 pb-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-surface-elevated border border-border text-accent">
-                      {strat.code}
-                    </span>
-                    <CardTitle className="text-base font-semibold">{strat.name}</CardTitle>
-                    {strat.isAiRecommended && (
-                      <Badge variant="simulation" size="sm">
-                        Recommended
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-text-muted">Review State:</span>
-                    <Badge
-                      variant={
-                        currentStatus === "Approved for Demonstration"
-                          ? "success"
-                          : currentStatus === "Rejected"
-                          ? "critical"
-                          : "warning"
-                      }
-                      size="sm"
-                    >
-                      {currentStatus}
-                    </Badge>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="pt-4 space-y-4 text-xs">
-                {/* AI Rationale & Citations */}
-                <div className="p-3.5 rounded-lg bg-[#191919] border border-border space-y-2">
-                  <div className="flex items-center justify-between text-text-muted text-[11px]">
-                    <span className="flex items-center gap-1 font-semibold text-accent">
-                      <Sparkles className="w-3.5 h-3.5" /> Explainable Synthesis
-                    </span>
-                    <span className="font-mono">Uncertainty: ±4.2%</span>
-                  </div>
-                  <p className="text-text-secondary leading-relaxed">{strat.aiRationale}</p>
-                  <div className="flex items-center gap-2 pt-2 border-t border-border/40 text-[11px] text-text-muted">
-                    <span>Evidence Citations:</span>
-                    <span className="font-mono font-semibold text-accent">EVD-101, EVD-102, EVD-104</span>
-                  </div>
-                </div>
-
-                {/* Quantitative Impact Comparison Bar */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 rounded-lg bg-surface-elevated/40 border border-border">
-                  <div>
-                    <span className="text-text-muted text-[10px] block">Risk Reduction</span>
-                    <span className="font-bold text-text-primary text-sm">{strat.securityBenefitScore}%</span>
-                  </div>
-                  <div>
-                    <span className="text-text-muted text-[10px] block">Simulated Downtime</span>
-                    <span className="font-bold text-text-primary text-sm">{strat.simulatedDowntimeMinutes} mins</span>
-                  </div>
-                  <div>
-                    <span className="text-text-muted text-[10px] block">Recovery Complexity</span>
-                    <span className="font-bold text-text-primary text-sm">{strat.recoveryEffort}</span>
-                  </div>
-                  <div>
-                    <span className="text-text-muted text-[10px] block">Deterministic Safety</span>
-                    <span
-                      className={`font-semibold text-xs ${
-                        isPassed ? "text-status-success" : "text-status-critical"
-                      }`}
-                    >
-                      {isPassed ? "PASSED (5 Rules)" : "BLOCKED"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Review Action Controls */}
-                <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-border/60">
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      variant="primary"
-                      disabled={!isPassed}
-                      onClick={() => handleUpdateStatus(strat.id, "Approved for Demonstration")}
-                      className="text-xs gap-1.5"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Approve for Demonstration</span>
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleUpdateStatus(strat.id, "Requires More Evidence")}
-                      className="text-xs gap-1.5"
-                    >
-                      <HelpCircle className="w-3.5 h-3.5" />
-                      <span>Request Evidence</span>
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleUpdateStatus(strat.id, "Rejected")}
-                      className="text-xs gap-1.5"
-                    >
-                      <XCircle className="w-3.5 h-3.5" />
-                      <span>Reject</span>
-                    </Button>
-                  </div>
-
-                  <Link href="/app/audit-trail">
-                    <span className="text-text-muted hover:text-text-primary text-xs flex items-center gap-1">
-                      <span>View Audit Log</span>
-                    </span>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+      {/* Persistent Disclaimer */}
+      <div className="text-xs text-[#737373] mt-8 mb-4">
+        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
       </div>
-
-      {/* Reviewer Sign-Off Box */}
-      <Card className="border-border bg-surface-card">
-        <CardHeader className="pb-3 border-b border-border/60">
-          <CardTitle className="text-sm font-semibold">SOC Reviewer Audit Sign-Off</CardTitle>
-          <CardDescription>
-            Enter rationale for audit log persistence (Actor: analyst-demo-03)
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-4 space-y-4 text-xs">
-          <textarea
-            rows={3}
-            value={analystNotes}
-            onChange={(e) => setAnalystNotes(e.target.value)}
-            className="w-full rounded-lg border border-border bg-surface-input p-3 text-text-primary focus:outline-none focus:border-accent"
-          />
-          <div className="flex items-center justify-between">
-            <span className="text-text-muted text-[11px]">
-              {isSaved ? "✓ Audit record updated in simulation log" : "Review notes will be permanently recorded in audit trail"}
-            </span>
-            <Link href="/app/audit-trail">
-              <Button size="sm" variant="outline" className="gap-2 text-xs">
-                <FileText className="w-3.5 h-3.5" />
-                <span>Open Audit Trail</span>
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
     </AppLayout>
   );
 }

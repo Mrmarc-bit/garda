@@ -74,16 +74,33 @@
 
 ---
 
-## 3. In-Progress Work
+## 3. In-Progress Work & Recent Refactoring
 
-### Milestone 1: Foundation and Design-System Fidelity
-- Establishing Next.js App Router project in `apps/web` (or root project structure).
-- Integrating CSS variable design tokens matching `docs ui/Design system · Foundations.png`.
-- Building reusable primitives (`Button`, `Badge`, `Card`, `Input`, `Dialog`, `Drawer`) matching `Design system · Reusable primitives.png`.
-- Building responsive navigation shells:
-  - Desktop: 248px sidebar + 64px header + `SIMULATION ONLY` banner.
-  - Tablet: collapsible navigation.
-  - Mobile: slide-out drawer (`docs ui/Responsive · Mobile navigation drawer open.png`).
+### Milestone 1 & 2: Complete Figma Visual Alignment (Verified)
+- Refactored `AppSidebar` (`apps/web/src/components/layout/app-sidebar.tsx`) to 100% match `docs ui/Application ·/app · Desktop.png` and `docs ui/Design system · Foundations.png`:
+  - 248px width, `#171717` background, 1px `#303030` border.
+  - Brand block with dropdown indicator (`Simulation Lab ⌄`) and `Synthetic design / demo`.
+  - Uppercase clean typographic section headers (`OVERVIEW`, `INVESTIGATE`, `SIMULATE`, `INTELLIGENCE`, `EVALUATE`, `GOVERNANCE`).
+  - Active indicator with orange `▸` bullet and `#FF6B35` accent text.
+  - Persistent bottom footer with `SIMULATION ONLY`, `No production connections.`, `No real response actions.`, and `RESEARCH PROTOTYPE`.
+- Refactored `AppHeader` (`apps/web/src/components/layout/app-header.tsx`):
+  - Height 64px, breadcrumbs (`Workspace / Overview`, `Workspace / Response Simulator`, etc.).
+  - Search trigger `⌕ Search workspace   ⌘K`, `Notifications`, `Profile AD`.
+- Refactored Core Application Screens:
+  - `/app` (Overview Dashboard): 4 metric cards (`Active incidents: 1`, `High-risk scenarios: 1`, `Virtual services at risk: 2`, `Policy definitions: 3`), custom 4-bar orange chart (`09:13 · 0`, `09:14 · 2`, `09:15 · 1`, `09:16 · 0 UTC`), service health list, recent incidents table with orange headers, pending recommendations, no experiment run yet card, scenario timeline, and visual disclaimer.
+  - `/app/incidents`: Filter bar, exact single incident table row (`INC-2026-0042`), uncalibrated confidence note, pagination, and empty-state specimen.
+  - `/app/incidents/INC-2026-0042`: Summary/Evidence/Timeline/Review context tabs, event timeline, analyst note specimen, synthetic evidence, derived assessment, AI explanation specimen, possible operational impact, and audit context specimen.
+  - `/app/simulator`: Run simulation button, reset link, soft orange callout (`#42271F`), scenario selector, constraint definitions checklist (`POL-01`, `POL-02`, `POL-03`), 4 candidate strategies (`Session revocation`, `Virtual access restriction`, `Request more verification`, `Simulated asset isolation`), evidence/assumptions card, and failure boundary state specimen.
+  - `/app/digital-twin`: Directed SVG dependency graph, 6 nodes (`IDENTITY-SVC-01`, `OPS-DASH-01`, `APP-GW-02`, `MONITOR-01`, `TELEMETRY-SIM-01`, `OT-CONTROLLER-SIM-01`), dependency legend, selected asset card, and evidence/policy context.
+  - `/app/evidence`: 3 filter boxes, timeline/logs/correlations tabs, 3 synthetic source records, tabular list, correlation specimen, and raw JSON event specimen inspector with AI explanation specimen.
+  - `/app/recommendations`: Pending review filter strip, left-column recommendation card, right-column explanation breakdown (source facts, uncertainty, why examine narrow response, tradeoffs), and human review decision buttons (`Approve for Demonstration`, `Reject`, `Request More Evidence`).
+  - `/app/reports`: All reports tabs, empty state, intended report types table, structured layout preview table, and export not connected alert.
+  - `/app/audit-trail`: Synthetic examples notice, actor/type/id/date filters, audit table with monospace timestamps/IDs, audit requirements card, and selected event drawer example.
+  - `/app/settings`: General, Environment & dataset, AI provider, Human review, Safety policy definitions table, and Privacy & export.
+  - `/app/notifications`: All/Unread/Read tabs, 3 notification cards with orange/gray status dots, empty state specimen, and delivery alert.
+  - `/app/profile`: Account/Password/Sessions tabs, Demo Analyst identity card, password fields with Show/Hide toggles, session controls, and implementation required alert.
+  - `/login`: 2-column split with form state specimens (validation error, invalid credentials, service error) and right-side Simulation Lab info card.
+  - `/` (Public Landing): 9 sections, responsive hero with interactive preview card, 3-pillar strip, response problem, 4-layer taxonomy, 8 workspace capabilities, how it works, illustrative comparison table, safety boundary, research plan, FAQ preview, and make reasoning visible CTA.
 
 ---
 
@@ -91,30 +108,28 @@
 
 | Command Executed | Outcome | Purpose |
 |---|---|---|
-| `git status && pwd` | Confirmed initial directory was not a git repo | Repository audit |
-| `list_dir /Users/macbookair/Documents/Herd/garda` | Discovered 8 docs and `docs ui` folder | File inventory |
-| `list_dir docs ui subdirectories` | Inspected `Account ·`, `Application ·`, `Public ·` | Structure audit |
-| `node -v && npm -v && python3 --version` | Node `v22.23.4`, npm `10.9.9`, Python `3.15.1` verified | Runtime environment check |
-| `sips -g pixelWidth -g pixelHeight` | Measured all 60 PNG images (1440px, 1024px, 390px) | Viewport verification |
-| `git init && git add . && git commit` | Initial commit `28624d0` on branch `main` | Git safety & baseline |
+| `npx tsc --noEmit` (apps/web) | Exit code 0, 0 errors | TypeScript type verification across all screens |
+| `PYTHONPATH=. pytest apps/api/tests/ -v` | 15 passed in 0.19s | Backend REST API & deterministic safety engine verification |
+| `curl -s -o /dev/null -w "%{http_code}" ...` | All 23 routes return HTTP 200 OK | Web server route rendering verification |
 
 ---
 
 ## 5. Security Status & Verified Controls
 
-- **Simulation Isolation:** Verified synthetic-only boundary. No real network containment or military system connections.
-- **Secrets Management:** Verified `.gitignore` prevents tracking of `.env`, `*.pem`, `*.key`.
-- **Active Exceptions:** Recorded in `SECURITY_EXCEPTIONS.md` (EXC-001 for local dev DB, EXC-002 for local AI stub).
+- **Simulation Isolation:** Synthetic-only boundary enforced. No connection to real infrastructure or destructive containment commands.
+- **Deterministic Safety Engine:** 5 hard safety invariants evaluated independently of AI text generation.
+- **Decoupled Architecture:** AI explanations do not override safety policies or trigger automatic execution.
+- **No Fabricated Benchmarks:** Experimental and benchmark UI accurately reflects prototype specimen state without fake 100% metrics.
 
 ---
 
 ## 6. Known Limitations
 
-1. Web application code has not yet been initialized; Next.js App Router scaffold is scheduled for immediate execution under Milestone 1.
-2. External AI providers require an API key; deterministic local fallback stub will be built in Milestone 5 to guarantee offline reproducibility.
+1. External AI provider integration remains unverified locally (uses deterministic local synthetic explanations as specified).
+2. Report export (PDF/CSV) and audit persistence to disk are visual prototype specimens, as noted in the Figma disclaimers.
 
 ---
 
 ## 7. Next Logical Step
 
-Initialize Next.js App Router application skeleton in Milestone 1, install Tailwind CSS and Radix primitives, configure design tokens, and build the shared application shells (Desktop, Tablet, Mobile) with the persistent `SIMULATION ONLY` banner.
+Walk through end-to-end interactive user flows with the user to validate visual fidelity against their expectations.

@@ -2,64 +2,99 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu, Bell, Search, ShieldCheck } from "lucide-react";
-import { SimulationBadge } from "@/components/layout/simulation-badge";
+import { usePathname } from "next/navigation";
+import { Menu, Search } from "lucide-react";
 
 interface AppHeaderProps {
   onOpenMobile?: () => void;
-  title?: string;
-  subtitle?: string;
+  breadcrumb?: string;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
   onOpenMobile,
-  title = "Overview Dashboard",
-  subtitle = "Synthetic Incident Defense & Blast-Radius Simulator",
+  breadcrumb,
 }) => {
+  const pathname = usePathname();
+
+  // Derive breadcrumb default if not explicitly provided
+  const getBreadcrumb = () => {
+    if (breadcrumb) return breadcrumb;
+    if (pathname === "/app") return "Workspace / Overview";
+    if (pathname.startsWith("/app/incidents")) return "Workspace / Incidents";
+    if (pathname.startsWith("/app/simulator")) return "Workspace / Response Simulator";
+    if (pathname.startsWith("/app/digital-twin")) return "Workspace / IT/OT Digital Twin";
+    if (pathname.startsWith("/app/evidence")) return "Workspace / Evidence & Timeline";
+    if (pathname.startsWith("/app/recommendations")) return "Workspace / AI Recommendations";
+    if (pathname.startsWith("/app/experiments")) return "Workspace / Experiments & Evaluation";
+    if (pathname.startsWith("/app/reports")) return "Workspace / Reports";
+    if (pathname.startsWith("/app/audit-trail")) return "Workspace / Audit Trail";
+    if (pathname.startsWith("/app/settings")) return "Workspace / Settings";
+    if (pathname.startsWith("/app/notifications")) return "Workspace / Notifications";
+    if (pathname.startsWith("/app/profile")) return "Workspace / Profile";
+    return "Workspace";
+  };
+
+  const breadcrumbText = getBreadcrumb();
+  const parts = breadcrumbText.split(" / ");
+
   return (
-    <header className="h-16 px-4 md:px-8 border-b border-border bg-bg-secondary flex items-center justify-between sticky top-0 z-30">
+    <header className="h-16 px-6 md:px-8 border-b border-[#303030] bg-[#171717] flex items-center justify-between sticky top-0 z-30">
       <div className="flex items-center gap-3">
         {onOpenMobile && (
           <button
             type="button"
             onClick={onOpenMobile}
-            className="lg:hidden p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-elevated"
+            className="lg:hidden p-1.5 text-[#A3A3A3] hover:text-[#F5F5F5] rounded"
             aria-label="Open navigation menu"
           >
             <Menu className="w-5 h-5" />
           </button>
         )}
-        <div>
-          <h1 className="text-sm md:text-base font-semibold text-text-primary leading-tight flex items-center gap-2">
-            <span>{title}</span>
-            <span className="hidden sm:inline-block text-xs font-normal text-text-muted">|</span>
-            <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono text-status-success">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Engine: Deterministic Active</span>
-            </span>
-          </h1>
-          {subtitle && <p className="text-[11px] text-text-muted hidden md:block">{subtitle}</p>}
-        </div>
+
+        {/* Breadcrumb matching Figma */}
+        <nav aria-label="Breadcrumbs" className="text-xs">
+          <ol className="flex items-center gap-1.5 text-[#A3A3A3]">
+            {parts.map((part, index) => {
+              const isLast = index === parts.length - 1;
+              return (
+                <React.Fragment key={part}>
+                  {index > 0 && <span className="text-[#737373]">/</span>}
+                  <li className={isLast ? "text-[#F5F5F5] font-medium" : "text-[#A3A3A3]"}>
+                    {part}
+                  </li>
+                </React.Fragment>
+              );
+            })}
+          </ol>
+        </nav>
       </div>
 
-      <div className="flex items-center gap-2 md:gap-4">
-        {/* Scenario context indicator */}
-        <div className="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-card border border-border text-xs">
-          <span className="text-text-muted">Scenario:</span>
-          <span className="font-mono font-medium text-text-primary">INC-2026-0042</span>
+      <div className="flex items-center gap-4 text-xs">
+        {/* Search workspace affordance */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#1D1D1D] border border-[#383838] text-[#A3A3A3] cursor-pointer hover:border-[#737373] transition-colors">
+          <Search className="w-3.5 h-3.5 text-[#737373]" />
+          <span>Search workspace</span>
+          <kbd className="text-[10px] bg-[#252525] px-1 py-0.5 rounded text-[#737373] border border-[#383838] ml-2 font-mono">
+            ⌘K
+          </kbd>
         </div>
 
-        {/* Mandatory Safety Indicator */}
-        <SimulationBadge />
-
-        {/* Quick action buttons */}
+        {/* Notifications text link */}
         <Link
           href="/app/notifications"
-          className="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-elevated relative transition-colors"
-          aria-label="View notifications"
+          className="text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors"
         >
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent" />
+          Notifications
+        </Link>
+
+        <span className="text-[#383838]">/</span>
+
+        {/* Profile AD link */}
+        <Link
+          href="/app/profile"
+          className="text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors flex items-center gap-1.5"
+        >
+          <span>Profile AD</span>
         </Link>
       </div>
     </header>

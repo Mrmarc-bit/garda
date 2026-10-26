@@ -2,307 +2,380 @@
 
 import * as React from "react";
 import Link from "next/link";
-import {
-  Network,
-  Server,
-  Cpu,
-  Radio,
-  Eye,
-  ShieldAlert,
-  AlertTriangle,
-  ArrowRight,
-  RotateCcw,
-  Sliders,
-  CheckCircle2,
-} from "lucide-react";
 import { AppLayout } from "@/components/layout/app-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { VIRTUAL_ASSETS, VirtualAsset, SYNTHETIC_INCIDENT } from "@/lib/synthetic-data";
 
 export default function DigitalTwinPage() {
-  const [selectedAssetId, setSelectedAssetId] = React.useState<string>("APP-GW-02");
-  const [showBlastRadius, setShowBlastRadius] = React.useState(true);
+  const [selectedAsset, setSelectedAsset] = React.useState<string>("APP-GW-02");
 
-  const selectedAsset =
-    VIRTUAL_ASSETS.find((a) => a.id === selectedAssetId) || VIRTUAL_ASSETS[1];
+  const assetDetails: Record<
+    string,
+    {
+      role: string;
+      dependsOn: string;
+      dependents: string;
+      context: string;
+    }
+  > = {
+    "APP-GW-02": {
+      role: "Application gateway",
+      dependsOn: "IDENTITY-SVC-01",
+      dependents: "OPS-DASH-01, MONITOR-01",
+      context: "Identity context: analyst-demo-03. Related incident: INC-2026-0042.",
+    },
+    "IDENTITY-SVC-01": {
+      role: "Identity service",
+      dependsOn: "None (baseline core)",
+      dependents: "APP-GW-02",
+      context: "Auth realm for analyst-demo-03 token generation.",
+    },
+    "OPS-DASH-01": {
+      role: "Operations dashboard",
+      dependsOn: "APP-GW-02, TELEMETRY-SIM-01",
+      dependents: "None (terminal node)",
+      context: "Operator monitoring surface for telemetry ingestion.",
+    },
+    "MONITOR-01": {
+      role: "Observability probe",
+      dependsOn: "APP-GW-02",
+      dependents: "None (terminal node)",
+      context: "Subject to policy POL-01 (observability preservation).",
+    },
+    "TELEMETRY-SIM-01": {
+      role: "Industrial telemetry forwarder",
+      dependsOn: "OT-CONTROLLER-SIM-01",
+      dependents: "OPS-DASH-01",
+      context: "OT telemetry gateway bridger.",
+    },
+    "OT-CONTROLLER-SIM-01": {
+      role: "Virtual OT controller",
+      dependsOn: "None (field baseline)",
+      dependents: "TELEMETRY-SIM-01",
+      context: "Subject to policy POL-03 (prohibit OT isolation).",
+    },
+  };
+
+  const currentDetails = assetDetails[selectedAsset] || assetDetails["APP-GW-02"];
 
   return (
-    <AppLayout
-      title="IT/OT Digital Twin"
-      subtitle="Virtual network topology, service dependency mapping, and containment blast-radius modeling"
-    >
-      {/* Control Bar */}
-      <div className="p-4 rounded-xl border border-border bg-surface-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-surface-elevated border border-border flex items-center justify-center text-accent">
-            <Network className="w-6 h-6" />
+    <AppLayout breadcrumb="Workspace / IT/OT Digital Twin">
+      {/* Top metadata tags */}
+      <div className="space-y-1">
+        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+          SIMULATION ONLY
+        </div>
+        <div className="text-xs text-[#A3A3A3]">
+          Synthetic design/demo environment — not live
+        </div>
+        <div className="text-xs font-mono text-[#737373]">
+          /app/digital-twin
+        </div>
+      </div>
+
+      {/* Heading & Subtitle */}
+      <div className="mt-6">
+        <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
+          IT/OT Digital Twin
+        </h1>
+        <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
+          Six virtual assets and explicit dependency assumptions. A topology design, not a working graph.
+        </p>
+      </div>
+
+      {/* Control Bar matching Figma */}
+      <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Search input box */}
+        <div className="bg-[#252525] border border-[#383838] rounded-xl px-4 py-2.5 w-full sm:w-72">
+          <label htmlFor="search-asset" className="block text-[11px] text-[#737373]">
+            Find virtual asset
+          </label>
+          <input
+            id="search-asset"
+            type="text"
+            value={selectedAsset}
+            onChange={(e) => setSelectedAsset(e.target.value)}
+            className="w-full bg-transparent border-none text-xs font-mono text-[#F5F5F5] focus:outline-none mt-0.5"
+          />
+        </div>
+
+        {/* Zoom & Canvas controls */}
+        <div className="flex items-center gap-4 text-xs text-[#A3A3A3]">
+          <div className="flex items-center gap-2">
+            <button type="button" className="hover:text-[#F5F5F5]">-</button>
+            <span className="font-mono text-xs">100%</span>
+            <button type="button" className="hover:text-[#F5F5F5]">+</button>
           </div>
-          <div>
-            <div className="text-xs text-text-muted font-mono">TOPOLOGY MODEL: VIRTUAL-GRID-2026</div>
-            <div className="text-sm font-semibold text-text-primary">
-              6 Virtual Nodes · 5 Directed Dependencies
+          <span>Pan</span>
+          <span>Fit</span>
+          <button
+            type="button"
+            onClick={() => setSelectedAsset("APP-GW-02")}
+            className="text-[#F5F5F5] underline hover:text-[#FF6B35]"
+          >
+            Reset baseline
+          </button>
+        </div>
+      </div>
+
+      {/* Interactive 2D Topology Canvas matching Figma */}
+      <div className="mt-4 bg-[#1E1E1E] border border-[#383838] rounded-xl p-8 relative min-h-[500px] flex flex-col justify-between overflow-hidden">
+        {/* SVG connection lines matching arrows in Figma */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <marker
+              id="arrowhead"
+              markerWidth="8"
+              markerHeight="6"
+              refX="7"
+              refY="3"
+              orient="auto"
+            >
+              <polygon points="0 0, 8 3, 0 6" fill="#737373" />
+            </marker>
+          </defs>
+
+          {/* APP-GW-02 -> IDENTITY-SVC-01 */}
+          <line
+            x1="45%"
+            y1="40%"
+            x2="28%"
+            y2="20%"
+            stroke="#737373"
+            strokeWidth="1.5"
+            markerEnd="url(#arrowhead)"
+          />
+
+          {/* OPS-DASH-01 -> APP-GW-02 */}
+          <line
+            x1="68%"
+            y1="22%"
+            x2="52%"
+            y2="38%"
+            stroke="#737373"
+            strokeWidth="1.5"
+            markerEnd="url(#arrowhead)"
+          />
+
+          {/* MONITOR-01 -> APP-GW-02 */}
+          <line
+            x1="28%"
+            y1="64%"
+            x2="45%"
+            y2="46%"
+            stroke="#737373"
+            strokeWidth="1.5"
+            markerEnd="url(#arrowhead)"
+          />
+
+          {/* OPS-DASH-01 -> TELEMETRY-SIM-01 */}
+          <line
+            x1="70%"
+            y1="24%"
+            x2="52%"
+            y2="76%"
+            stroke="#737373"
+            strokeWidth="1.5"
+            markerEnd="url(#arrowhead)"
+          />
+
+          {/* TELEMETRY-SIM-01 -> OT-CONTROLLER-SIM-01 */}
+          <line
+            x1="52%"
+            y1="76%"
+            x2="68%"
+            y2="64%"
+            stroke="#737373"
+            strokeWidth="1.5"
+            markerEnd="url(#arrowhead)"
+          />
+        </svg>
+
+        {/* Nodes Layout Grid in Relative Viewport */}
+        <div className="relative z-10 w-full h-[400px]">
+          {/* Node 1: IDENTITY-SVC-01 (Top Left) */}
+          <div
+            onClick={() => setSelectedAsset("IDENTITY-SVC-01")}
+            className={`absolute left-[10%] top-[8%] w-48 bg-[#252525] rounded-xl p-4 cursor-pointer transition-colors ${
+              selectedAsset === "IDENTITY-SVC-01" ? "border-2 border-[#FF6B35]" : "border border-[#383838]"
+            }`}
+          >
+            <div className="font-mono text-xs font-semibold text-[#F5F5F5]">
+              IDENTITY-SVC-01
+            </div>
+            <div className="text-[11px] text-[#737373] mt-1">
+              Virtual baseline
+            </div>
+          </div>
+
+          {/* Node 2: OPS-DASH-01 (Top Right) */}
+          <div
+            onClick={() => setSelectedAsset("OPS-DASH-01")}
+            className={`absolute right-[15%] top-[8%] w-48 bg-[#252525] rounded-xl p-4 cursor-pointer transition-colors ${
+              selectedAsset === "OPS-DASH-01" ? "border-2 border-[#FF6B35]" : "border border-[#383838]"
+            }`}
+          >
+            <div className="font-mono text-xs font-semibold text-[#F5F5F5]">
+              OPS-DASH-01
+            </div>
+            <div className="text-[11px] text-[#737373] mt-1">
+              Virtual baseline
+            </div>
+          </div>
+
+          {/* Node 3: APP-GW-02 (Center - Selected in Figma) */}
+          <div
+            onClick={() => setSelectedAsset("APP-GW-02")}
+            className={`absolute left-[40%] top-[36%] w-52 bg-[#252525] rounded-xl p-4 cursor-pointer transition-colors ${
+              selectedAsset === "APP-GW-02" ? "border-2 border-[#FF6B35]" : "border border-[#383838]"
+            }`}
+          >
+            <div className="font-mono text-xs font-semibold text-[#F5F5F5]">
+              APP-GW-02
+            </div>
+            <div className="text-[11px] text-[#A3A3A3] mt-1">
+              Selected · gateway
+            </div>
+          </div>
+
+          {/* Node 4: MONITOR-01 (Mid Left) */}
+          <div
+            onClick={() => setSelectedAsset("MONITOR-01")}
+            className={`absolute left-[10%] top-[60%] w-48 bg-[#252525] rounded-xl p-4 cursor-pointer transition-colors ${
+              selectedAsset === "MONITOR-01" ? "border-2 border-[#FF6B35]" : "border border-[#383838]"
+            }`}
+          >
+            <div className="font-mono text-xs font-semibold text-[#F5F5F5]">
+              MONITOR-01
+            </div>
+            <div className="text-[11px] text-[#737373] mt-1">
+              Virtual baseline
+            </div>
+          </div>
+
+          {/* Node 5: TELEMETRY-SIM-01 (Bottom Center) */}
+          <div
+            onClick={() => setSelectedAsset("TELEMETRY-SIM-01")}
+            className={`absolute left-[38%] top-[72%] w-52 bg-[#252525] rounded-xl p-4 cursor-pointer transition-colors ${
+              selectedAsset === "TELEMETRY-SIM-01" ? "border-2 border-[#FF6B35]" : "border border-[#383838]"
+            }`}
+          >
+            <div className="font-mono text-xs font-semibold text-[#F5F5F5]">
+              TELEMETRY-SIM-01
+            </div>
+            <div className="text-[11px] text-[#737373] mt-1">
+              Virtual baseline
+            </div>
+          </div>
+
+          {/* Node 6: OT-CONTROLLER-SIM-01 (Mid Right) */}
+          <div
+            onClick={() => setSelectedAsset("OT-CONTROLLER-SIM-01")}
+            className={`absolute right-[15%] top-[56%] w-52 bg-[#252525] rounded-xl p-4 cursor-pointer transition-colors ${
+              selectedAsset === "OT-CONTROLLER-SIM-01" ? "border-2 border-[#FF6B35]" : "border border-[#383838]"
+            }`}
+          >
+            <div className="font-mono text-xs font-semibold text-[#F5F5F5]">
+              OT-CONTROLLER-SIM-01
+            </div>
+            <div className="text-[11px] text-[#737373] mt-1">
+              Virtual OT controller
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button
-            variant={showBlastRadius ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => setShowBlastRadius(!showBlastRadius)}
-            className="gap-2 text-xs"
-          >
-            <Sliders className="w-4 h-4" />
-            <span>{showBlastRadius ? "Blast Radius: Highlighted" : "Show Blast Radius"}</span>
-          </Button>
-          <Link href="/app/simulator">
-            <Button variant="outline" size="sm" className="gap-2 text-xs">
-              <span>Test Containment Impact</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Button>
-          </Link>
+        {/* Baseline topology label inside canvas */}
+        <div className="text-xs text-[#737373] font-mono mt-4">
+          Baseline topology
         </div>
       </div>
 
-      {/* Main Grid: Interactive 2D Visual Canvas & Node Detail Panel */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Topology Visualizer Canvas (Col span 2) */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="overflow-hidden border-border bg-[#141414]">
-            <CardHeader className="border-b border-border/60 pb-3 bg-[#191919]">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                  <span>Interactive 2D Dependency Canvas</span>
-                  <Badge variant="simulation" size="sm">Virtual Model</Badge>
-                </CardTitle>
-                <div className="flex items-center gap-3 text-[11px] text-text-muted">
-                  <span className="flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-status-critical" /> Compromised
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-status-warning" /> At Risk
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-status-success" /> Healthy
-                  </span>
-                </div>
+      {/* Dependency Legend Card */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
+        <h2 className="text-base font-semibold text-[#F5F5F5]">
+          Dependency legend
+        </h2>
+        <div className="text-xs font-mono text-[#F5F5F5] mt-2">
+          A → B means “A depends on B”
+        </div>
+        <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+          Not traffic flow, attack direction or proof of causation. Orange outline = selected asset. Baseline = assumed virtual configuration, not live health.
+        </p>
+        <div className="font-mono text-xs text-[#737373] mt-4 leading-relaxed break-words">
+          APP-GW-02 → IDENTITY-SVC-01 · OPS-DASH-01 → APP-GW-02 · OPS-DASH-01 → TELEMETRY-SIM-01 · TELEMETRY-SIM-01 → OT-CONTROLLER-SIM-01 · MONITOR-01 → APP-GW-02
+        </div>
+      </div>
+
+      {/* Lower 2-Column: Selected Virtual Asset & Evidence/Policies */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        {/* Selected Virtual Asset Card */}
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
+          <div>
+            <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+              SELECTED VIRTUAL ASSET
+            </div>
+            <h2 className="text-xl font-bold font-mono text-[#F5F5F5] mt-1">
+              {selectedAsset}
+            </h2>
+
+            <div className="space-y-2 text-xs mt-4">
+              <div>
+                <span className="text-[#A3A3A3]">Role / </span>
+                <span className="text-[#F5F5F5]">{currentDetails.role}</span>
               </div>
-            </CardHeader>
-
-            <CardContent className="p-6">
-              {/* Visual Grid Schematic representing 2D Node Graph */}
-              <div className="relative min-h-[460px] rounded-xl border border-border/60 bg-[#121212] p-8 flex flex-col justify-between overflow-hidden">
-                {/* Background circuit grid pattern */}
-                <div
-                  className="absolute inset-0 opacity-[0.03] pointer-events-none"
-                  style={{
-                    backgroundImage: "radial-gradient(#FFF 1px, transparent 1px)",
-                    backgroundSize: "20px 20px",
-                  }}
-                />
-
-                {/* Level 1: Core Identity Provider */}
-                <div className="flex justify-center">
-                  <NodeCard
-                    asset={VIRTUAL_ASSETS[0]}
-                    isSelected={selectedAssetId === VIRTUAL_ASSETS[0].id}
-                    onClick={() => setSelectedAssetId(VIRTUAL_ASSETS[0].id)}
-                    highlight={false}
-                  />
-                </div>
-
-                {/* Connector line */}
-                <div className="flex justify-center -my-2">
-                  <div className="w-0.5 h-10 bg-border border-dashed border-l border-accent/60" />
-                </div>
-
-                {/* Level 2: Compromised Gateway (Central Node) */}
-                <div className="flex justify-center">
-                  <NodeCard
-                    asset={VIRTUAL_ASSETS[1]}
-                    isSelected={selectedAssetId === VIRTUAL_ASSETS[1].id}
-                    onClick={() => setSelectedAssetId(VIRTUAL_ASSETS[1].id)}
-                    highlight={showBlastRadius}
-                  />
-                </div>
-
-                {/* Connector lines branching out */}
-                <div className="flex justify-around px-8 -my-2">
-                  <div className="w-0.5 h-10 bg-border" />
-                  <div className="w-0.5 h-10 bg-border" />
-                  <div className="w-0.5 h-10 bg-border" />
-                </div>
-
-                {/* Level 3: Downstream Dependencies */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <NodeCard
-                    asset={VIRTUAL_ASSETS[2]}
-                    isSelected={selectedAssetId === VIRTUAL_ASSETS[2].id}
-                    onClick={() => setSelectedAssetId(VIRTUAL_ASSETS[2].id)}
-                    highlight={false}
-                  />
-                  <NodeCard
-                    asset={VIRTUAL_ASSETS[3]}
-                    isSelected={selectedAssetId === VIRTUAL_ASSETS[3].id}
-                    onClick={() => setSelectedAssetId(VIRTUAL_ASSETS[3].id)}
-                    highlight={showBlastRadius}
-                  />
-                  <NodeCard
-                    asset={VIRTUAL_ASSETS[4]}
-                    isSelected={selectedAssetId === VIRTUAL_ASSETS[4].id}
-                    onClick={() => setSelectedAssetId(VIRTUAL_ASSETS[4].id)}
-                    highlight={showBlastRadius}
-                  />
-                </div>
-
-                {/* Level 4: Telemetry Feed Leaf Node */}
-                <div className="flex justify-end pt-4 pr-10">
-                  <NodeCard
-                    asset={VIRTUAL_ASSETS[5]}
-                    isSelected={selectedAssetId === VIRTUAL_ASSETS[5].id}
-                    onClick={() => setSelectedAssetId(VIRTUAL_ASSETS[5].id)}
-                    highlight={showBlastRadius}
-                  />
-                </div>
+              <div>
+                <span className="text-[#A3A3A3]">Depends on / </span>
+                <span className="font-mono text-[#F5F5F5]">{currentDetails.dependsOn}</span>
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <span className="text-[#A3A3A3]">Dependents / </span>
+                <span className="font-mono text-[#F5F5F5]">{currentDetails.dependents}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-xs text-[#737373] mt-6 leading-relaxed">
+            {currentDetails.context}
+          </div>
         </div>
 
-        {/* Selected Node Details Panel (Col span 1) */}
-        <div className="space-y-6">
-          <Card className="border-border bg-surface-card">
-            <CardHeader className="border-b border-border/60 pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold">Node Inspector</CardTitle>
-                <Badge
-                  variant={
-                    selectedAsset.status === "compromised"
-                      ? "critical"
-                      : selectedAsset.status === "at_risk"
-                      ? "warning"
-                      : "success"
-                  }
-                  size="sm"
-                >
-                  {selectedAsset.status.toUpperCase()}
-                </Badge>
-              </div>
-              <CardDescription className="font-mono text-xs text-accent">
-                {selectedAsset.id}
-              </CardDescription>
-            </CardHeader>
+        {/* Evidence & Policies Card */}
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
+          <div>
+            <h2 className="text-base font-semibold text-[#F5F5F5]">
+              Evidence & policies
+            </h2>
+            <div className="font-mono text-xs text-[#A3A3A3] mt-2">
+              EV-0042-01 · EV-0042-02 · EV-0042-03
+            </div>
+            <p className="text-xs text-[#A3A3A3] mt-3 leading-relaxed">
+              POL-01 preserves monitoring. POL-02 requires human review. POL-03 protects OT controller isolation. Definitions are not evaluated here.
+            </p>
+            <div className="text-xs text-[#FF6B35] mt-3 font-mono">
+              · Policy Validation · proposed layer
+            </div>
+          </div>
 
-            <CardContent className="pt-4 space-y-4 text-xs">
-              <div>
-                <span className="text-text-muted text-[11px] block mb-1">Service Name</span>
-                <span className="font-semibold text-text-primary text-sm">{selectedAsset.name}</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-lg bg-surface-elevated/40 border border-border">
-                <div>
-                  <span className="text-text-muted text-[10px] block">IP Address</span>
-                  <span className="font-mono font-semibold text-text-primary">{selectedAsset.ipAddress}</span>
-                </div>
-                <div>
-                  <span className="text-text-muted text-[10px] block">Criticality Tier</span>
-                  <span className="font-semibold text-accent capitalize">{selectedAsset.criticality}</span>
-                </div>
-              </div>
-
-              <div>
-                <span className="text-text-muted text-[11px] block mb-1">Direct Upstream Dependencies</span>
-                {selectedAsset.dependsOn.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {selectedAsset.dependsOn.map((dep) => (
-                      <span
-                        key={dep}
-                        className="px-2 py-0.5 rounded bg-surface-elevated border border-border font-mono text-[11px] text-text-primary"
-                      >
-                        {dep}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <span className="text-text-muted italic text-[11px]">Root architecture node</span>
-                )}
-              </div>
-
-              {selectedAsset.status === "compromised" && (
-                <div className="p-3 rounded-lg border border-status-critical/30 bg-status-critical/10 space-y-1.5">
-                  <div className="flex items-center gap-1.5 font-semibold text-status-critical">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span>Compromise Assessment</span>
-                  </div>
-                  <p className="text-[11px] text-text-secondary leading-relaxed">
-                    Root privilege escalation active. Lateral probes intercepted targeting OT Controller.
-                  </p>
-                </div>
-              )}
-
-              <div className="pt-2 border-t border-border space-y-2">
-                <Link href="/app/simulator" className="block">
-                  <Button variant="primary" size="sm" className="w-full text-xs">
-                    Evaluate Containment Impact
-                  </Button>
-                </Link>
-                <Link href={`/app/incidents/${SYNTHETIC_INCIDENT.id}`} className="block">
-                  <Button variant="outline" size="sm" className="w-full text-xs">
-                    View Associated Evidence
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="mt-6">
+            <Link
+              href="/app/simulator"
+              className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
+            >
+              Open Response Simulator
+            </Link>
+          </div>
         </div>
+      </div>
+
+      <div className="text-xs text-[#737373] mt-4">
+        Controls are visual affordances. On mobile the topology stays inside this bounded viewport; details follow below, with no page-level horizontal scrolling.
+      </div>
+
+      {/* Persistent Disclaimer */}
+      <div className="text-xs text-[#737373] mt-8 mb-4">
+        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
       </div>
     </AppLayout>
-  );
-}
-
-interface NodeCardProps {
-  asset: VirtualAsset;
-  isSelected: boolean;
-  onClick: () => void;
-  highlight: boolean;
-}
-
-function NodeCard({ asset, isSelected, onClick, highlight }: NodeCardProps) {
-  const isCompromised = asset.status === "compromised";
-  const isAtRisk = asset.status === "at_risk";
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`p-3.5 rounded-xl border text-left transition-all relative ${
-        isSelected
-          ? "border-accent bg-surface-elevated ring-1 ring-accent shadow-lg"
-          : "border-border bg-surface-card hover:bg-surface-elevated/80"
-      } ${
-        highlight && isCompromised
-          ? "border-status-critical ring-2 ring-status-critical/40"
-          : highlight && isAtRisk
-          ? "border-status-warning ring-1 ring-status-warning/40"
-          : ""
-      }`}
-    >
-      <div className="flex items-center justify-between gap-3 mb-1">
-        <span className="font-mono text-xs font-bold text-text-primary">{asset.id}</span>
-        <span
-          className={`w-2.5 h-2.5 rounded-full ${
-            isCompromised
-              ? "bg-status-critical animate-pulse"
-              : isAtRisk
-              ? "bg-status-warning"
-              : "bg-status-success"
-          }`}
-        />
-      </div>
-      <div className="text-xs text-text-muted truncate max-w-[160px]">{asset.name}</div>
-      <div className="text-[10px] font-mono text-text-muted mt-1">{asset.ipAddress}</div>
-    </button>
   );
 }

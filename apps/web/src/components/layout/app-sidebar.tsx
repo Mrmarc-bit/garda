@@ -3,21 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  AlertTriangle,
-  PlayCircle,
-  Network,
-  FileSearch,
-  Sparkles,
-  FlaskConical,
-  FileText,
-  History,
-  Settings,
-  User,
-  Shield,
-  X,
-} from "lucide-react";
+import { X, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AppSidebarProps {
@@ -25,21 +11,51 @@ interface AppSidebarProps {
   isMobileOpen?: boolean;
 }
 
-const NAV_ITEMS = [
-  { href: "/app", label: "Overview", icon: LayoutDashboard },
-  { href: "/app/incidents", label: "Incidents", icon: AlertTriangle, badge: "1 Active" },
-  { href: "/app/simulator", label: "Response Simulator", icon: PlayCircle },
-  { href: "/app/digital-twin", label: "IT/OT Digital Twin", icon: Network },
-  { href: "/app/evidence", label: "Evidence & Timeline", icon: FileSearch },
-  { href: "/app/recommendations", label: "AI Recommendations", icon: Sparkles },
-  { href: "/app/experiments", label: "Experiments", icon: FlaskConical },
-  { href: "/app/reports", label: "Reports", icon: FileText },
-  { href: "/app/audit-trail", label: "Audit Trail", icon: History },
-];
+interface NavSection {
+  title: string;
+  items: {
+    href: string;
+    label: string;
+  }[];
+}
 
-const SECONDARY_ITEMS = [
-  { href: "/app/settings", label: "Settings", icon: Settings },
-  { href: "/app/profile", label: "Profile", icon: User },
+const NAV_SECTIONS: NavSection[] = [
+  {
+    title: "OVERVIEW",
+    items: [{ href: "/app", label: "Overview" }],
+  },
+  {
+    title: "INVESTIGATE",
+    items: [
+      { href: "/app/incidents", label: "Incidents" },
+      { href: "/app/evidence", label: "Evidence & Timeline" },
+    ],
+  },
+  {
+    title: "SIMULATE",
+    items: [
+      { href: "/app/simulator", label: "Response Simulator" },
+      { href: "/app/digital-twin", label: "IT/OT Digital Twin" },
+    ],
+  },
+  {
+    title: "INTELLIGENCE",
+    items: [{ href: "/app/recommendations", label: "AI Recommendations" }],
+  },
+  {
+    title: "EVALUATE",
+    items: [
+      { href: "/app/experiments", label: "Experiments & Evaluation" },
+      { href: "/app/reports", label: "Reports" },
+    ],
+  },
+  {
+    title: "GOVERNANCE",
+    items: [
+      { href: "/app/audit-trail", label: "Audit Trail" },
+      { href: "/app/settings", label: "Settings" },
+    ],
+  },
 ];
 
 export const AppSidebar: React.FC<AppSidebarProps> = ({ onCloseMobile, isMobileOpen }) => {
@@ -48,102 +64,97 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ onCloseMobile, isMobileO
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-bg-secondary border-r border-border flex flex-col justify-between transition-transform duration-200 ease-in-out",
-        "lg:translate-x-0 lg:static lg:w-64",
+        "fixed inset-y-0 left-0 z-40 w-[248px] bg-[#171717] border-r border-[#303030] flex flex-col justify-between transition-transform duration-200 ease-in-out shrink-0",
+        "lg:translate-x-0 lg:static lg:w-[248px]",
         isMobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
       )}
     >
-      {/* Brand header */}
-      <div className="h-16 px-6 flex items-center justify-between border-b border-border">
-        <Link href="/app" className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-accent/20 border border-accent/40 flex items-center justify-center text-accent">
-            <Shield className="w-5 h-5 text-accent" />
+      <div className="flex flex-col flex-1 overflow-y-auto">
+        {/* Brand header from Figma */}
+        <div className="p-6 pb-5 border-b border-[#303030]/60">
+          <div className="flex items-center justify-between">
+            <Link href="/app" className="block">
+              <span className="font-bold text-sm tracking-wide text-[#F5F5F5] block">
+                GARDA-SIM AI
+              </span>
+            </Link>
+            {onCloseMobile && (
+              <button
+                type="button"
+                onClick={onCloseMobile}
+                className="lg:hidden p-1 text-[#A3A3A3] hover:text-[#F5F5F5]"
+                aria-label="Close navigation"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
-          <div>
-            <div className="font-bold text-sm text-text-primary tracking-wide">GARDA-SIM AI</div>
-            <div className="text-[10px] text-text-muted font-mono tracking-wider">DEFENSE SIMULATOR</div>
+          <div className="flex items-center gap-1 text-xs text-[#A3A3A3] mt-2 cursor-pointer hover:text-[#F5F5F5]">
+            <span>Simulation Lab</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
           </div>
-        </Link>
-        {onCloseMobile && (
-          <button
-            type="button"
-            onClick={onCloseMobile}
-            className="lg:hidden p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-elevated"
-            aria-label="Close navigation"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
+          <p className="text-[11px] text-[#737373] mt-1">
+            Synthetic design / demo
+          </p>
+        </div>
+
+        {/* Navigation Sections */}
+        <nav className="p-6 pt-4 space-y-5 flex-1" aria-label="Main sidebar navigation">
+          {NAV_SECTIONS.map((section) => (
+            <div key={section.title} className="space-y-2">
+              <h2 className="text-[11px] font-semibold text-[#737373] tracking-wider uppercase">
+                {section.title}
+              </h2>
+              <ul className="space-y-1.5">
+                {section.items.map((item) => {
+                  const isActive =
+                    item.href === "/app"
+                      ? pathname === "/app"
+                      : pathname.startsWith(item.href);
+
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={onCloseMobile}
+                        className={cn(
+                          "block text-xs transition-colors py-0.5",
+                          isActive
+                            ? "text-[#FF6B35] font-medium"
+                            : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+                        )}
+                      >
+                        {isActive ? (
+                          <span className="inline-flex items-center gap-1.5">
+                            <span className="text-[#FF6B35] text-[10px]">▸</span>
+                            <span>{item.label}</span>
+                          </span>
+                        ) : (
+                          <span>{item.label}</span>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </nav>
       </div>
 
-      {/* Main navigation links */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-        <div className="px-3 pb-2 text-[11px] font-semibold text-text-muted uppercase tracking-wider">
-          Operations
+      {/* Persistent Bottom Footer from Figma */}
+      <div className="p-6 border-t border-[#303030]/60 bg-[#171717] space-y-1">
+        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+          SIMULATION ONLY
         </div>
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/app" && pathname.startsWith(item.href));
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onCloseMobile}
-              className={cn(
-                "flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-accent/15 text-accent border border-accent/25 font-semibold"
-                  : "text-text-secondary hover:text-text-primary hover:bg-surface-elevated"
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <Icon className={cn("w-4 h-4", isActive ? "text-accent" : "text-text-muted")} />
-                <span>{item.label}</span>
-              </div>
-              {item.badge && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-status-critical/15 text-status-critical font-semibold">
-                  {item.badge}
-                </span>
-              )}
-            </Link>
-          );
-        })}
-
-        <div className="pt-6 px-3 pb-2 text-[11px] font-semibold text-text-muted uppercase tracking-wider">
-          System & Config
+        <div className="text-xs text-[#A3A3A3]">
+          No production connections.
         </div>
-        {SECONDARY_ITEMS.map((item) => {
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onCloseMobile}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-accent/15 text-accent border border-accent/25 font-semibold"
-                  : "text-text-secondary hover:text-text-primary hover:bg-surface-elevated"
-              )}
-            >
-              <Icon className={cn("w-4 h-4", isActive ? "text-accent" : "text-text-muted")} />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Operator identity card */}
-      <div className="p-4 border-t border-border bg-[#1A1A1A]">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-xs font-semibold text-accent">
-            AD
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-medium text-text-primary truncate">analyst-demo-03</div>
-            <div className="text-[10px] text-text-muted truncate">SOC Level 2 · Synthetic</div>
-          </div>
+        <div className="text-xs text-[#A3A3A3]">
+          No real response actions.
+        </div>
+        <div className="text-[10px] text-[#737373] tracking-widest uppercase pt-2">
+          RESEARCH PROTOTYPE
         </div>
       </div>
     </aside>

@@ -2,266 +2,305 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import {
-  ArrowLeft,
-  PlayCircle,
-  FileSearch,
-  Network,
-  Clock,
-  ShieldAlert,
-  Server,
-  Code,
-  CheckCircle2,
-  AlertTriangle,
-} from "lucide-react";
 import { AppLayout } from "@/components/layout/app-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import {
-  SYNTHETIC_INCIDENT,
-  SYNTHETIC_EVIDENCE_LIST,
-  CANDIDATE_STRATEGIES,
-} from "@/lib/synthetic-data";
 
 export default function IncidentDetailPage() {
-  const params = useParams();
-  const incidentId = params?.id as string || SYNTHETIC_INCIDENT.id;
-  const [selectedEvidence, setSelectedEvidence] = React.useState<string | null>(null);
+  const [activeTab, setActiveTab] = React.useState<"summary" | "evidence" | "timeline" | "review">("summary");
 
   return (
-    <AppLayout
-      title={`Incident Detail · ${incidentId}`}
-      subtitle="Correlated synthetic evidence, attack timeline, and candidate defense response options"
-    >
-      {/* Navigation Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs text-text-muted">
-        <Link href="/app/incidents" className="hover:text-text-primary flex items-center gap-1">
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Incidents</span>
-        </Link>
-        <span>/</span>
-        <span className="font-mono text-text-primary">{incidentId}</span>
+    <AppLayout breadcrumb="Workspace / Incidents">
+      {/* Top metadata tags */}
+      <div className="space-y-1">
+        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+          SIMULATION ONLY
+        </div>
+        <div className="text-xs text-[#A3A3A3]">
+          Synthetic design/demo environment — not live
+        </div>
+        <div className="text-xs font-mono text-[#737373]">
+          /app/incidents/INC-2026-0042
+        </div>
       </div>
 
-      {/* Incident Header Spotlight Card */}
-      <Card className="border-accent/40 bg-surface-card">
-        <CardContent className="p-6 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-sm font-bold text-accent">{incidentId}</span>
-                <Badge variant="critical">Critical Severity</Badge>
-                <Badge variant="warning">Awaiting Review</Badge>
-                <Badge variant="simulation">Simulation Only</Badge>
-              </div>
-              <h2 className="text-xl md:text-2xl font-bold text-text-primary">
-                {SYNTHETIC_INCIDENT.title}
-              </h2>
+      {/* Main Heading & Breadcrumb text */}
+      <div className="mt-6">
+        <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
+          Suspicious Privilege Escalation
+        </h1>
+        <p className="text-xs text-[#A3A3A3] mt-2">
+          INC-2026-0042 / Simulation Lab / Synthetic incident detail
+        </p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="mt-5 flex items-center gap-4">
+        <Link
+          href="/app/simulator"
+          className="bg-[#FF6B35] text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-[#FF8255] transition-colors"
+        >
+          Open Response Simulator
+        </Link>
+        <Link
+          href="/app/evidence"
+          className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
+        >
+          View evidence
+        </Link>
+      </div>
+
+      {/* Navigation Tabs matching Figma */}
+      <div className="mt-6 flex items-center gap-6 border-b border-[#383838] text-xs">
+        <button
+          type="button"
+          onClick={() => setActiveTab("summary")}
+          className={`pb-2.5 transition-colors ${
+            activeTab === "summary"
+              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+          }`}
+        >
+          Summary
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("evidence")}
+          className={`pb-2.5 transition-colors ${
+            activeTab === "evidence"
+              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+          }`}
+        >
+          Evidence · 3
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("timeline")}
+          className={`pb-2.5 transition-colors ${
+            activeTab === "timeline"
+              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+          }`}
+        >
+          Timeline
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("review")}
+          className={`pb-2.5 transition-colors ${
+            activeTab === "review"
+              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+          }`}
+        >
+          Review context
+        </button>
+      </div>
+
+      {/* Main 2-Column Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mt-6">
+        {/* Left Column (7 cols) */}
+        <div className="lg:col-span-7 space-y-4">
+          {/* Card 1: Incident Header & Confidence */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <div className="text-[11px] font-mono text-[#FF6B35]">
+              INC-2026-0042
             </div>
-            <div className="flex items-center gap-3">
-              <Link href="/app/digital-twin">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Network className="w-4 h-4" />
-                  <span>Inspect Topology</span>
-                </Button>
-              </Link>
-              <Link href="/app/simulator">
-                <Button size="sm" className="gap-2 bg-accent hover:bg-accent-hover text-white">
-                  <PlayCircle className="w-4 h-4" />
-                  <span>Simulate Response</span>
-                </Button>
-              </Link>
+            <h2 className="text-xl font-bold text-[#F5F5F5] mt-1">
+              Suspicious Privilege Escalation
+            </h2>
+
+            <div className="flex items-center gap-3 text-xs mt-3">
+              <span className="text-[#FBBF24]">· High</span>
+              <span className="text-[#A3A3A3]">· Awaiting Review</span>
+              <span className="text-[#A3A3A3]">· Simulation Lab</span>
+            </div>
+
+            <div className="space-y-1.5 text-xs mt-5">
+              <div>
+                <span className="text-[#A3A3A3]">Primary asset / </span>
+                <span className="font-mono text-[#F5F5F5]">APP-GW-02</span>
+              </div>
+              <div>
+                <span className="text-[#A3A3A3]">Synthetic identity / </span>
+                <span className="font-mono text-[#F5F5F5]">analyst-demo-03</span>
+              </div>
+              <div>
+                <span className="text-[#A3A3A3]">Evidence records / </span>
+                <span className="font-mono text-[#F5F5F5]">3 · EV-0042-01–03</span>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-5 border-t border-[#383838]">
+              <div className="text-[11px] text-[#A3A3A3] mb-2">
+                Illustrative confidence
+              </div>
+              <div className="w-full h-1.5 bg-[#171717] rounded-full overflow-hidden">
+                <div className="h-full bg-[#FF6B35] rounded-full w-[82%]" />
+              </div>
+              <div className="font-mono text-xs text-[#A3A3A3] mt-2">
+                0.82 / not calibrated probability
+              </div>
             </div>
           </div>
 
-          {/* Incident Attributes Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-xs">
-            <div>
-              <span className="text-text-muted block mb-1">Target Asset</span>
-              <span className="font-mono font-semibold text-text-primary px-2 py-0.5 rounded bg-surface-elevated border border-border inline-block">
-                {SYNTHETIC_INCIDENT.targetAsset}
+          {/* Card 2: Synthetic Event Timeline */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <h2 className="text-base font-semibold text-[#F5F5F5] mb-5">
+              Synthetic event timeline
+            </h2>
+
+            <div className="space-y-6">
+              {/* Event 1 */}
+              <div className="space-y-1">
+                <div className="text-xs font-mono text-[#FF6B35]">
+                  · EV-0042-01 / 2026-10-26 09:14:00 UTC
+                </div>
+                <div className="text-sm font-semibold text-[#F5F5F5]">
+                  Role elevation requested
+                </div>
+                <p className="text-xs text-[#A3A3A3]">
+                  analyst-demo-03 requested the synthetic privileged role for APP-GW-02.
+                </p>
+                <div className="text-[11px] font-mono text-[#737373]">
+                  Synthetic Evidence / IDENTITY-SVC-01
+                </div>
+              </div>
+
+              {/* Event 2 */}
+              <div className="space-y-1">
+                <div className="text-xs font-mono text-[#FF6B35]">
+                  · EV-0042-02 / 2026-10-26 09:14:08 UTC
+                </div>
+                <div className="text-sm font-semibold text-[#F5F5F5]">
+                  Privileged token issued
+                </div>
+                <p className="text-xs text-[#A3A3A3]">
+                  IDENTITY-SVC-01 issued a synthetic privileged token to analyst-demo-03 for APP-GW-02.
+                </p>
+                <div className="text-[11px] font-mono text-[#737373]">
+                  Synthetic Evidence / IDENTITY-SVC-01
+                </div>
+              </div>
+
+              {/* Event 3 */}
+              <div className="space-y-1">
+                <div className="text-xs font-mono text-[#FF6B35]">
+                  · EV-0042-03 / 2026-10-26 09:15:10 UTC
+                </div>
+                <div className="text-sm font-semibold text-[#F5F5F5]">
+                  Privileged route accessed
+                </div>
+                <p className="text-xs text-[#A3A3A3]">
+                  APP-GW-02 recorded synthetic access to /admin/config by analyst-demo-03.
+                </p>
+                <div className="text-[11px] font-mono text-[#737373]">
+                  Synthetic Evidence / APP-GW-02
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Analyst Note Specimen */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <h2 className="text-base font-semibold text-[#F5F5F5] mb-4">
+              Analyst note specimen
+            </h2>
+
+            <div className="bg-[#1D1D1D] border border-[#383838] rounded-lg p-4">
+              <span className="block text-[11px] text-[#737373] mb-1">
+                Review note
               </span>
+              <p className="text-xs text-[#F5F5F5] leading-relaxed">
+                Verify whether the synthetic role elevation had an approved context before comparing broad isolation.
+              </p>
+              <div className="text-[11px] text-[#737373] mt-3">
+                Unsaved visual specimen. Persistence and actor attribution require implementation.
+              </div>
             </div>
-            <div>
-              <span className="text-text-muted block mb-1">Detection Source</span>
-              <span className="font-semibold text-text-primary">EDR-SIM-AGENT</span>
+
+            <div className="text-xs text-[#737373] mt-4">
+              Save note — not connected
             </div>
-            <div>
-              <span className="text-text-muted block mb-1">Detected Time</span>
-              <span className="font-mono text-text-primary">2026-10-26 14:12 UTC</span>
+          </div>
+        </div>
+
+        {/* Right Column (5 cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          {/* Synthetic Evidence */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-5">
+            <h2 className="text-sm font-semibold text-[#F5F5F5]">
+              Synthetic Evidence
+            </h2>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              EV-0042-01 → EV-0042-03 record a request, token issue and privileged access. These are fictional source facts.
+            </p>
+          </div>
+
+          {/* Derived Assessment */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-5">
+            <h2 className="text-sm font-semibold text-[#F5F5F5]">
+              Derived Assessment
+            </h2>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              The sequence may indicate privilege misuse. Intent and authorization context are unknown. Confidence 0.82 is illustrative only.
+            </p>
+          </div>
+
+          {/* AI-Generated Explanation */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-5">
+            <h2 className="text-sm font-semibold text-[#F5F5F5]">
+              AI-Generated Explanation
+            </h2>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              Specimen narrative: review the session before broad virtual isolation. Provider integration unverified; not an observed fact or action approval.
+            </p>
+          </div>
+
+          {/* Possible Operational Impact */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-5">
+            <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+              DERIVED ASSESSMENT
             </div>
-            <div>
-              <span className="text-text-muted block mb-1">Confidence Score</span>
-              <span className="font-semibold text-accent">82% (Illustrative)</span>
-            </div>
-            <div>
-              <span className="text-text-muted block mb-1">Synthetic Identity</span>
-              <span className="font-mono text-text-primary">analyst-demo-03</span>
-            </div>
-            <div>
-              <span className="text-text-muted block mb-1">Blast Radius</span>
-              <span className="font-semibold text-status-warning">3 Virtual Assets</span>
+            <h2 className="text-sm font-semibold text-[#F5F5F5] mt-1">
+              Possible operational impact
+            </h2>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              APP-GW-02 supports OPS-DASH-01. Restricting gateway access may affect that dashboard. MONITOR-01 depends on the gateway and must remain observable.
+            </p>
+            <div className="text-xs text-[#737373] mt-3">
+              2 virtual services at risk is an illustrative assessment, not observed downtime.
             </div>
           </div>
 
-          <p className="text-xs text-text-secondary leading-relaxed bg-surface-elevated/40 p-3 rounded-lg border border-border">
-            {SYNTHETIC_INCIDENT.summary}
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Main Grid: Evidence Table & Incident Attack Timeline */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Correlated Evidence Table (Col span 2) */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader className="pb-3 border-b border-border/60">
-              <CardTitle className="text-sm font-semibold flex items-center justify-between">
-                <span>Correlated Synthetic Evidence ({SYNTHETIC_EVIDENCE_LIST.length})</span>
-                <span className="text-xs font-normal text-text-muted font-mono">Traceable Fixtures</span>
-              </CardTitle>
-              <CardDescription>
-                Empirical observations, derived analytic assessments, and deterministic policy alerts.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#1C1C1C] border-b border-border text-text-muted uppercase text-[10px] tracking-wider font-semibold">
-                    <tr>
-                      <th className="py-3 px-4">Evidence ID</th>
-                      <th className="py-3 px-4">Timestamp</th>
-                      <th className="py-3 px-4">Category</th>
-                      <th className="py-3 px-4">Description</th>
-                      <th className="py-3 px-4 text-right">Payload</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/60">
-                    {SYNTHETIC_EVIDENCE_LIST.map((evd) => (
-                      <tr key={evd.id} className="hover:bg-surface-elevated/40 transition-colors">
-                        <td className="py-3.5 px-4 font-mono font-bold text-accent">
-                          {evd.id}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono text-text-muted whitespace-nowrap">
-                          {evd.timestamp.replace("2026-10-26T", "").replace("Z", "")}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                              evd.category === "Observed Fact"
-                                ? "bg-status-info/15 text-status-info border border-status-info/30"
-                                : evd.category === "Policy Validation"
-                                ? "bg-status-warning/15 text-status-warning border border-status-warning/30"
-                                : "bg-surface-elevated text-text-secondary border border-border"
-                            }`}
-                          >
-                            {evd.category}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-text-secondary leading-relaxed">
-                          {evd.description}
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setSelectedEvidence(selectedEvidence === evd.id ? null : evd.id)
-                            }
-                            className="p-1.5 rounded hover:bg-surface-elevated text-text-muted hover:text-text-primary transition-colors"
-                            title="Inspect Raw JSON"
-                          >
-                            <Code className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          {/* Audit Context Specimen */}
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-5">
+            <h2 className="text-sm font-semibold text-[#F5F5F5]">
+              Audit context specimen
+            </h2>
+            <div className="space-y-1.5 text-xs mt-3">
+              <div>
+                <span className="text-[#A3A3A3]">Example actor / </span>
+                <span className="font-mono text-[#F5F5F5]">analyst-demo-03</span>
               </div>
-
-              {/* JSON Payload Inspection Drawer */}
-              {selectedEvidence && (
-                <div className="p-4 border-t border-border bg-[#141414] space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-semibold text-accent">
-                      Raw Payload · {selectedEvidence}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedEvidence(null)}
-                      className="text-xs text-text-muted hover:text-text-primary"
-                    >
-                      Close
-                    </button>
-                  </div>
-                  <pre className="p-3 rounded bg-black/60 border border-border text-[11px] font-mono text-status-success overflow-x-auto">
-                    {JSON.stringify(
-                      SYNTHETIC_EVIDENCE_LIST.find((e) => e.id === selectedEvidence)?.rawPayload,
-                      null,
-                      2
-                    )}
-                  </pre>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Timeline & Next Steps (Col span 1) */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader className="pb-3 border-b border-border/60">
-              <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                <Clock className="w-4 h-4 text-accent" />
-                <span>Chronological Attack Timeline</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-4">
-              <div className="relative pl-6 border-l-2 border-border space-y-6 text-xs">
-                <div className="relative">
-                  <span className="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-status-info border-2 border-bg-primary" />
-                  <div className="font-mono text-[10px] text-text-muted">14:10:12 UTC</div>
-                  <div className="font-semibold text-text-primary">Sudo Token Elevation</div>
-                  <p className="text-text-muted mt-0.5">UID 1004 escalated to root on APP-GW-02.</p>
-                </div>
-
-                <div className="relative">
-                  <span className="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-status-warning border-2 border-bg-primary" />
-                  <div className="font-mono text-[10px] text-text-muted">14:11:05 UTC</div>
-                  <div className="font-semibold text-text-primary">Outbound C2 Connection</div>
-                  <p className="text-text-muted mt-0.5">SYN attempt to external IP 198.51.100.44:443.</p>
-                </div>
-
-                <div className="relative">
-                  <span className="absolute -left-[31px] top-1 w-3 h-3 rounded-full bg-status-critical border-2 border-bg-primary animate-pulse" />
-                  <div className="font-mono text-[10px] text-text-muted">14:12:00 UTC</div>
-                  <div className="font-semibold text-status-critical">Lateral OT Probe Intercepted</div>
-                  <p className="text-text-muted mt-0.5">Probing virtual controller port 502 (Modbus).</p>
-                </div>
+              <div>
+                <span className="text-[#A3A3A3]">Related incident / </span>
+                <span className="font-mono text-[#F5F5F5]">INC-2026-0042</span>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Fast CTA to Simulator */}
-          <Card className="bg-[#1C1814] border-accent/40">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-accent flex items-center gap-2">
-                <PlayCircle className="w-4 h-4" />
-                <span>Simulate Response Candidates</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-xs text-text-secondary space-y-3">
-              <p>
-                3 candidate containment strategies are ready for deterministic simulation and safety policy validation.
-              </p>
-              <Link href="/app/simulator" className="block">
-                <Button className="w-full text-xs">Launch Simulator for INC-2026-0042</Button>
-              </Link>
-            </CardContent>
-          </Card>
+              <div>
+                <span className="text-[#A3A3A3]">Review state / </span>
+                <span className="text-[#F5F5F5]">Awaiting Review</span>
+              </div>
+            </div>
+            <div className="text-xs text-[#737373] mt-3 leading-relaxed">
+              Context specimen only. No note, review decision or immutable record has been saved.
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Persistent Disclaimer */}
+      <div className="text-xs text-[#737373] mt-8 mb-4">
+        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
       </div>
     </AppLayout>
   );

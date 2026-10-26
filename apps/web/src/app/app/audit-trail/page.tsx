@@ -1,193 +1,190 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import {
-  History,
-  Search,
-  Filter,
-  ShieldCheck,
-  Hash,
-  User,
-  ArrowRight,
-  Clock,
-} from "lucide-react";
 import { AppLayout } from "@/components/layout/app-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { ChevronDown } from "lucide-react";
 
 export default function AuditTrailPage() {
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [selectedEventType, setSelectedEventType] = React.useState<string>("all");
-
-  const auditEvents = [
-    {
-      id: "AUD-8849-01",
-      timestamp: "2026-10-26T15:42:10Z",
-      actor: "analyst-demo-03",
-      eventType: "STRATEGY_APPROVED",
-      resource: "STRAT-B (INC-2026-0042)",
-      result: "SUCCESS",
-      hash: "8f4a1c72...9b2e",
-      details: "Approved STRAT-B for demonstration review with verified OT telemetry continuity.",
-    },
-    {
-      id: "AUD-8849-02",
-      timestamp: "2026-10-26T15:40:02Z",
-      actor: "system-safety-engine",
-      eventType: "POLICY_INVARIANT_EVAL",
-      resource: "STRAT-A (INC-2026-0042)",
-      result: "VIOLATION_BLOCKED",
-      hash: "3d22bf10...6a4c",
-      details: "Blocked candidate STRAT-A due to Rule SEC-OT-04 telemetry cutoff violation.",
-    },
-    {
-      id: "AUD-8849-03",
-      timestamp: "2026-10-26T15:39:45Z",
-      actor: "system-simulation-engine",
-      eventType: "SIMULATION_RUN",
-      resource: "INC-2026-0042 (APP-GW-02)",
-      result: "SUCCESS",
-      hash: "e3b0c442...b855",
-      details: "Deterministic calculation of 3 candidate containment strategies completed.",
-    },
-    {
-      id: "AUD-8849-04",
-      timestamp: "2026-10-26T14:15:00Z",
-      actor: "analyst-demo-03",
-      eventType: "SCENARIO_LOADED",
-      resource: "INC-2026-0042",
-      result: "SUCCESS",
-      hash: "91c49b01...22fa",
-      details: "Loaded synthetic scenario Suspicious Privilege Escalation on APP-GW-02.",
-    },
-    {
-      id: "AUD-8849-05",
-      timestamp: "2026-10-26T14:12:00Z",
-      actor: "EDR-SIM-AGENT",
-      eventType: "INCIDENT_TRIGGER",
-      resource: "APP-GW-02",
-      result: "TRIGGERED",
-      hash: "44ab8190...81dd",
-      details: "Synthetic lateral scan intercepted targeting port 502 Modbus controller.",
-    },
-  ];
-
-  const filteredEvents = auditEvents.filter((ev) => {
-    const matchesSearch =
-      ev.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ev.details.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ev.actor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ev.resource.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = selectedEventType === "all" || ev.eventType === selectedEventType;
-    return matchesSearch && matchesType;
-  });
+  const [selectedEventId, setSelectedEventId] = React.useState<string>("REC-0042-01");
 
   return (
-    <AppLayout
-      title="Audit Trail"
-      subtitle="Append-only cryptographic simulation event ledger, operator action logs, and policy decisions"
-    >
-      {/* Header Context */}
-      <div className="p-4 rounded-xl border border-border bg-surface-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">Immutable Simulation Audit Trail</h2>
-          <p className="text-xs text-text-muted">
-            All operator reviews, deterministic simulation runs, and safety verdicts are permanently recorded.
-          </p>
+    <AppLayout breadcrumb="Workspace / Audit Trail">
+      {/* Top metadata tags */}
+      <div className="space-y-1">
+        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+          SIMULATION ONLY
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="simulation">Audit Mode Active</Badge>
-          <Badge variant="success">Hash Chain Verified</Badge>
+        <div className="text-xs text-[#A3A3A3]">
+          Synthetic design/demo environment — not live
+        </div>
+        <div className="text-xs font-mono text-[#737373]">
+          /app/audit-trail
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" />
-          <Input
-            placeholder="Search audit trail by event ID, actor, resource, or action details..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-text-muted flex items-center gap-1">
-            <Filter className="w-3.5 h-3.5" /> Event:
-          </span>
-          <select
-            value={selectedEventType}
-            onChange={(e) => setSelectedEventType(e.target.value)}
-            className="h-10 rounded-lg border border-border bg-surface-input px-3 text-xs text-text-primary focus:outline-none focus:border-accent"
-          >
-            <option value="all">All Event Types</option>
-            <option value="STRATEGY_APPROVED">STRATEGY_APPROVED</option>
-            <option value="POLICY_INVARIANT_EVAL">POLICY_INVARIANT_EVAL</option>
-            <option value="SIMULATION_RUN">SIMULATION_RUN</option>
-            <option value="SCENARIO_LOADED">SCENARIO_LOADED</option>
-            <option value="INCIDENT_TRIGGER">INCIDENT_TRIGGER</option>
-          </select>
-        </div>
+      {/* Heading & Subtitle */}
+      <div className="mt-6">
+        <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
+          Audit Trail
+        </h1>
+        <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
+          Synthetic example events for visual review. These are not persisted activity or immutable records.
+        </p>
       </div>
 
-      {/* Audit Log Table Card */}
-      <Card>
-        <CardHeader className="pb-3 border-b border-border/60">
-          <CardTitle className="text-sm font-semibold flex items-center justify-between">
-            <span>Recorded Audit Entries ({filteredEvents.length})</span>
-            <span className="text-xs font-mono text-text-muted">Ledger State: Consistent</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[#1C1C1C] border-b border-border text-text-muted uppercase text-[10px] tracking-wider font-semibold">
-                <tr>
-                  <th className="py-3 px-4">Event ID</th>
-                  <th className="py-3 px-4">Timestamp (UTC)</th>
-                  <th className="py-3 px-4">Actor</th>
-                  <th className="py-3 px-4">Event Type</th>
-                  <th className="py-3 px-4">Resource</th>
-                  <th className="py-3 px-4">Action Summary</th>
-                  <th className="py-3 px-4 text-right">Result</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {filteredEvents.map((ev) => (
-                  <tr key={ev.id} className="hover:bg-surface-elevated/40 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-accent">{ev.id}</td>
-                    <td className="py-3.5 px-4 font-mono text-text-muted whitespace-nowrap">
-                      {ev.timestamp.replace("2026-10-26T", "").replace("Z", "")}
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-text-primary">{ev.actor}</td>
-                    <td className="py-3.5 px-4 font-mono text-[11px] text-text-secondary">{ev.eventType}</td>
-                    <td className="py-3.5 px-4 font-mono text-accent">{ev.resource}</td>
-                    <td className="py-3.5 px-4 text-text-secondary max-w-xs">{ev.details}</td>
-                    <td className="py-3.5 px-4 text-right">
-                      <Badge
-                        size="sm"
-                        variant={
-                          ev.result === "SUCCESS"
-                            ? "success"
-                            : ev.result === "VIOLATION_BLOCKED"
-                            ? "critical"
-                            : "info"
-                        }
-                      >
-                        {ev.result}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Synthetic examples callout box */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-5 mt-6">
+        <h2 className="text-xs font-semibold text-[#F5F5F5]">
+          Synthetic examples — not actual user history
+        </h2>
+        <p className="text-xs text-[#A3A3A3] mt-1">
+          Timestamps below belong to the scenario specimen. No real review, simulation or save event has occurred.
+        </p>
+      </div>
+
+      {/* Filter Row matching Figma */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between cursor-pointer">
+          <span className="text-[11px] text-[#737373]">Actor</span>
+          <div className="flex items-center justify-between text-xs text-[#F5F5F5] mt-1">
+            <span>All synthetic actors</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between cursor-pointer">
+          <span className="text-[11px] text-[#737373]">Event type</span>
+          <div className="flex items-center justify-between text-xs text-[#F5F5F5] mt-1">
+            <span>All types</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
+          </div>
+        </div>
+
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between">
+          <span className="text-[11px] text-[#737373]">Related ID</span>
+          <span className="text-xs font-mono text-[#F5F5F5] mt-1">INC-2026-0042</span>
+        </div>
+
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between cursor-pointer">
+          <span className="text-[11px] text-[#737373]">Date · UTC</span>
+          <div className="flex items-center justify-between text-xs text-[#F5F5F5] mt-1">
+            <span>26 Oct 2026</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
+          </div>
+        </div>
+      </div>
+
+      {/* Audit Table Card */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] font-medium tracking-wider uppercase">
+                <th className="pb-3 font-medium">TIMESTAMP · UTC</th>
+                <th className="pb-3 font-medium">ACTOR / TYPE</th>
+                <th className="pb-3 font-medium">RELATED ID</th>
+                <th className="pb-3 font-medium">SUMMARY</th>
+                <th className="pb-3 font-medium">RESULT</th>
+                <th className="pb-3 font-medium">EVIDENCE</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#383838]/40 font-mono">
+              <tr
+                onClick={() => setSelectedEventId("INC-2026-0042")}
+                className="hover:bg-[#2C2C2C]/50 cursor-pointer transition-colors"
+              >
+                <td className="py-3.5 text-[#A3A3A3]">2026-10-26 09:16:00</td>
+                <td className="py-3.5 text-[#F5F5F5]">analyst-demo-03 / View</td>
+                <td className="py-3.5 text-[#F5F5F5]">INC-2026-0042</td>
+                <td className="py-3.5 font-sans text-[#A3A3A3]">Incident context opened · example</td>
+                <td className="py-3.5 font-sans text-[#F5F5F5]">Display specimen</td>
+                <td className="py-3.5 text-[#A3A3A3]">EV-0042-01</td>
+              </tr>
+              <tr
+                onClick={() => setSelectedEventId("EV-0042-02")}
+                className="hover:bg-[#2C2C2C]/50 cursor-pointer transition-colors"
+              >
+                <td className="py-3.5 text-[#A3A3A3]">2026-10-26 09:16:20</td>
+                <td className="py-3.5 text-[#F5F5F5]">analyst-demo-03 / Inspect</td>
+                <td className="py-3.5 text-[#F5F5F5]">EV-0042-02</td>
+                <td className="py-3.5 font-sans text-[#A3A3A3]">Synthetic token event inspected · example</td>
+                <td className="py-3.5 font-sans text-[#F5F5F5]">Display specimen</td>
+                <td className="py-3.5 text-[#A3A3A3]">EV-0042-02</td>
+              </tr>
+              <tr
+                onClick={() => setSelectedEventId("REC-0042-01")}
+                className="hover:bg-[#2C2C2C]/50 cursor-pointer transition-colors"
+              >
+                <td className="py-3.5 text-[#A3A3A3]">2026-10-26 09:17:00</td>
+                <td className="py-3.5 text-[#F5F5F5]">analyst-demo-03 / Review</td>
+                <td className="py-3.5 text-[#F5F5F5]">REC-0042-01</td>
+                <td className="py-3.5 font-sans text-[#A3A3A3]">Review requested · example</td>
+                <td className="py-3.5 font-sans text-[#FF6B35]">Pending Review specimen</td>
+                <td className="py-3.5 text-[#A3A3A3]">EV-0042-01–03</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Lower 2-Column: Audit Requirements & Selected Event Drawer */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        {/* Left Card: Audit design requirements */}
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
+          <div>
+            <h2 className="text-base font-semibold text-[#F5F5F5]">
+              Audit design requirements
+            </h2>
+            <p className="text-xs text-[#A3A3A3] mt-3 leading-relaxed">
+              A real implementation needs server-attributed actors, authorization, timestamps, retention, access controls and integrity protections. No immutable or tamper-proof property is asserted.
+            </p>
+          </div>
+          <div className="text-xs text-[#737373] mt-6">
+            Export audit — not connected
+          </div>
+        </div>
+
+        {/* Right Card: Selected event drawer · example */}
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
+          <div>
+            <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+              REVIEW CONTEXT
+            </div>
+            <h2 className="text-base font-semibold text-[#F5F5F5] mt-1">
+              Selected event drawer · example
+            </h2>
+            <div className="text-xs text-[#A3A3A3] mt-2">
+              · Synthetic example
+            </div>
+
+            <div className="font-mono text-xs text-[#F5F5F5] mt-4 leading-relaxed">
+              2026-10-26 09:17:00 UTC Actor: analyst-demo-03 Type: Review / Related: REC-0042-01 Incident: INC-2026-0042
+            </div>
+
+            <p className="text-xs text-[#A3A3A3] mt-3">
+              Summary: human review requested for a hypothetical session response.
+            </p>
+
+            <p className="text-xs text-[#737373] mt-3">
+              Result: Pending Review specimen Evidence: EV-0042-01 / EV-0042-02 / EV-0042-03 No record has been saved by this design.
+            </p>
+          </div>
+
+          <div className="mt-6">
+            <button
+              type="button"
+              className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
+            >
+              Close drawer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Persistent Disclaimer */}
+      <div className="text-xs text-[#737373] mt-8 mb-4">
+        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
+      </div>
     </AppLayout>
   );
 }

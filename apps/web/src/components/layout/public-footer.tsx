@@ -1,60 +1,45 @@
 import * as React from "react";
 import Link from "next/link";
-import { Shield } from "lucide-react";
 
 export const PublicFooter: React.FC = () => {
   return (
-    <footer className="border-t border-border bg-bg-secondary text-text-secondary py-12 px-4 md:px-8">
-      <div className="max-w-[1440px] mx-auto grid grid-cols-2 md:grid-cols-5 gap-8">
-        <div className="col-span-2 space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-accent/20 border border-accent/40 flex items-center justify-center text-accent">
-              <Shield className="w-4 h-4 text-accent" />
-            </div>
-            <span className="font-bold text-sm text-text-primary tracking-wider">GARDA-SIM AI</span>
+    <footer className="border-t border-[#303030] bg-[#141414] text-[#A3A3A3] text-xs">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 py-12">
+        <div className="space-y-4">
+          <div className="font-bold text-sm tracking-wide text-[#F5F5F5]">
+            GARDA-SIM AI
           </div>
-          <p className="text-xs text-text-muted max-w-sm leading-relaxed">
-            AI-Assisted Cyber Defense Response Simulator. Evaluate candidate containment actions, model virtual IT/OT impact, and enforce deterministic safety policies.
+          <p className="text-xs text-[#737373] max-w-xl leading-relaxed">
+            AI-Assisted Cyber Defense Response Simulator.
+            <br />
+            Defensive research prototype. Synthetic incidents and virtual IT/OT assets only.
           </p>
-          <div className="text-[11px] text-accent/80 font-mono">
-            DEFENSIVE SIMULATION ONLY · SYNTHETIC ENVIRONMENTS
+
+          <div className="pt-4 space-y-1.5 text-xs">
+            <div>
+              <span className="text-[#F5F5F5] font-medium mr-2">Product /</span>
+              <Link href="/features" className="hover:text-[#F5F5F5]">Features</Link> ·{" "}
+              <Link href="/how-it-works" className="hover:text-[#F5F5F5]">How It Works</Link> ·{" "}
+              <Link href="/app" className="hover:text-[#F5F5F5]">Simulation Lab</Link>
+            </div>
+            <div>
+              <span className="text-[#F5F5F5] font-medium mr-2">Resources /</span>
+              <Link href="/documentation" className="hover:text-[#F5F5F5]">Documentation</Link> ·{" "}
+              <Link href="/faq" className="hover:text-[#F5F5F5]">FAQ</Link> ·{" "}
+              <Link href="/contact" className="hover:text-[#F5F5F5]">Contact</Link>
+            </div>
+            <div>
+              <span className="text-[#F5F5F5] font-medium mr-2">Legal /</span>
+              <Link href="/privacy" className="hover:text-[#F5F5F5]">Privacy</Link> ·{" "}
+              <Link href="/terms" className="hover:text-[#F5F5F5]">Terms</Link> ·{" "}
+              <Link href="/security" className="hover:text-[#F5F5F5]">Security</Link>
+            </div>
           </div>
         </div>
 
-        <div>
-          <h4 className="text-xs font-semibold text-text-primary uppercase tracking-wider mb-3">Product</h4>
-          <ul className="space-y-2 text-xs">
-            <li><Link href="/features" className="hover:text-text-primary">Features</Link></li>
-            <li><Link href="/how-it-works" className="hover:text-text-primary">How It Works</Link></li>
-            <li><Link href="/app" className="hover:text-text-primary">Response Simulator</Link></li>
-            <li><Link href="/app/digital-twin" className="hover:text-text-primary">Digital Twin</Link></li>
-          </ul>
+        <div className="mt-12 pt-6 border-t border-[#303030]/60 text-[11px] text-[#737373]">
+          Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
         </div>
-
-        <div>
-          <h4 className="text-xs font-semibold text-text-primary uppercase tracking-wider mb-3">Security & Trust</h4>
-          <ul className="space-y-2 text-xs">
-            <li><Link href="/security" className="hover:text-text-primary">Security Model</Link></li>
-            <li><Link href="/documentation" className="hover:text-text-primary">Deterministic Safety</Link></li>
-            <li><Link href="/privacy" className="hover:text-text-primary">Privacy Policy</Link></li>
-            <li><Link href="/terms" className="hover:text-text-primary">Terms of Service</Link></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="text-xs font-semibold text-text-primary uppercase tracking-wider mb-3">Resources</h4>
-          <ul className="space-y-2 text-xs">
-            <li><Link href="/documentation" className="hover:text-text-primary">Documentation</Link></li>
-            <li><Link href="/faq" className="hover:text-text-primary">FAQ</Link></li>
-            <li><Link href="/about" className="hover:text-text-primary">About GARDA-SIM</Link></li>
-            <li><Link href="/contact" className="hover:text-text-primary">Contact & Feedback</Link></li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="max-w-[1440px] mx-auto mt-8 pt-6 border-t border-border flex flex-col md:flex-row items-center justify-between text-xs text-text-muted gap-4">
-        <div>© 2026 GARDA-SIM AI. All rights reserved. Built for defensive security simulation and evaluation.</div>
-        <div className="text-[11px] font-mono">Status: All Simulation Engines Operational</div>
       </div>
     </footer>
   );

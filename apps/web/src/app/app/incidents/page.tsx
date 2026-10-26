@@ -2,189 +2,212 @@
 
 import * as React from "react";
 import Link from "next/link";
-import {
-  AlertTriangle,
-  Search,
-  Filter,
-  ArrowRight,
-  ShieldAlert,
-  Server,
-  Clock,
-  PlayCircle,
-} from "lucide-react";
 import { AppLayout } from "@/components/layout/app-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { SYNTHETIC_INCIDENT } from "@/lib/synthetic-data";
+import { ChevronDown, ArrowDown } from "lucide-react";
 
 export default function IncidentsPage() {
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [selectedSeverity, setSelectedSeverity] = React.useState<string>("all");
+  const [severityFilter, setSeverityFilter] = React.useState("all");
 
-  const incidents = [
-    SYNTHETIC_INCIDENT,
-    {
-      id: "INC-2026-0038",
-      title: "Anomalous SCADA Modbus Command Frequency",
-      severity: "warning" as const,
-      status: "contained" as const,
-      targetAsset: "OT-CONTROLLER-SIM-01",
-      detectedAt: "2026-10-25T09:40:00Z",
-      confidence: 0.74,
-      syntheticIdentity: "analyst-demo-01",
-      summary: "High-frequency telemetry polling detected from unauthorized edge node. Response simulated and verified.",
-      affectedServices: ["OT-CONTROLLER-SIM-01"],
-    },
-    {
-      id: "INC-2026-0029",
-      title: "Lateral Reconnaissance Probe",
-      severity: "info" as const,
-      status: "simulated" as const,
-      targetAsset: "MONITOR-01",
-      detectedAt: "2026-10-24T18:15:00Z",
-      confidence: 0.68,
-      syntheticIdentity: "analyst-demo-02",
-      summary: "Port scan activity targeting SIEM collector. Evaluated under baseline containment scenario.",
-      affectedServices: ["MONITOR-01"],
-    },
-  ];
-
-  const filteredIncidents = incidents.filter((inc) => {
-    const matchesSearch =
-      inc.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inc.targetAsset.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSeverity = selectedSeverity === "all" || inc.severity === selectedSeverity;
-    return matchesSearch && matchesSeverity;
-  });
+  const isFiltered = searchQuery.trim() !== "" || severityFilter !== "all";
 
   return (
-    <AppLayout
-      title="Incidents & Scenarios"
-      subtitle="Synthetic cybersecurity incident repository and response scenario workbench"
-    >
-      {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-border bg-surface-card">
-        <div>
-          <h2 className="text-base font-semibold text-text-primary">Incident Repository</h2>
-          <p className="text-xs text-text-muted">
-            All scenarios and logs are synthetic for defensive evaluation. Active incident highlighted below.
-          </p>
+    <AppLayout breadcrumb="Workspace / Incidents">
+      {/* Top metadata tags */}
+      <div className="space-y-1">
+        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+          SIMULATION ONLY
         </div>
-        <Link href="/app/simulator">
-          <Button size="sm" className="gap-2">
-            <PlayCircle className="w-4 h-4" />
-            <span>Simulate Active Scenario</span>
-          </Button>
-        </Link>
+        <div className="text-xs text-[#A3A3A3]">
+          Synthetic design/demo environment — not live
+        </div>
+        <div className="text-xs font-mono text-[#737373]">
+          /app/incidents
+        </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 w-4 h-4 text-text-muted" />
-          <Input
-            placeholder="Search by incident ID, title, or asset (e.g., APP-GW-02)..."
+      {/* Heading & Subtitle */}
+      <div className="mt-6">
+        <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
+          Incidents
+        </h1>
+        <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
+          One synthetic incident in the bounded local dataset. No production alerts or historical runs.
+        </p>
+      </div>
+
+      {/* Search Input Box */}
+      <div className="mt-6 bg-[#252525] border border-[#383838] rounded-xl p-4 flex items-center justify-between">
+        <div className="flex-1">
+          <label htmlFor="search-incidents" className="block text-[11px] text-[#737373] mb-1">
+            Search incidents
+          </label>
+          <input
+            id="search-incidents"
+            type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            placeholder="Search ID, title or virtual asset"
+            className="w-full bg-transparent border-none text-xs text-[#F5F5F5] placeholder-[#737373] focus:outline-none"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-text-muted flex items-center gap-1">
-            <Filter className="w-3.5 h-3.5" /> Severity:
-          </span>
-          <select
-            value={selectedSeverity}
-            onChange={(e) => setSelectedSeverity(e.target.value)}
-            className="h-10 rounded-lg border border-border bg-surface-input px-3 text-xs text-text-primary focus:outline-none focus:border-accent"
-          >
-            <option value="all">All Severities</option>
-            <option value="critical">Critical</option>
-            <option value="warning">Warning</option>
-            <option value="info">Info</option>
-          </select>
+        <div className="flex items-center gap-1 text-xs text-[#A3A3A3] cursor-pointer hover:text-[#F5F5F5]">
+          <span>Newest first</span>
+          <ArrowDown className="w-3.5 h-3.5 text-[#737373]" />
         </div>
       </div>
 
-      {/* Incident List Table Card */}
-      <Card>
-        <CardHeader className="pb-3 border-b border-border/60">
-          <CardTitle className="text-sm font-semibold flex items-center justify-between">
-            <span>Simulated Incidents ({filteredIncidents.length})</span>
-            <span className="text-xs font-normal text-text-muted font-mono">Dataset: SYNTH-2026.1</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[#1C1C1C] border-b border-border text-text-muted uppercase text-[10px] tracking-wider font-semibold">
-                <tr>
-                  <th className="py-3 px-4">Incident ID</th>
-                  <th className="py-3 px-4">Title & Description</th>
-                  <th className="py-3 px-4">Target Asset</th>
-                  <th className="py-3 px-4">Severity</th>
-                  <th className="py-3 px-4">Confidence</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {filteredIncidents.map((incident) => {
-                  const isCurrent = incident.id === SYNTHETIC_INCIDENT.id;
-                  return (
-                    <tr
-                      key={incident.id}
-                      className={`hover:bg-surface-elevated/40 transition-colors ${
-                        isCurrent ? "bg-accent/5" : ""
-                      }`}
-                    >
-                      <td className="py-4 px-4 font-mono font-bold text-text-primary">
-                        <div className="flex items-center gap-1.5">
-                          {isCurrent && <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />}
-                          <span>{incident.id}</span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4 max-w-sm">
-                        <div className="font-semibold text-text-primary">{incident.title}</div>
-                        <div className="text-[11px] text-text-muted truncate mt-0.5">{incident.summary}</div>
-                      </td>
-                      <td className="py-4 px-4 font-mono text-text-secondary">
-                        <span className="px-2 py-0.5 rounded bg-surface-elevated border border-border">
-                          {incident.targetAsset}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4">
-                        <Badge variant={incident.severity} size="sm">
-                          {incident.severity.toUpperCase()}
-                        </Badge>
-                      </td>
-                      <td className="py-4 px-4 font-mono text-text-primary">
-                        {(incident.confidence * 100).toFixed(0)}%
-                      </td>
-                      <td className="py-4 px-4">
-                        <span className="capitalize text-text-secondary font-medium">
-                          {incident.status.replace("_", " ")}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4 text-right">
-                        <Link href={`/app/incidents/${incident.id}`}>
-                          <Button variant="outline" size="sm" className="gap-1.5 text-xs">
-                            <span>Inspect</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </Button>
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+      {/* Filter Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-3">
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between cursor-pointer">
+          <span className="text-[11px] text-[#737373]">Severity</span>
+          <div className="flex items-center justify-between text-xs text-[#F5F5F5] mt-1">
+            <span>All severities</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between cursor-pointer">
+          <span className="text-[11px] text-[#737373]">Status</span>
+          <div className="flex items-center justify-between text-xs text-[#F5F5F5] mt-1">
+            <span>All statuses</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
+          </div>
+        </div>
+
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between cursor-pointer">
+          <span className="text-[11px] text-[#737373]">Confidence</span>
+          <div className="flex items-center justify-between text-xs text-[#F5F5F5] mt-1">
+            <span>Any range</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
+          </div>
+        </div>
+
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between cursor-pointer">
+          <span className="text-[11px] text-[#737373]">Date · UTC</span>
+          <div className="flex items-center justify-between text-xs text-[#F5F5F5] mt-1">
+            <span>26 Oct 2026</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
+          </div>
+        </div>
+
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between cursor-pointer">
+          <span className="text-[11px] text-[#737373]">Service</span>
+          <div className="flex items-center justify-between text-xs text-[#F5F5F5] mt-1">
+            <span>All virtual assets</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
+          </div>
+        </div>
+      </div>
+
+      {/* Result Count and Clear Filters */}
+      <div className="mt-4 flex items-center justify-between text-xs">
+        <span className="text-[#A3A3A3]">1 incident · synthetic dataset</span>
+        <button
+          type="button"
+          onClick={() => {
+            setSearchQuery("");
+            setSeverityFilter("all");
+          }}
+          className="text-[#A3A3A3] underline hover:text-[#FF6B35] transition-colors"
+        >
+          Clear filters
+        </button>
+      </div>
+
+      {/* Incident Table Card */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-3">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] tracking-wider uppercase font-medium">
+                <th className="pb-3 font-medium">INCIDENT ⇅</th>
+                <th className="pb-3 font-medium">SCENARIO</th>
+                <th className="pb-3 font-medium">SEVERITY / STATUS</th>
+                <th className="pb-3 font-medium">SERVICE</th>
+                <th className="pb-3 font-medium">CONFIDENCE</th>
+                <th className="pb-3 font-medium">FIRST EVENT · UTC</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#383838]/40">
+              <tr className="hover:bg-[#2C2C2C]/50 transition-colors">
+                <td className="py-4 font-mono text-[#F5F5F5]">
+                  <Link
+                    href="/app/incidents/INC-2026-0042"
+                    className="hover:text-[#FF6B35] underline-offset-2 hover:underline"
+                  >
+                    INC-2026-0042
+                  </Link>
+                </td>
+                <td className="py-4 text-[#A3A3A3]">
+                  Suspicious Privilege Escalation
+                </td>
+                <td className="py-4 text-[#F5F5F5]">
+                  High / Awaiting Review
+                </td>
+                <td className="py-4 font-mono text-[#A3A3A3]">
+                  APP-GW-02
+                </td>
+                <td className="py-4 font-mono text-[#A3A3A3]">
+                  0.82 illustrative
+                </td>
+                <td className="py-4 font-mono text-[#A3A3A3]">
+                  2026-10-26 09:14:00
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Confidence Callout */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-5 mt-4">
+        <h2 className="text-xs font-semibold text-[#F5F5F5]">
+          Confidence is not calibrated probability
+        </h2>
+        <p className="text-xs text-[#A3A3A3] mt-1">
+          The displayed 0.82 is an illustrative assessment label, not a measured certainty or automated decision.
+        </p>
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-4 flex items-center justify-between text-xs text-[#737373]">
+        <button type="button" disabled className="hover:text-[#F5F5F5] disabled:opacity-50 cursor-not-allowed">
+          Previous
+        </button>
+        <div className="flex items-center gap-1.5 font-mono">
+          <span>•</span>
+          <span>Page 1 of 1 · 1-1 of 1</span>
+        </div>
+        <button type="button" disabled className="hover:text-[#F5F5F5] disabled:opacity-50 cursor-not-allowed">
+          Next
+        </button>
+      </div>
+
+      {/* Filtered Empty-State Specimen */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-6">
+        <h2 className="text-sm font-semibold text-[#F5F5F5]">
+          Filtered empty-state specimen
+        </h2>
+        <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+          No synthetic incidents match these filters. Clear filters to return to the single-record dataset.
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            setSearchQuery("");
+            setSeverityFilter("all");
+          }}
+          className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] mt-4 block"
+        >
+          Reset filters
+        </button>
+      </div>
+
+      {/* Persistent Disclaimer */}
+      <div className="text-xs text-[#737373] mt-8 mb-4">
+        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
+      </div>
     </AppLayout>
   );
 }

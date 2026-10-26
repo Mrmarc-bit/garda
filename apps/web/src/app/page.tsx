@@ -1,217 +1,427 @@
+"use client";
+
 import * as React from "react";
 import Link from "next/link";
-import {
-  ShieldAlert,
-  PlayCircle,
-  Network,
-  ShieldCheck,
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  AlertTriangle,
-  FileSearch,
-} from "lucide-react";
 import { PublicHeader } from "@/components/layout/public-header";
 import { PublicFooter } from "@/components/layout/public-footer";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { SYNTHETIC_INCIDENT, CANDIDATE_STRATEGIES } from "@/lib/synthetic-data";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
+    <div className="min-h-screen flex flex-col bg-[#171717] text-[#F5F5F5] font-sans antialiased">
       <PublicHeader />
 
-      {/* Hero Section */}
-      <section className="relative pt-16 pb-20 md:pt-24 md:pb-28 px-4 md:px-8 overflow-hidden border-b border-border">
-        <div className="max-w-[1440px] mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/15 border border-accent/30 text-accent text-xs font-semibold uppercase tracking-wider">
-            <ShieldAlert className="w-4 h-4 text-accent" />
-            <span>Synthetic Incident Defense Simulator · Version 1.0</span>
+      {/* Hero Section matching Figma */}
+      <section className="px-6 md:px-12 lg:px-16 pt-16 pb-20 border-b border-[#303030]">
+        <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Left Column (7 cols) */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+              DEFENSIVE SIMULATION PLATFORM
+            </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#F5F5F5] leading-[1.15]">
+              Before you respond, understand the impact.
+            </h1>
+
+            <p className="text-base md:text-lg text-[#A3A3A3] max-w-xl leading-relaxed">
+              AI-assisted cyber defense, grounded in synthetic evidence. Explore response strategies and their possible service impact before a human makes the call.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <Link
+                href="/app"
+                className="bg-[#FF6B35] text-white text-xs font-medium px-5 py-2.5 rounded-lg hover:bg-[#FF8255] transition-colors inline-flex items-center gap-2 shadow-sm"
+              >
+                <span>↗ Start Exploring</span>
+              </Link>
+              <Link
+                href="/app/simulator"
+                className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
+              >
+                Explore the Simulator
+              </Link>
+            </div>
+
+            <div className="text-[11px] font-mono text-[#737373] tracking-wider uppercase pt-4">
+              SYNTHETIC INCIDENTS / VIRTUAL IT & OT / HUMAN REVIEW
+            </div>
           </div>
 
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-text-primary max-w-4xl mx-auto leading-tight">
-            Simulate the impact. Explain the trade-offs.{" "}
-            <span className="text-accent">Keep humans in control.</span>
-          </h1>
+          {/* Right Column: Interactive Workspace Preview Card (5 cols) */}
+          <div className="lg:col-span-5">
+            <div className="bg-[#202020] border border-[#383838] rounded-2xl p-6 shadow-2xl">
+              <div className="flex items-center justify-between text-[10px] text-[#A3A3A3] pb-3 border-b border-[#383838]">
+                <span>GARDA-SIM AI / RESPONSE WORKSPACE</span>
+                <span className="text-[#FF6B35] font-semibold">· SIMULATION ONLY</span>
+              </div>
 
-          <p className="text-base md:text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
-            GARDA-SIM AI evaluates candidate cybersecurity response actions before execution.
-            Estimate operational downtime, protect critical IT/OT dependency chains, and enforce
-            hard safety constraints deterministically.
-          </p>
+              <div className="mt-4">
+                <span className="text-[11px] text-[#737373] block">
+                  Simulation Lab / Incident detail
+                </span>
+                <h2 className="text-lg font-bold text-[#F5F5F5] mt-0.5">
+                  Suspicious Privilege Escalation
+                </h2>
+                <div className="flex items-center gap-2 text-xs text-[#A3A3A3] mt-1">
+                  <span className="font-mono">· INC-2026-0042</span>
+                  <span className="text-[#FBBF24]">· High</span>
+                  <span>· Awaiting Review</span>
+                </div>
+              </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <Link href="/app/simulator">
-              <Button size="lg" className="gap-2">
-                <PlayCircle className="w-5 h-5" />
-                <span>Launch Response Simulator</span>
-              </Button>
-            </Link>
-            <Link href="/app/incidents/INC-2026-0042">
-              <Button variant="secondary" size="lg" className="gap-2">
-                <FileSearch className="w-5 h-5" />
-                <span>Inspect Scenario INC-2026-0042</span>
-              </Button>
-            </Link>
-          </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                {/* Synthetic Evidence */}
+                <div className="bg-[#252525] border border-[#383838] rounded-xl p-3.5">
+                  <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+                    SYNTHETIC EVIDENCE
+                  </div>
+                  <h3 className="text-xs font-semibold text-[#F5F5F5] mt-1">
+                    Evidence, not assumptions
+                  </h3>
+                  <div className="font-mono text-[11px] text-[#737373] mt-2">
+                    EV-0042-01 / 09:14:00 UTC
+                  </div>
+                  <p className="text-[11px] text-[#A3A3A3] mt-0.5">
+                    Role elevation requested by analyst-demo-03 on APP-GW-02.
+                  </p>
+                  <div className="font-mono text-[11px] text-[#737373] mt-2">
+                    EV-0042-02 / 09:14:08 UTC
+                  </div>
+                  <p className="text-[11px] text-[#A3A3A3] mt-0.5">
+                    Synthetic privileged token issued.
+                  </p>
+                </div>
 
-          {/* Interactive Hero Simulator Preview Card */}
-          <div className="pt-10 max-w-4xl mx-auto text-left">
-            <div className="rounded-2xl border border-border bg-surface-card shadow-2xl p-6 md:p-8 space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 rounded-full bg-status-critical animate-pulse" />
+                {/* Derived Assessment */}
+                <div className="bg-[#252525] border border-[#383838] rounded-xl p-3.5 flex flex-col justify-between">
                   <div>
-                    <div className="text-xs font-mono text-text-muted">ACTIVE SYNTHETIC INCIDENT</div>
-                    <div className="text-base font-semibold text-text-primary">
-                      {SYNTHETIC_INCIDENT.id} — {SYNTHETIC_INCIDENT.title}
+                    <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+                      DERIVED ASSESSMENT
                     </div>
+                    <h3 className="text-xs font-semibold text-[#F5F5F5] mt-1">
+                      Review the tradeoff
+                    </h3>
+                    <div className="space-y-1 text-[11px] mt-2">
+                      <div>
+                        <span className="text-[#737373]">Identity / </span>
+                        <span className="font-mono text-[#F5F5F5]">analyst-demo-03</span>
+                      </div>
+                      <div>
+                        <span className="text-[#737373]">Confidence / </span>
+                        <span className="font-mono text-[#F5F5F5]">0.82 illustrative</span>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-[#737373] mt-2">
+                      Not a calibrated probability. Context remains incomplete.
+                    </p>
+                  </div>
+                  <div className="text-[11px] text-[#FF6B35] font-mono mt-3">
+                    · Pending Review
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="critical">Critical Severity</Badge>
-                  <Badge variant="simulation">Simulation Only</Badge>
-                </div>
               </div>
 
-              {/* Multi-Candidate Strategy Evaluation Comparison */}
-              <div className="space-y-3">
-                <div className="text-xs font-semibold text-text-muted uppercase tracking-wider">
-                  Evaluated Response Candidates (Deterministic Engine)
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {CANDIDATE_STRATEGIES.map((strat) => (
-                    <div
-                      key={strat.id}
-                      className={`p-4 rounded-xl border transition-all ${
-                        strat.isAiRecommended
-                          ? "bg-accent/10 border-accent/40 shadow-sm"
-                          : "bg-surface-elevated/60 border-border"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-mono font-bold text-text-muted">{strat.code}</span>
-                        {strat.safetyPolicyStatus === "PASSED" ? (
-                          <Badge variant="success" size="sm">Safety: Passed</Badge>
-                        ) : (
-                          <Badge variant="critical" size="sm">Safety: Blocked</Badge>
-                        )}
-                      </div>
-                      <div className="font-semibold text-sm text-text-primary mb-1">{strat.name}</div>
-                      <div className="text-xs text-text-muted line-clamp-2 mb-3">{strat.description}</div>
-                      <div className="pt-2 border-t border-border/40 grid grid-cols-2 text-xs">
-                        <div>
-                          <div className="text-[10px] text-text-muted">Risk Reduction</div>
-                          <div className="font-semibold text-text-primary">{strat.securityBenefitScore}%</div>
-                        </div>
-                        <div>
-                          <div className="text-[10px] text-text-muted">Downtime</div>
-                          <div className="font-semibold text-text-primary">{strat.simulatedDowntimeMinutes}m</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-2 flex items-center justify-between text-xs text-text-muted">
-                <span className="flex items-center gap-1.5 text-status-success font-medium">
-                  <ShieldCheck className="w-4 h-4" />
-                  Deterministic Safety Verification Precedes AI Review
-                </span>
-                <Link href="/app" className="text-accent hover:underline flex items-center gap-1 font-medium">
-                  <span>Enter Full Console</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+              <div className="mt-4 pt-4 border-t border-[#383838] flex items-center justify-between">
+                <Link
+                  href="/app/simulator"
+                  className="bg-[#FF6B35] text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-[#FF8255] transition-colors"
+                >
+                  Compare strategies
                 </Link>
+                <span className="text-[11px] text-[#737373]">
+                  Preview only. No simulation has been run.
+                </span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Core Capabilities */}
-      <section className="py-20 px-4 md:px-8 border-b border-border bg-[#191919]">
-        <div className="max-w-[1440px] mx-auto space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-2xl md:text-4xl font-bold text-text-primary">
-              Defensive Response Grounded in Reality
-            </h2>
-            <p className="text-sm md:text-base text-text-secondary">
-              A comprehensive system combining deterministic topology modeling with AI-assisted explanation.
-            </p>
+      {/* 3 Pillars Value Props Strip */}
+      <section className="px-6 md:px-12 lg:px-16 py-6 border-b border-[#303030] bg-[#1E1E1E]">
+        <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#A3A3A3]">
+          <div>
+            <span className="font-mono text-[#FF6B35] mr-2">01</span>
+            <span className="text-[#F5F5F5] font-medium">Synthetic by design</span>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-              <CardHeader>
-                <div className="w-10 h-10 rounded-lg bg-status-info/15 border border-status-info/30 flex items-center justify-center text-status-info mb-3">
-                  <FileSearch className="w-5 h-5" />
-                </div>
-                <CardTitle>Evidence Grounding</CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs text-text-secondary leading-relaxed">
-                Connect incidents to traceable synthetic logs and host telemetry. No fabricated evidence IDs or hallucinated network artifacts.
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="w-10 h-10 rounded-lg bg-accent/15 border border-accent/30 flex items-center justify-center text-accent mb-3">
-                  <Network className="w-5 h-5" />
-                </div>
-                <CardTitle>IT/OT Digital Twin</CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs text-text-secondary leading-relaxed">
-                Model directed dependencies between enterprise identity services, edge gateways, and industrial controller nodes.
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="w-10 h-10 rounded-lg bg-status-success/15 border border-status-success/30 flex items-center justify-center text-status-success mb-3">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <CardTitle>Deterministic Safety</CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs text-text-secondary leading-relaxed">
-                Enforce hard safety constraints in code. A model cannot override safety thresholds or authorize destructive containment actions.
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="w-10 h-10 rounded-lg bg-[#9333EA]/15 border border-[#9333EA]/30 flex items-center justify-center text-[#C084FC] mb-3">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <CardTitle>Human-in-the-Loop AI</CardTitle>
-              </CardHeader>
-              <CardContent className="text-xs text-text-secondary leading-relaxed">
-                Receive plain-language trade-off analyses, uncertainty ratings, and citations for final SOC analyst review and approval.
-              </CardContent>
-            </Card>
+          <div>
+            <span className="font-mono text-[#FF6B35] mr-2">02</span>
+            <span className="text-[#F5F5F5] font-medium">Evidence before explanation</span>
+          </div>
+          <div>
+            <span className="font-mono text-[#FF6B35] mr-2">03</span>
+            <span className="text-[#F5F5F5] font-medium">Human review, always</span>
           </div>
         </div>
       </section>
 
-      {/* Safety & Defensive Boundaries Banner */}
-      <section className="py-16 px-4 md:px-8 border-b border-border bg-bg-secondary">
-        <div className="max-w-4xl mx-auto rounded-2xl border border-accent/30 bg-accent/10 p-8 flex flex-col md:flex-row items-center gap-6">
-          <div className="w-14 h-14 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center text-accent shrink-0">
-            <ShieldAlert className="w-8 h-8 text-accent" />
+      {/* Section 01: The Response Problem */}
+      <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
+        <div className="max-w-[1440px] mx-auto space-y-4">
+          <div className="text-xs font-mono text-[#737373]">
+            01 / THE RESPONSE PROBLEM
           </div>
-          <div className="space-y-2 text-center md:text-left">
-            <h3 className="text-lg font-bold text-text-primary">Defensive Decision-Support Boundary</h3>
-            <p className="text-xs text-text-secondary leading-relaxed">
-              GARDA-SIM AI operates strictly on synthetic scenario data. The application does not connect to live operational technology, production enterprise networks, or military infrastructure, and executes no real-world containment.
+          <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+            A response can stop a threat. It can also stop a service.
+          </h2>
+          <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
+            An alert alone does not explain operational consequences. A confident narrative does not validate a response. GARDA-SIM AI connects evidence, hypothetical actions and virtual dependencies before explicit human review.
+          </p>
+        </div>
+      </section>
+
+      {/* Section 02: Four Layers */}
+      <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
+        <div className="max-w-[1440px] mx-auto space-y-4">
+          <div className="text-xs font-mono text-[#FF6B35]">
+            KNOW WHAT YOU ARE READING
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+            Four layers. No blurred boundaries.
+          </h2>
+          <p className="text-sm md:text-base text-[#A3A3A3] max-w-4xl leading-relaxed">
+            Synthetic Evidence — fictional source observations. Derived Assessment — interpretations, not facts. AI-Generated Explanation — a narrative specimen with unverified provider integration. Policy Validation — a separately proposed deterministic layer, not an AI assertion.
+          </p>
+        </div>
+      </section>
+
+      {/* Section 03: Connected Workspace (8 Capabilities) */}
+      <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
+        <div className="max-w-[1440px] mx-auto space-y-8">
+          <div>
+            <div className="text-xs font-mono text-[#737373]">
+              03 / A CONNECTED WORKSPACE
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5] mt-1">
+              Investigate. Compare. Review.
+            </h2>
+            <p className="text-sm text-[#A3A3A3] mt-2">
+              Eight capabilities for examining decisions in a bounded synthetic environment.
             </p>
           </div>
-          <Link href="/security" className="shrink-0">
-            <Button variant="outline" size="sm">
-              Read Security Policy
-            </Button>
-          </Link>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link href="/app/incidents" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
+              <span className="text-[11px] font-mono text-[#737373]">01 / Incidents → Incident detail</span>
+              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Incident investigation</h3>
+              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+                Trace a synthetic incident from identity to affected virtual services.
+              </p>
+            </Link>
+
+            <Link href="/app/evidence" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
+              <span className="text-[11px] font-mono text-[#737373]">02 / Evidence & Timeline</span>
+              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Evidence & timeline</h3>
+              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+                Keep source events, derived assessments and explanations distinct.
+              </p>
+            </Link>
+
+            <Link href="/app/simulator" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
+              <span className="text-[11px] font-mono text-[#737373]">03 / Response Simulator</span>
+              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Strategy comparison</h3>
+              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+                Compare hypothetical responses against explicit assumptions.
+              </p>
+            </Link>
+
+            <Link href="/app/digital-twin" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
+              <span className="text-[11px] font-mono text-[#737373]">04 / IT/OT Digital Twin</span>
+              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">IT/OT dependencies</h3>
+              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+                Follow virtual service dependencies and examine possible propagation.
+              </p>
+            </Link>
+
+            <Link href="/app/recommendations" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
+              <span className="text-[11px] font-mono text-[#737373]">05 / AI Recommendations</span>
+              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Explainable AI</h3>
+              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+                Read an explanation with evidence references and uncertainty.
+              </p>
+            </Link>
+
+            <Link href="/app/settings" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
+              <span className="text-[11px] font-mono text-[#737373]">06 / Settings → Safety policies</span>
+              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Policy validation</h3>
+              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+                Inspect a proposed deterministic boundary, separate from AI.
+              </p>
+            </Link>
+
+            <Link href="/app/experiments" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
+              <span className="text-[11px] font-mono text-[#737373]">07 / Experiments & Evaluation</span>
+              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Experiments</h3>
+              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+                Configure rule-based, AI-only and constrained approaches.
+              </p>
+            </Link>
+
+            <Link href="/app/reports" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
+              <span className="text-[11px] font-mono text-[#737373]">08 / Reports / Audit Trail</span>
+              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Reports & audit</h3>
+              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+                Inspect sample reporting and traceable synthetic event context.
+              </p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 04: How It Works */}
+      <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
+        <div className="max-w-[1440px] mx-auto space-y-6">
+          <div className="text-xs font-mono text-[#737373]">
+            04 / HOW IT WORKS
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+            Evidence to a human decision.
+          </h2>
+
+          <div className="space-y-4 text-xs md:text-sm text-[#A3A3A3] max-w-3xl leading-relaxed font-mono">
+            <div>1. Scenario — Choose INC-2026-0042 and the bounded virtual environment. <span className="text-[#737373]">[Incident context]</span></div>
+            <div>2. Evidence — Inspect EV-0042-01 through EV-0042-03 and their provenance. <span className="text-[#737373]">[Synthetic Evidence]</span></div>
+            <div>3. Candidates — Define session revocation, access restriction or more verification. <span className="text-[#737373]">[Candidate strategies]</span></div>
+            <div>4. Impact — Compare possible security benefit and virtual service disruption. <span className="text-[#737373]">[Derived Assessment]</span></div>
+            <div>5. Policy — Inspect proposed constraint checks, independent of generated text. <span className="text-[#737373]">[Policy Validation]</span></div>
+            <div>6. Review — A person approves for demonstration, rejects or asks for evidence. <span className="text-[#737373]">[Human review]</span></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 05: Illustrative Comparison */}
+      <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
+        <div className="max-w-[1440px] mx-auto space-y-6">
+          <div>
+            <div className="text-xs font-mono text-[#737373]">
+              05 / ILLUSTRATIVE COMPARISON — NOT A RECORDED RUN
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5] mt-1">
+              Not just “what works,” but “what changes?”
+            </h2>
+            <p className="text-xs text-[#A3A3A3] mt-2">
+              Evidence: EV-0042-01 / EV-0042-02 / EV-0042-03. All ratings are assumptions for layout comparison; no actual policy evaluation occurred.
+            </p>
+          </div>
+
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] font-medium tracking-wider uppercase">
+                  <th className="pb-3 font-medium">STRATEGY</th>
+                  <th className="pb-3 font-medium">SECURITY BENEFIT</th>
+                  <th className="pb-3 font-medium">SERVICE IMPACT</th>
+                  <th className="pb-3 font-medium">POLICY SPECIMEN</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#383838]/40">
+                <tr>
+                  <td className="py-3 text-[#F5F5F5]">Session revocation</td>
+                  <td className="py-3 text-[#A3A3A3]">Moderate · assumed</td>
+                  <td className="py-3 text-[#A3A3A3]">Low · assumed</td>
+                  <td className="py-3 text-[#4ADE80]">Illustrative pass</td>
+                </tr>
+                <tr>
+                  <td className="py-3 text-[#F5F5F5]">Virtual access restriction</td>
+                  <td className="py-3 text-[#A3A3A3]">Moderate · assumed</td>
+                  <td className="py-3 text-[#A3A3A3]">Medium · assumed</td>
+                  <td className="py-3 text-[#4ADE80]">Illustrative pass</td>
+                </tr>
+                <tr>
+                  <td className="py-3 text-[#F5F5F5]">Simulated asset isolation</td>
+                  <td className="py-3 text-[#A3A3A3]">Broad containment</td>
+                  <td className="py-3 text-[#A3A3A3]">High · assumed</td>
+                  <td className="py-3 text-[#F87171]">Illustrative fail · POL-01</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="bg-[#42271F]/40 border border-[#FF6B35] rounded-xl p-4 text-xs text-[#A3A3A3]">
+            <span className="font-semibold text-[#F5F5F5] uppercase tracking-wider block mb-1">
+              SIMULATION ONLY
+            </span>
+            Results are simulated estimates, not guarantees of real-world outcomes.
+          </div>
+        </div>
+      </section>
+
+      {/* Section 06: Safety Boundary */}
+      <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
+        <div className="max-w-[1440px] mx-auto space-y-4">
+          <div className="text-xs font-mono text-[#737373]">
+            06 / THE SAFETY BOUNDARY
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+            AI explains. Constraints are separate. People decide.
+          </h2>
+          <p className="text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
+            No production path: synthetic incidents, virtual IT/OT assets and hypothetical actions only. Nothing connects to or changes a real environment. A proposed deterministic layer: policy definitions are explicit design artifacts. Server-side validation, fail-closed behavior and authorization require implementation. Review stays visible: Pending Review is the default. No generated explanation constitutes permission to act.
+          </p>
+        </div>
+      </section>
+
+      {/* Section 07: Research Plan */}
+      <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
+        <div className="max-w-[1440px] mx-auto space-y-4">
+          <div className="text-xs font-mono text-[#737373]">
+            07 / RESEARCH, NOT A PERFORMANCE CLAIM
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+            Three approaches. One transparent evaluation plan.
+          </h2>
+          <p className="text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
+            A / Rule-based — predefined mappings; inspect rule coverage and missing context. B / AI-only — narrative-led proposal; inspect evidence grounding and unsupported actions. C / Simulation + constraints — hypothetical impact plus policy checks; inspect assumptions and constraint handling. No experiment run yet. No comparative results, measured improvements or superiority claims are available.
+          </p>
+        </div>
+      </section>
+
+      {/* Section 08: Scope & Limitations */}
+      <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
+        <div className="max-w-[1440px] mx-auto space-y-4">
+          <div className="text-xs font-mono text-[#737373]">
+            08 / QUESTIONS BEFORE YOU BEGIN
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+            Clear scope. Clear limitations.
+          </h2>
+          <p className="text-sm text-[#A3A3A3] max-w-3xl leading-relaxed">
+            Does this connect to production? No. Every incident and asset is synthetic or virtual. Can AI execute a response? No. Explanations do not authorize actions; human review is explicit. Are the example results measured? No. Comparisons are illustrative, not recorded experiments.
+          </p>
+          <div className="pt-2">
+            <Link href="/faq" className="text-xs text-[#FF6B35] underline hover:text-[#FF8255]">
+              View all FAQs ↗
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 09: Explore the Design CTA */}
+      <section className="px-6 md:px-12 lg:px-16 py-20 border-b border-[#303030] bg-[#202020]">
+        <div className="max-w-[1440px] mx-auto space-y-4 text-center">
+          <div className="text-xs font-mono text-[#737373]">
+            09 / EXPLORE THE DESIGN
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#F5F5F5]">
+            Make the reasoning visible.
+          </h2>
+          <p className="text-sm text-[#A3A3A3] max-w-xl mx-auto leading-relaxed">
+            Enter a bounded simulation workspace. Examine the evidence, the tradeoffs and the limits. Research prototype; no subscription or availability commitment.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <Link
+              href="/app"
+              className="bg-[#FF6B35] text-white text-xs font-medium px-5 py-2.5 rounded-lg hover:bg-[#FF8255] transition-colors"
+            >
+              Get Started
+            </Link>
+            <Link
+              href="/docs"
+              className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
+            >
+              Read the documentation
+            </Link>
+          </div>
         </div>
       </section>
 

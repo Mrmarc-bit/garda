@@ -2,321 +2,318 @@
 
 import * as React from "react";
 import Link from "next/link";
-import {
-  PlayCircle,
-  RotateCcw,
-  ShieldCheck,
-  ShieldAlert,
-  AlertOctagon,
-  Clock,
-  Sparkles,
-  CheckCircle2,
-  XCircle,
-  ArrowRight,
-  HelpCircle,
-  FileText,
-} from "lucide-react";
 import { AppLayout } from "@/components/layout/app-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import {
-  SYNTHETIC_INCIDENT,
-  CANDIDATE_STRATEGIES,
-  CandidateStrategy,
-} from "@/lib/synthetic-data";
+import { ChevronDown, Play, CheckSquare } from "lucide-react";
 
 export default function ResponseSimulatorPage() {
-  const [selectedStrategyId, setSelectedStrategyId] = React.useState<string>("strat-02");
-  const [isSimulating, setIsSimulating] = React.useState(false);
-  const [hasRun, setHasRun] = React.useState(true);
+  const [selectedCandidates, setSelectedCandidates] = React.useState<Record<string, boolean>>({
+    session: true,
+    access: true,
+    verify: true,
+    isolation: false,
+  });
 
-  const selectedStrategy =
-    CANDIDATE_STRATEGIES.find((s) => s.id === selectedStrategyId) || CANDIDATE_STRATEGIES[1];
-
-  const handleRunSimulation = () => {
-    setIsSimulating(true);
-    setTimeout(() => {
-      setIsSimulating(false);
-      setHasRun(true);
-    }, 600);
+  const toggleCandidate = (key: string) => {
+    setSelectedCandidates((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
-    <AppLayout
-      title="Response Simulator"
-      subtitle="Deterministic strategy evaluation, operational downtime modeling, and safety constraint verification"
-    >
-      {/* Mandatory Defensive Disclaimer */}
-      <div className="p-3.5 rounded-xl border border-border bg-[#181818] flex items-center justify-between text-xs text-text-muted">
-        <div className="flex items-center gap-2">
-          <ShieldAlert className="w-4 h-4 text-accent shrink-0" />
-          <span>
-            <strong className="text-text-primary">Defensive Simulation Mode:</strong> Calculations reflect deterministic synthetic models. No real network modifications or isolation actions occur.
-          </span>
+    <AppLayout breadcrumb="Workspace / Response Simulator">
+      {/* Top metadata tags */}
+      <div className="space-y-1">
+        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+          SIMULATION ONLY
         </div>
-        <Badge variant="simulation" size="sm">SIMULATION ONLY</Badge>
+        <div className="text-xs text-[#A3A3A3]">
+          Synthetic design/demo environment — not live
+        </div>
+        <div className="text-xs font-mono text-[#737373]">
+          /app/simulator
+        </div>
       </div>
 
-      {/* Scenario Context & Execution Controls */}
-      <div className="p-4 rounded-xl border border-border bg-surface-card flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-surface-elevated border border-border flex items-center justify-center text-accent">
-            <PlayCircle className="w-6 h-6" />
-          </div>
+      {/* Heading & Subtitle */}
+      <div className="mt-6">
+        <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
+          Response Simulator
+        </h1>
+        <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
+          Inspect assumptions, service impact and constraints before human review. No real actions are available.
+        </p>
+      </div>
+
+      {/* Primary Actions */}
+      <div className="mt-6 flex items-center gap-4">
+        <button
+          type="button"
+          className="bg-[#FF6B35] text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-[#FF8255] transition-colors inline-flex items-center gap-2 shadow-sm"
+        >
+          <Play className="w-3.5 h-3.5 fill-white" />
+          <span>Run Simulation</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setSelectedCandidates({ session: true, access: true, verify: true, isolation: false })}
+          className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
+        >
+          Reset
+        </button>
+      </div>
+
+      {/* Ready State Callout Container with soft orange surface */}
+      <div className="mt-6 bg-[#42271F]/40 border border-[#FF6B35] rounded-xl p-5">
+        <div className="text-xs font-semibold text-[#F5F5F5]">
+          Ready state · no simulation run yet
+        </div>
+        <p className="text-xs text-[#A3A3A3] mt-1">
+          Results are simulated estimates, not guarantees of real-world outcomes. Run control is a visual affordance only.
+        </p>
+      </div>
+
+      {/* Scenario Selector Dropdown Box */}
+      <div className="mt-4 bg-[#252525] border border-[#383838] rounded-xl p-4 flex items-center justify-between cursor-pointer">
+        <div>
+          <span className="block text-[11px] text-[#737373]">Scenario selector</span>
+          <span className="text-xs font-mono text-[#F5F5F5] mt-0.5 block">
+            INC-2026-0042 — Suspicious Privilege Escalation
+          </span>
+        </div>
+        <ChevronDown className="w-4 h-4 text-[#737373]" />
+      </div>
+
+      {/* 2-Column: Incident Context & Policy Constraints */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        {/* Left Card: Incident summary */}
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
           <div>
-            <div className="text-xs text-text-muted font-mono">SCENARIO: {SYNTHETIC_INCIDENT.id}</div>
-            <div className="text-sm font-semibold text-text-primary">
-              Target Asset: <span className="font-mono text-accent">{SYNTHETIC_INCIDENT.targetAsset}</span> ({SYNTHETIC_INCIDENT.title})
+            <div className="text-[11px] font-mono text-[#FF6B35]">
+              INC-2026-0042
+            </div>
+            <h2 className="text-lg font-bold text-[#F5F5F5] mt-1">
+              Suspicious Privilege Escalation
+            </h2>
+
+            <div className="flex items-center gap-3 text-xs mt-3">
+              <span className="text-[#FBBF24]">· High</span>
+              <span className="text-[#A3A3A3]">· Awaiting Review</span>
+              <span className="text-[#A3A3A3]">· Simulation Lab</span>
+            </div>
+
+            <div className="space-y-1.5 text-xs mt-4">
+              <div>
+                <span className="text-[#A3A3A3]">Primary asset / </span>
+                <span className="font-mono text-[#F5F5F5]">APP-GW-02</span>
+              </div>
+              <div>
+                <span className="text-[#A3A3A3]">Synthetic identity / </span>
+                <span className="font-mono text-[#F5F5F5]">analyst-demo-03</span>
+              </div>
+              <div>
+                <span className="text-[#A3A3A3]">Evidence records / </span>
+                <span className="font-mono text-[#F5F5F5]">3 · EV-0042-01-03</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 pt-5 border-t border-[#383838]">
+            <div className="text-[11px] text-[#A3A3A3] mb-2">
+              Illustrative confidence
+            </div>
+            <div className="w-full h-1.5 bg-[#171717] rounded-full overflow-hidden">
+              <div className="h-full bg-[#FF6B35] rounded-full w-[82%]" />
+            </div>
+            <div className="font-mono text-xs text-[#A3A3A3] mt-2">
+              0.82 / not calibrated probability
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setHasRun(false)}
-            className="gap-1.5 text-xs"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Reset</span>
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleRunSimulation}
-            isLoading={isSimulating}
-            className="gap-2"
-          >
-            <PlayCircle className="w-4 h-4" />
-            <span>Run Simulation</span>
-          </Button>
+        {/* Right Card: Constraint definitions */}
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
+          <div>
+            <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+              POLICY VALIDATION / PROPOSED LAYER
+            </div>
+            <h2 className="text-lg font-bold text-[#F5F5F5] mt-1 mb-4">
+              Constraint definitions
+            </h2>
+
+            <div className="space-y-3 text-xs">
+              <div className="flex items-center gap-2 text-[#F5F5F5]">
+                <CheckSquare className="w-4 h-4 text-[#A3A3A3]" />
+                <span className="font-mono">POL-01 · Preserve MONITOR-01 observability</span>
+              </div>
+              <div className="flex items-center gap-2 text-[#F5F5F5]">
+                <CheckSquare className="w-4 h-4 text-[#A3A3A3]" />
+                <span className="font-mono">POL-02 · Require explicit human review</span>
+              </div>
+              <div className="flex items-center gap-2 text-[#F5F5F5]">
+                <CheckSquare className="w-4 h-4 text-[#A3A3A3]" />
+                <span className="font-mono">POL-03 · Do not isolate OT-CONTROLLER-SIM-01</span>
+              </div>
+            </div>
+
+            <p className="text-xs text-[#A3A3A3] mt-5 leading-relaxed">
+              Definitions only. Deterministic validation and fail-closed execution require separate implementation.
+            </p>
+          </div>
+
+          <div className="text-xs text-[#737373] mt-6">
+            · Simulation Lab · 6 virtual assets
+          </div>
         </div>
       </div>
 
-      {/* Strategy Selector Tabs */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {CANDIDATE_STRATEGIES.map((strat) => {
-          const isSelected = strat.id === selectedStrategyId;
-          const isPassed = strat.safetyPolicyStatus === "PASSED";
-          return (
-            <button
-              key={strat.id}
-              type="button"
-              onClick={() => setSelectedStrategyId(strat.id)}
-              className={`p-4 rounded-xl border text-left transition-all relative ${
-                isSelected
-                  ? "bg-surface-elevated border-accent shadow-md ring-1 ring-accent"
-                  : "bg-surface-card border-border hover:bg-surface-elevated/60"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-mono text-xs font-bold text-text-muted">{strat.code}</span>
-                {isPassed ? (
-                  <Badge variant="success" size="sm">Safety: PASSED</Badge>
-                ) : (
-                  <Badge variant="critical" size="sm">Safety: BLOCKED</Badge>
-                )}
-              </div>
-              <div className="font-semibold text-sm text-text-primary mb-1">{strat.name}</div>
-              <p className="text-xs text-text-muted line-clamp-2">{strat.description}</p>
-              {strat.isAiRecommended && (
-                <div className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-accent">
-                  <Sparkles className="w-3 h-3" />
-                  <span>AI Recommended Candidate</span>
-                </div>
-              )}
-            </button>
-          );
-        })}
+      {/* Candidate Strategies Section */}
+      <div className="mt-8">
+        <h2 className="text-xl font-bold text-[#F5F5F5] mb-4">
+          Candidate strategies
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Card 1: Session revocation */}
+          <div
+            onClick={() => toggleCandidate("session")}
+            className={`bg-[#252525] rounded-xl p-5 cursor-pointer transition-colors ${
+              selectedCandidates.session ? "border border-[#FF6B35]" : "border border-[#383838]"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedCandidates.session}
+                onChange={() => {}}
+                className="accent-[#FF6B35]"
+              />
+              <span className="text-xs font-semibold text-[#F5F5F5]">
+                Session revocation
+              </span>
+            </div>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              Revoke only the fictional elevated session. Preserve service and monitoring dependencies.
+            </p>
+            <div className="text-xs text-[#FF6B35] mt-4 font-mono">
+              · Selected · hypothetical
+            </div>
+          </div>
+
+          {/* Card 2: Virtual access restriction */}
+          <div
+            onClick={() => toggleCandidate("access")}
+            className={`bg-[#252525] rounded-xl p-5 cursor-pointer transition-colors ${
+              selectedCandidates.access ? "border border-[#FF6B35]" : "border border-[#383838]"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedCandidates.access}
+                onChange={() => {}}
+                className="accent-[#FF6B35]"
+              />
+              <span className="text-xs font-semibold text-[#F5F5F5]">
+                Virtual access restriction
+              </span>
+            </div>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              Restrict the privileged route in the virtual gateway. May affect OPS-DASH-01.
+            </p>
+            <div className="text-xs text-[#FF6B35] mt-4 font-mono">
+              · Selected · hypothetical
+            </div>
+          </div>
+
+          {/* Card 3: Request more verification */}
+          <div
+            onClick={() => toggleCandidate("verify")}
+            className={`bg-[#252525] rounded-xl p-5 cursor-pointer transition-colors ${
+              selectedCandidates.verify ? "border border-[#FF6B35]" : "border border-[#383838]"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedCandidates.verify}
+                onChange={() => {}}
+                className="accent-[#FF6B35]"
+              />
+              <span className="text-xs font-semibold text-[#F5F5F5]">
+                Request more verification
+              </span>
+            </div>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              Pause the proposal and ask for synthetic authorization context. Threat exposure may remain.
+            </p>
+            <div className="text-xs text-[#FF6B35] mt-4 font-mono">
+              · Selected · hypothetical
+            </div>
+          </div>
+
+          {/* Card 4: Simulated asset isolation */}
+          <div
+            onClick={() => toggleCandidate("isolation")}
+            className={`bg-[#252525] rounded-xl p-5 cursor-pointer transition-colors ${
+              selectedCandidates.isolation ? "border border-[#FF6B35]" : "border border-[#383838]"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedCandidates.isolation}
+                onChange={() => {}}
+                className="accent-[#FF6B35]"
+              />
+              <span className="text-xs font-semibold text-[#F5F5F5]">
+                Simulated asset isolation
+              </span>
+            </div>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              Optional comparison candidate. Broad service disruption; preserve OT constraints.
+            </p>
+            <div className="text-xs text-[#737373] mt-4 font-mono">
+              · Optional · not selected
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Simulation Results & Impact Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Authoritative Deterministic Metrics (Col span 2) */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader className="border-b border-border/60 pb-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-base font-semibold">
-                    Simulated Impact Evaluation · {selectedStrategy.code}
-                  </CardTitle>
-                  <CardDescription>
-                    Authoritative calculations computed deterministically by the Python simulation engine
-                  </CardDescription>
-                </div>
-                <Badge variant={selectedStrategy.safetyPolicyStatus === "PASSED" ? "success" : "critical"}>
-                  Policy: {selectedStrategy.safetyPolicyStatus}
-                </Badge>
-              </div>
-            </CardHeader>
-
-            <CardContent className="pt-6 space-y-6">
-              {/* Primary Evaluation Metrics Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-4 rounded-xl border border-border bg-[#1C1C1C]">
-                  <div className="text-xs text-text-muted mb-1">Risk Reduction Score</div>
-                  <div className="text-3xl font-bold font-mono text-text-primary flex items-baseline gap-1">
-                    <span>{selectedStrategy.securityBenefitScore}%</span>
-                    <span className="text-xs font-normal text-status-success">benefit</span>
-                  </div>
-                  <div className="mt-2 h-1.5 w-full bg-border rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-accent rounded-full"
-                      style={{ width: `${selectedStrategy.securityBenefitScore}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-xl border border-border bg-[#1C1C1C]">
-                  <div className="text-xs text-text-muted mb-1">Simulated Service Downtime</div>
-                  <div className="text-3xl font-bold font-mono text-text-primary flex items-baseline gap-1">
-                    <span>{selectedStrategy.simulatedDowntimeMinutes}</span>
-                    <span className="text-xs font-normal text-text-muted">mins</span>
-                  </div>
-                  <div className="text-[11px] text-text-muted mt-2">
-                    {selectedStrategy.simulatedDowntimeMinutes === 0
-                      ? "Zero estimated disruption"
-                      : "Transient impact on connected dependencies"}
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-xl border border-border bg-[#1C1C1C]">
-                  <div className="text-xs text-text-muted mb-1">Recovery Effort</div>
-                  <div className="text-3xl font-bold text-text-primary">
-                    {selectedStrategy.recoveryEffort}
-                  </div>
-                  <div className="text-[11px] text-text-muted mt-2">
-                    Operational overhead for SOC and IT staff
-                  </div>
-                </div>
-              </div>
-
-              {/* Safety Policy Engine Verification Table */}
-              <div className="space-y-3">
-                <h4 className="text-xs font-semibold text-text-muted uppercase tracking-wider">
-                  Deterministic Safety Policy Invariants (5 Enforced)
-                </h4>
-                <div className="rounded-lg border border-border bg-surface-elevated/40 divide-y divide-border/60 text-xs">
-                  <div className="p-3 flex items-center justify-between">
-                    <div>
-                      <span className="font-semibold text-text-primary">Rule SEC-OT-01:</span> No real-world containment trigger
-                    </div>
-                    <span className="flex items-center gap-1 text-status-success font-medium">
-                      <CheckCircle2 className="w-4 h-4" /> PASSED
-                    </span>
-                  </div>
-                  <div className="p-3 flex items-center justify-between">
-                    <div>
-                      <span className="font-semibold text-text-primary">Rule SEC-OT-02:</span> Operator clearance validation
-                    </div>
-                    <span className="flex items-center gap-1 text-status-success font-medium">
-                      <CheckCircle2 className="w-4 h-4" /> PASSED
-                    </span>
-                  </div>
-                  <div className="p-3 flex items-center justify-between">
-                    <div>
-                      <span className="font-semibold text-text-primary">Rule SEC-OT-03:</span> Identity controller availability preservation
-                    </div>
-                    <span className="flex items-center gap-1 text-status-success font-medium">
-                      <CheckCircle2 className="w-4 h-4" /> PASSED
-                    </span>
-                  </div>
-                  <div className="p-3 flex items-center justify-between">
-                    <div>
-                      <span className="font-semibold text-text-primary">Rule SEC-OT-04:</span> Uninterrupted OT controller telemetry feed
-                    </div>
-                    {selectedStrategy.code === "STRAT-A" ? (
-                      <span className="flex items-center gap-1 text-status-critical font-semibold">
-                        <XCircle className="w-4 h-4" /> VIOLATION BLOCKED
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1 text-status-success font-medium">
-                        <CheckCircle2 className="w-4 h-4" /> PASSED
-                      </span>
-                    )}
-                  </div>
-                  <div className="p-3 flex items-center justify-between">
-                    <div>
-                      <span className="font-semibold text-text-primary">Rule SEC-OT-05:</span> Audit record generation invariant
-                    </div>
-                    <span className="flex items-center gap-1 text-status-success font-medium">
-                      <CheckCircle2 className="w-4 h-4" /> PASSED
-                    </span>
-                  </div>
-                </div>
-
-                {selectedStrategy.safetyViolationReason && (
-                  <div className="p-3 rounded-lg border border-status-critical/40 bg-status-critical/10 text-xs text-status-critical flex items-start gap-2">
-                    <AlertOctagon className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>{selectedStrategy.safetyViolationReason}</span>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+      {/* Evidence and Assumptions */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
+        <h2 className="text-base font-semibold text-[#F5F5F5]">
+          Evidence and assumptions
+        </h2>
+        <div className="font-mono text-xs text-[#A3A3A3] mt-2">
+          EV-0042-01 / EV-0042-02 / EV-0042-03
         </div>
+        <p className="text-xs text-[#A3A3A3] mt-3 leading-relaxed">
+          One synthetic privileged session on APP-GW-02. OPS-DASH-01 depends on the gateway; MONITOR-01 must remain observable. No measured baseline or calibrated impact model is available.
+        </p>
+      </div>
 
-        {/* AI Explanation & Review Card (Col span 1) */}
-        <div className="space-y-6">
-          <Card className="bg-[#1C1814] border-accent/40">
-            <CardHeader className="pb-3 border-b border-border/60">
-              <CardTitle className="text-sm font-semibold flex items-center gap-2 text-text-primary">
-                <Sparkles className="w-4 h-4 text-accent" />
-                <span>Explainable AI Trade-off Analysis</span>
-              </CardTitle>
-              <CardDescription>
-                Decision-support reasoning for {selectedStrategy.code}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-4 text-xs">
-              <p className="text-text-secondary leading-relaxed bg-surface-card p-3 rounded-lg border border-border">
-                {selectedStrategy.aiRationale}
-              </p>
-
-              <div className="space-y-2">
-                <span className="text-text-muted text-[11px] block font-semibold uppercase">
-                  Supporting Evidence Citations
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  <span className="px-2 py-0.5 rounded bg-surface-elevated border border-border font-mono text-[11px] text-accent">
-                    EVD-101
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-surface-elevated border border-border font-mono text-[11px] text-accent">
-                    EVD-102
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-surface-elevated border border-border font-mono text-[11px] text-accent">
-                    EVD-104
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-1 pt-2 border-t border-border">
-                <span className="text-text-muted text-[11px] block">Uncertainty Estimation</span>
-                <span className="font-semibold text-text-primary">±4.2%</span>
-                <p className="text-[10px] text-text-muted leading-relaxed">
-                  Reflects synthetic network jitter and process restart variance.
-                </p>
-              </div>
-
-              <div className="pt-4 space-y-2">
-                <Link href="/app/recommendations" className="block">
-                  <Button variant="primary" size="sm" className="w-full text-xs">
-                    Approve for Demonstration Review
-                  </Button>
-                </Link>
-                <Link href="/app/reports" className="block">
-                  <Button variant="outline" size="sm" className="w-full text-xs gap-1.5">
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>Generate Simulation Report</span>
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+      {/* No acceptable candidate — state specimen */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
+        <h2 className="text-base font-semibold text-[#F5F5F5]">
+          No acceptable candidate — state specimen
+        </h2>
+        <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+          If every hypothetical candidate violates a constraint, stop and request more evidence or revise assumptions. Never auto-select a failing candidate.
+        </p>
+        <div className="mt-4">
+          <Link
+            href="/app/evidence"
+            className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
+          >
+            Request More Evidence
+          </Link>
         </div>
+        <div className="text-xs text-[#737373] mt-4">
+          Intended failure boundary; not a computed evaluation.
+        </div>
+      </div>
+
+      {/* Persistent Disclaimer */}
+      <div className="text-xs text-[#737373] mt-8 mb-4">
+        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
       </div>
     </AppLayout>
   );

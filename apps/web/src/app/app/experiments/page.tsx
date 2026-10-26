@@ -1,180 +1,215 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import {
-  FlaskConical,
-  PlayCircle,
-  CheckCircle2,
-  XCircle,
-  HelpCircle,
-  BarChart2,
-  FileText,
-  RotateCcw,
-} from "lucide-react";
 import { AppLayout } from "@/components/layout/app-layout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { ChevronDown } from "lucide-react";
 
 export default function ExperimentsPage() {
-  const [activeExperiment, setActiveExperiment] = React.useState("EXP-2026-BETA-1");
-
-  const benchmarkRuns = [
-    {
-      id: "RUN-01",
-      method: "Baseline (Heuristic Containment)",
-      scenario: "INC-2026-0042",
-      safetyViolations: "1 Violation (SEC-OT-04)",
-      downtimeMinutes: 45,
-      riskReduction: "94%",
-      verdict: "FAILED_POLICY",
-    },
-    {
-      id: "RUN-02",
-      method: "GARDA-SIM AI (Deterministic Multi-Candidate)",
-      scenario: "INC-2026-0042",
-      safetyViolations: "0 Violations",
-      downtimeMinutes: 0,
-      riskReduction: "88%",
-      verdict: "PASSED_ALL",
-    },
-    {
-      id: "RUN-03",
-      method: "Baseline (Uncoordinated VLAN Drop)",
-      scenario: "INC-2026-0038",
-      safetyViolations: "2 Violations",
-      downtimeMinutes: 60,
-      riskReduction: "90%",
-      verdict: "FAILED_POLICY",
-    },
-    {
-      id: "RUN-04",
-      method: "GARDA-SIM AI (Deterministic Multi-Candidate)",
-      scenario: "INC-2026-0038",
-      safetyViolations: "0 Violations",
-      downtimeMinutes: 4,
-      riskReduction: "84%",
-      verdict: "PASSED_ALL",
-    },
-  ];
-
   return (
-    <AppLayout
-      title="Experiments & Evaluation"
-      subtitle="Defensive simulation benchmark testbench, comparative evaluation, and reproducibility harness"
-    >
-      {/* Context banner */}
-      <div className="p-4 rounded-xl border border-border bg-surface-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-sm font-semibold text-text-primary">Evaluation Benchmark Workbench</h2>
-          <p className="text-xs text-text-muted">
-            Compare deterministic multi-candidate evaluation against naive heuristic containment.
+    <AppLayout breadcrumb="Workspace / Experiments & Evaluation">
+      {/* Top metadata tags */}
+      <div className="space-y-1">
+        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+          SIMULATION ONLY
+        </div>
+        <div className="text-xs text-[#A3A3A3]">
+          Synthetic design/demo environment — not live
+        </div>
+        <div className="text-xs font-mono text-[#737373]">
+          /app/experiments
+        </div>
+      </div>
+
+      {/* Heading & Subtitle */}
+      <div className="mt-6">
+        <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
+          Experiments & Evaluation
+        </h1>
+        <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
+          Configure a future comparison. This workspace contains no recorded experimental data.
+        </p>
+      </div>
+
+      {/* Actions */}
+      <div className="mt-6 flex items-center gap-4">
+        <button
+          type="button"
+          className="bg-[#FF6B35] text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-[#FF8255] transition-colors"
+        >
+          Queue experiment — specimen
+        </button>
+        <span className="text-xs text-[#A3A3A3] cursor-not-allowed">
+          Export results
+        </span>
+      </div>
+
+      {/* Empty State Card */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-8 text-center mt-6">
+        <h2 className="text-base font-semibold text-[#F5F5F5]">
+          No experiment run yet
+        </h2>
+        <p className="text-xs text-[#A3A3A3] mt-2 max-w-lg mx-auto">
+          No queue, run history, measurements or comparative results exist in this visual prototype.
+        </p>
+      </div>
+
+      {/* Experiment configuration */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
+        <h2 className="text-base font-semibold text-[#F5F5F5] mb-4">
+          Experiment configuration
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-[#1D1D1D] border border-[#383838] rounded-lg p-3 flex items-center justify-between cursor-pointer">
+            <div>
+              <span className="block text-[11px] text-[#737373]">Dataset</span>
+              <span className="text-xs text-[#F5F5F5] font-medium mt-0.5 block">
+                Local synthetic dataset · 1 incident
+              </span>
+            </div>
+            <ChevronDown className="w-4 h-4 text-[#737373]" />
+          </div>
+
+          <div className="bg-[#1D1D1D] border border-[#383838] rounded-lg p-3 flex items-center justify-between cursor-pointer">
+            <div>
+              <span className="block text-[11px] text-[#737373]">Scenario</span>
+              <span className="text-xs font-mono text-[#F5F5F5] font-medium mt-0.5 block">
+                INC-2026-0042
+              </span>
+            </div>
+            <ChevronDown className="w-4 h-4 text-[#737373]" />
+          </div>
+
+          <div className="bg-[#1D1D1D] border border-[#383838] rounded-lg p-3 flex items-center justify-between cursor-pointer">
+            <div>
+              <span className="block text-[11px] text-[#737373]">Methods</span>
+              <span className="text-xs text-[#F5F5F5] font-medium mt-0.5 block">
+                A + B + C · all selected
+              </span>
+            </div>
+            <ChevronDown className="w-4 h-4 text-[#737373]" />
+          </div>
+
+          <div className="bg-[#1D1D1D] border border-[#383838] rounded-lg p-3">
+            <span className="block text-[11px] text-[#737373]">Repetitions</span>
+            <span className="text-xs text-[#A3A3A3] mt-0.5 block">
+              Not configured
+            </span>
+          </div>
+        </div>
+
+        <div className="bg-[#1D1D1D] border border-[#383838] rounded-lg p-3 mt-4">
+          <span className="block text-[11px] text-[#737373]">Research note specimen</span>
+          <p className="text-xs text-[#F5F5F5] mt-1 leading-relaxed">
+            Compare evidence grounding, constraint handling and assumed service tradeoffs. No superiority hypothesis is asserted.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="simulation">Reproducible Fixture</Badge>
-          <Badge variant="info">Seed: 0x99A41</Badge>
+      </div>
+
+      {/* Methods Table */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] font-medium tracking-wider uppercase">
+                <th className="pb-3 font-medium">METHOD</th>
+                <th className="pb-3 font-medium">DEFINITION</th>
+                <th className="pb-3 font-medium">REVIEW FOCUS</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#383838]/40">
+              <tr>
+                <td className="py-3.5 font-medium text-[#F5F5F5]">A · Rule-based</td>
+                <td className="py-3.5 text-[#A3A3A3]">Predefined response mappings</td>
+                <td className="py-3.5 text-[#A3A3A3]">Coverage and missing context</td>
+              </tr>
+              <tr>
+                <td className="py-3.5 font-medium text-[#F5F5F5]">B · AI-only</td>
+                <td className="py-3.5 text-[#A3A3A3]">Narrative-led proposal</td>
+                <td className="py-3.5 text-[#A3A3A3]">Evidence grounding and unsupported actions</td>
+              </tr>
+              <tr>
+                <td className="py-3.5 font-medium text-[#F5F5F5]">C · Simulation + safety</td>
+                <td className="py-3.5 text-[#A3A3A3]">Hypothetical impact + constraints</td>
+                <td className="py-3.5 text-[#A3A3A3]">Assumptions and rule handling</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* Summary KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>GARDA-SIM Safety Compliance</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-status-success">
-              100%
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-xs text-text-muted">
-            0 safety invariant violations across all verified runs
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Naive Heuristic Baseline Violations</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-status-critical">
-              75%
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-xs text-text-muted">
-            Severed OT telemetry feed without fail-safe buffer
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Average Downtime Prevention</CardDescription>
-            <CardTitle className="text-2xl font-bold font-mono text-text-primary">
-              -41 mins
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-xs text-text-muted">
-            Downtime reduced from 45m to 0–4m average
-          </CardContent>
-        </Card>
+      {/* Metric definitions — not measurements */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
+        <h2 className="text-base font-semibold text-[#F5F5F5]">
+          Metric definitions — not measurements
+        </h2>
+        <p className="text-xs text-[#A3A3A3] mt-3 leading-relaxed">
+          Evidence coverage: cited relevant synthetic records / available relevant records. Constraint compliance: acceptable candidates / evaluated candidates, once a validator exists. Service impact: estimated disruption under declared topology assumptions. Human review: documented decision and rationale, not operational success.
+        </p>
+        <div className="text-xs text-[#737373] mt-4">
+          No values are shown because no experiment has run. Methods and metrics require a recorded, reproducible protocol.
+        </div>
       </div>
 
-      {/* Comparative Evaluation Runs Table */}
-      <Card>
-        <CardHeader className="pb-3 border-b border-border/60">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-semibold">
-              Comparative Benchmark Matrix · Seed: 0x99A41
-            </CardTitle>
-            <span className="text-xs font-mono text-text-muted">Sample: 4 Evaluated Runs</span>
+      {/* 3 State Specimen Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-5 flex flex-col justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-[#F5F5F5]">
+              Queued
+            </h2>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              Intended state only. No job has been submitted.
+            </p>
           </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-[#1C1C1C] border-b border-border text-text-muted uppercase text-[10px] tracking-wider font-semibold">
-                <tr>
-                  <th className="py-3 px-4">Run ID</th>
-                  <th className="py-3 px-4">Method / Approach</th>
-                  <th className="py-3 px-4">Scenario</th>
-                  <th className="py-3 px-4">Safety Violations</th>
-                  <th className="py-3 px-4">Downtime</th>
-                  <th className="py-3 px-4">Risk Reduction</th>
-                  <th className="py-3 px-4 text-right">Policy Verdict</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {benchmarkRuns.map((run) => (
-                  <tr key={run.id} className="hover:bg-surface-elevated/40 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-accent">{run.id}</td>
-                    <td className="py-3.5 px-4 font-semibold text-text-primary">{run.method}</td>
-                    <td className="py-3.5 px-4 font-mono text-text-secondary">{run.scenario}</td>
-                    <td className="py-3.5 px-4">
-                      <span
-                        className={
-                          run.safetyViolations.includes("0")
-                            ? "text-status-success font-semibold"
-                            : "text-status-critical font-semibold"
-                        }
-                      >
-                        {run.safetyViolations}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-text-primary">{run.downtimeMinutes}m</td>
-                    <td className="py-3.5 px-4 font-mono font-semibold text-text-primary">{run.riskReduction}</td>
-                    <td className="py-3.5 px-4 text-right">
-                      <Badge
-                        size="sm"
-                        variant={run.verdict === "PASSED_ALL" ? "success" : "critical"}
-                      >
-                        {run.verdict}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="text-xs text-[#737373] mt-4 font-mono">
+            · State specimen
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-5 flex flex-col justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-[#F5F5F5]">
+              Running
+            </h2>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              Loading specimen. Do not show invented progress or results.
+            </p>
+          </div>
+          <div className="text-xs text-[#737373] mt-4 font-mono">
+            · State specimen
+          </div>
+        </div>
+
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-5 flex flex-col justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-[#F5F5F5]">
+              Error
+            </h2>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              Intended failure message: evaluation unavailable. Retain configuration and allow retry.
+            </p>
+          </div>
+          <div className="text-xs text-[#737373] mt-4 font-mono">
+            · State specimen
+          </div>
+        </div>
+      </div>
+
+      {/* Exports disabled box */}
+      <div className="bg-[#252525] border border-[#383838] rounded-xl p-5 mt-4">
+        <h2 className="text-xs font-semibold text-[#F5F5F5]">
+          Exports disabled
+        </h2>
+        <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+          Recorded data and export integration are required. No files have been generated.
+        </p>
+      </div>
+
+      {/* Persistent Disclaimer */}
+      <div className="text-xs text-[#737373] mt-8 mb-4">
+        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
+      </div>
     </AppLayout>
   );
 }
