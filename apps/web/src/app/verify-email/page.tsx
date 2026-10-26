@@ -3,70 +3,167 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Shield, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
-  const [token, setToken] = React.useState("984-210");
-  const [isVerified, setIsVerified] = React.useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsVerified(true);
-    setTimeout(() => router.push("/onboarding"), 1200);
-  };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center px-4 bg-bg-primary text-text-primary">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <Link href="/" className="inline-flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center text-accent">
-              <Shield className="w-6 h-6 text-accent" />
+    <div className="min-h-screen flex flex-col justify-between bg-[#171717] text-[#F5F5F5] font-sans antialiased">
+      {/* Top Header */}
+      <header className="px-6 md:px-12 py-5 border-b border-[#303030] flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 font-bold text-sm tracking-wide text-[#F5F5F5]">
+          <span className="w-3 h-0.5 bg-[#FF6B35]" />
+          <span>GARDA-SIM AI</span>
+        </Link>
+        <span className="text-[11px] font-mono text-[#737373] uppercase tracking-wider">
+          VISUAL SPECIMEN / NO AUTHENTICATED SESSION
+        </span>
+      </header>
+
+      {/* Main Content: 2-Column Split matching Figma */}
+      <div className="flex-1 max-w-[1440px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12">
+        {/* Left Form Column (7 cols) */}
+        <div className="lg:col-span-7 p-6 md:p-12 lg:p-16 space-y-8">
+          <div>
+            <div className="text-[11px] font-mono text-[#FF6B35] uppercase">
+              ACCOUNT / /verify-email
             </div>
-            <span className="font-bold text-lg text-text-primary tracking-wide">GARDA-SIM AI</span>
-          </Link>
-          <h1 className="text-xl font-bold text-text-primary pt-2">Verify Email Address</h1>
-          <p className="text-xs text-text-muted">Enter verification code sent to your account email</p>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-[#F5F5F5] mt-2">
+              Verify your email.
+            </h1>
+            <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
+              Pending-verification visual state. This prototype has not sent a verification message.
+            </p>
+          </div>
+
+          <div className="space-y-6 max-w-lg">
+            {/* Pending Verification Card */}
+            <div className="bg-[#1D1D1D] border border-[#383838] rounded-xl p-5 space-y-3">
+              <h2 className="text-sm font-bold text-[#F5F5F5]">
+                Pending verification
+              </h2>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
+                The intended flow asks you to follow a verification link for analyst@example.test before entering the lab.
+              </p>
+              <div className="text-[11px] font-mono text-[#FBBF24]">
+                · Unverified · specimen
+              </div>
+              <div className="font-mono text-xs text-[#A3A3A3] pt-1">
+                Resend link in 00:45
+              </div>
+              <p className="text-[11px] text-[#737373] pt-2 border-t border-[#303030]">
+                Cooldown specimen. Server rate limiting and email integration are required.
+              </p>
+            </div>
+
+            {/* Secondary Links */}
+            <div className="text-xs text-[#A3A3A3] flex items-center gap-2">
+              <Link href="/login" className="text-[#FF6B35] hover:underline">
+                Use a different email
+              </Link>
+              <span>·</span>
+              <Link href="/login" className="text-[#FF6B35] hover:underline">
+                Back to Sign In
+              </Link>
+            </div>
+
+            {/* Alert 1: Email delivery not configured */}
+            <div className="bg-[#42271F]/40 border border-[#FF6B35] rounded-xl p-4 text-xs text-[#A3A3A3]">
+              <span className="font-semibold text-[#F5F5F5] block mb-1">
+                Email delivery not configured in this prototype
+              </span>
+              No verification state has actually changed.
+            </div>
+
+            {/* Alert 2: Expired-link specimen */}
+            <div className="bg-[#1D1D1D] border border-[#F87171] rounded-xl p-4 text-xs space-y-1">
+              <div className="text-xs font-semibold text-[#F5F5F5]">
+                Expired-link specimen
+              </div>
+              <p className="text-xs text-[#A3A3A3]">
+                This verification link has expired. Request a new link. Expiry and token checks require implementation.
+              </p>
+            </div>
+
+            {/* Card 2: Verified-state specimen */}
+            <div className="bg-[#1D1D1D] border border-[#383838] rounded-xl p-5 space-y-3">
+              <div className="text-[10px] font-mono text-[#FF6B35] tracking-wider uppercase">
+                INTENDED STATE / NOT AN AUTHENTICATED SUCCESS
+              </div>
+              <h2 className="text-sm font-bold text-[#F5F5F5]">
+                Verified-state specimen
+              </h2>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
+                Email verification would be confirmed here after server validation.
+              </p>
+              <div className="pt-1">
+                <Link
+                  href="/onboarding"
+                  className="bg-[#FF6B35] text-white text-xs font-medium px-5 py-2.5 rounded-lg hover:bg-[#FF8255] transition-colors inline-block"
+                >
+                  Continue to onboarding
+                </Link>
+              </div>
+              <p className="text-[11px] text-[#737373] pt-2 border-t border-[#303030]">
+                Do not show this state based only on a client-side navigation event.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface-card p-6 md:p-8 space-y-6 shadow-2xl">
-          {isVerified ? (
-            <div className="text-center space-y-3 py-4">
-              <div className="w-12 h-12 rounded-full bg-status-success/20 text-status-success flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
-              <h3 className="text-sm font-bold text-text-primary">Email Verified</h3>
-              <p className="text-xs text-text-muted">Proceeding to simulation lab setup wizard...</p>
+        {/* Right Info Column (5 cols) */}
+        <div className="lg:col-span-5 bg-[#202020] border-t lg:border-t-0 lg:border-l border-[#383838] p-8 md:p-12 lg:p-16 flex flex-col justify-between">
+          <div className="space-y-6">
+            <div className="text-[11px] font-bold text-[#FF6B35] tracking-wider uppercase font-mono">
+              SIMULATION ONLY
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1.5 text-center">
-                <label className="text-xs font-medium text-text-secondary">6-Digit Verification Code</label>
-                <Input
-                  value={token}
-                  onChange={(e) => setToken(e.target.value)}
-                  placeholder="000-000"
-                  className="text-center font-mono tracking-widest text-lg font-bold"
-                  required
-                />
-              </div>
-              <Button type="submit" variant="primary" className="w-full text-xs">
-                Confirm & Enter Lab
-              </Button>
-            </form>
-          )}
 
-          <div className="pt-2 border-t border-border text-center text-xs text-text-muted">
-            Didn&apos;t receive code?{" "}
-            <button type="button" className="text-accent hover:underline font-medium">
-              Resend verification code
-            </button>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5] leading-snug">
+              A safe place to examine a difficult decision.
+            </h2>
+
+            <p className="text-xs text-[#A3A3A3] leading-relaxed">
+              Explore synthetic evidence, compare hypothetical responses and keep human review explicit.
+            </p>
+
+            <div className="pt-6 border-t border-[#383838] space-y-3">
+              <h3 className="text-sm font-semibold text-[#F5F5F5]">
+                Simulation Lab
+              </h3>
+              <div className="space-y-1 font-mono text-xs text-[#A3A3A3]">
+                <div>INC-2026-0042</div>
+                <div>Suspicious Privilege Escalation</div>
+                <div>High / Awaiting Review</div>
+              </div>
+              <div className="font-mono text-xs text-[#737373] pt-2">
+                6 virtual assets / 3 synthetic events
+                <br />
+                No real action
+              </div>
+            </div>
+          </div>
+
+          <div className="text-xs text-[#737373] mt-8 pt-6 border-t border-[#383838] leading-relaxed">
+            Visual specification, not authentication. Forms and account states are specimens. Identity, server validation, email delivery and persistence require implementation.
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="px-6 md:px-12 py-6 border-t border-[#303030] text-xs text-[#737373] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Link href="/privacy" className="hover:text-[#F5F5F5]">Privacy</Link>
+          <span>·</span>
+          <Link href="/terms" className="hover:text-[#F5F5F5]">Terms</Link>
+          <span>·</span>
+          <Link href="/security" className="hover:text-[#F5F5F5]">Security</Link>
+          <span>·</span>
+          <Link href="/" className="hover:text-[#F5F5F5]">Back to home</Link>
+        </div>
+        <div>
+          Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
+        </div>
+      </footer>
     </div>
   );
 }

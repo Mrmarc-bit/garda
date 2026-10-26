@@ -1,63 +1,195 @@
+"use client";
+
 import * as React from "react";
 import Link from "next/link";
-import { HelpCircle, ArrowRight } from "lucide-react";
 import { PublicHeader } from "@/components/layout/public-header";
 import { PublicFooter } from "@/components/layout/public-footer";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 export default function FaqPage() {
-  const faqs = [
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [activeTab, setActiveTab] = React.useState<"all" | "scenarios" | "ai" | "results">("all");
+
+  const faqGroups = [
     {
-      q: "Does GARDA-SIM AI execute real containment actions against my network?",
-      a: "No. GARDA-SIM AI is strictly a defensive decision-support simulator. It operates entirely on synthetic data, virtual IT/OT asset models, and synthetic incident logs. It cannot execute live containment, modify network firewalls, or terminate live accounts.",
+      id: "scenarios",
+      title: "Scenarios & data",
+      items: [
+        {
+          q: "What can I investigate?",
+          a: "INC-2026-0042 — Suspicious Privilege Escalation, with three synthetic events and six virtual IT/OT assets in Simulation Lab.",
+        },
+        {
+          q: "Does any content come from production?",
+          a: "No. The specified dataset is local and synthetic. Do not enter real credentials, incident records or sensitive operational information.",
+        },
+        {
+          q: "What does a dependency arrow mean?",
+          a: "A → B means A depends on B. It is not an attack path, data flow or proof of propagation.",
+        },
+      ],
     },
     {
-      q: "Can the AI model override a safety policy verdict?",
-      a: "Never. All safety invariants are enforced deterministically by code before recommendations are displayed. If an action violates a safety rule (such as severing OT telemetry), it is marked as BLOCKED, and the AI model cannot authorize or execute it.",
+      id: "ai",
+      title: "AI & safety",
+      items: [
+        {
+          q: "Can AI take a response action?",
+          a: "No. AI assists explanation only. Candidate actions are hypothetical and require explicit human review for demonstration.",
+        },
+        {
+          q: "Is confidence a probability?",
+          a: "No. The example 0.82 is illustrative confidence and has not been calibrated. It is not evidence of correctness.",
+        },
+        {
+          q: "Does the design validate policy?",
+          a: "No. Policy Validation is a separate proposed deterministic layer. Pass/fail labels are illustrative specimens, not computed checks.",
+        },
+      ],
     },
     {
-      q: "Can the simulator operate if an external AI provider goes offline?",
-      a: "Yes. The deterministic simulation calculations and safety policy engine operate completely offline and independently of external LLMs. A local deterministic fallback persona generates structured explanations directly from the rule graph.",
-    },
-    {
-      q: "Are the metrics and incident records consistent across the platform?",
-      a: "Yes. The entire application uses a unified synthetic dataset: incident INC-2026-0042 targeting edge gateway APP-GW-02, connected to virtual assets IDENTITY-SVC-01, MONITOR-01, OPS-DASH-01, OT-CONTROLLER-SIM-01, and TELEMETRY-SIM-01.",
+      id: "results",
+      title: "Results & access",
+      items: [
+        {
+          q: "Are comparisons recorded experiments?",
+          a: "No. Every sample comparison is labeled Illustrative comparison — not a recorded run. Experiments default to No experiment run yet.",
+        },
+        {
+          q: "Can I export results?",
+          a: "Export controls remain disabled until recorded data exists and an export implementation is provided. Sample report layouts do not create files.",
+        },
+        {
+          q: "Is account or email behavior implemented?",
+          a: "No. Account forms and verification messages are visual specimens. Server validation, sessions, email delivery and persistence require implementation.",
+        },
+      ],
     },
   ];
 
+  const filteredGroups = faqGroups
+    .filter((group) => (activeTab === "all" ? true : group.id === activeTab))
+    .map((group) => {
+      if (!searchQuery.trim()) return group;
+      const lower = searchQuery.toLowerCase();
+      const filteredItems = group.items.filter(
+        (item) => item.q.toLowerCase().includes(lower) || item.a.toLowerCase().includes(lower)
+      );
+      return { ...group, items: filteredItems };
+    })
+    .filter((group) => group.items.length > 0);
+
   return (
-    <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary">
+    <div className="min-h-screen flex flex-col bg-[#171717] text-[#F5F5F5] font-sans antialiased">
       <PublicHeader />
 
-      <section className="py-16 md:py-24 px-4 md:px-8 border-b border-border bg-[#181818]">
-        <div className="max-w-[1440px] mx-auto text-center space-y-4">
-          <Badge variant="simulation">Frequently Asked Questions</Badge>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-text-primary max-w-3xl mx-auto">
-            Questions & Operational Clarifications
+      {/* Header matching docs ui/Public ·/faq · Desktop.png */}
+      <section className="px-6 md:px-12 lg:px-16 pt-16 pb-10 border-b border-[#303030]">
+        <div className="max-w-[1440px] mx-auto space-y-3">
+          <div className="text-[11px] font-mono font-bold tracking-wider text-[#FF6B35] uppercase">
+            PRODUCT GUIDE / /faq
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-[#F5F5F5] leading-tight">
+            Know the boundaries.
           </h1>
-          <p className="text-sm md:text-base text-text-secondary max-w-2xl mx-auto">
-            Clear answers on simulation scope, deterministic safety, and synthetic boundaries.
+          <p className="text-sm md:text-base text-[#A3A3A3] max-w-2xl leading-relaxed">
+            Answers about scenarios, synthetic data, AI assistance and the meaning of simulated results.
           </p>
         </div>
       </section>
 
-      <section className="py-20 px-4 md:px-8">
-        <div className="max-w-3xl mx-auto space-y-6">
-          {faqs.map((faq) => (
-            <Card key={faq.q} className="border-border bg-surface-card">
-              <CardHeader>
-                <CardTitle className="text-sm md:text-base font-semibold flex items-start gap-2.5">
-                  <HelpCircle className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                  <span>{faq.q}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0 text-xs text-text-secondary leading-relaxed pl-10">
-                {faq.a}
-              </CardContent>
-            </Card>
-          ))}
+      {/* Main FAQ Content */}
+      <section className="px-6 md:px-12 lg:px-16 py-10 flex-1">
+        <div className="max-w-[1440px] mx-auto space-y-10">
+          {/* Search Bar Specimen Box */}
+          <div className="bg-[#202020] border border-[#383838] rounded-xl p-5 max-w-4xl space-y-2">
+            <label htmlFor="search-input" className="text-xs font-mono text-[#737373] block">
+              Search questions
+            </label>
+            <input
+              id="search-input"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by topic or keyword"
+              className="w-full bg-transparent text-sm text-[#F5F5F5] placeholder-[#737373] focus:outline-none"
+            />
+            <div className="text-[11px] text-[#737373] pt-1 border-t border-[#303030]">
+              Search appearance only; filtering requires implementation.
+            </div>
+          </div>
+
+          {/* Category Tabs */}
+          <div className="flex flex-wrap items-center gap-6 text-xs border-b border-[#303030] pb-3 max-w-4xl">
+            <button
+              onClick={() => setActiveTab("all")}
+              className={`transition-colors ${
+                activeTab === "all" ? "text-[#FF6B35] font-semibold" : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+              }`}
+            >
+              All questions
+            </button>
+            <button
+              onClick={() => setActiveTab("scenarios")}
+              className={`transition-colors ${
+                activeTab === "scenarios" ? "text-[#FF6B35] font-semibold" : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+              }`}
+            >
+              Scenarios & data
+            </button>
+            <button
+              onClick={() => setActiveTab("ai")}
+              className={`transition-colors ${
+                activeTab === "ai" ? "text-[#FF6B35] font-semibold" : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+              }`}
+            >
+              AI & safety
+            </button>
+            <button
+              onClick={() => setActiveTab("results")}
+              className={`transition-colors ${
+                activeTab === "results" ? "text-[#FF6B35] font-semibold" : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+              }`}
+            >
+              Results & access
+            </button>
+          </div>
+
+          {/* Groups and Cards */}
+          <div className="space-y-12 max-w-4xl">
+            {filteredGroups.map((group) => (
+              <div key={group.id} className="space-y-4">
+                <h2 className="text-xl font-bold text-[#F5F5F5]">
+                  {group.title}
+                </h2>
+
+                <div className="space-y-4">
+                  {group.items.map((item) => (
+                    <div
+                      key={item.q}
+                      className="bg-[#202020] border border-[#383838] rounded-xl p-6 space-y-3"
+                    >
+                      <h3 className="text-base font-bold text-[#F5F5F5]">
+                        {item.q}
+                      </h3>
+                      <p className="text-xs text-[#A3A3A3] leading-relaxed">
+                        {item.a}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom Link */}
+          <div className="pt-4">
+            <Link
+              href="/contact"
+              className="text-xs text-[#F5F5F5] hover:text-[#FF6B35] underline transition-colors"
+            >
+              Ask a question → Contact
+            </Link>
+          </div>
         </div>
       </section>
 

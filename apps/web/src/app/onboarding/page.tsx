@@ -3,278 +3,259 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Shield,
-  CheckCircle2,
-  ArrowRight,
-  ArrowLeft,
-  Server,
-  Network,
-  Cpu,
-  Sparkles,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = React.useState(1);
-  const [role, setRole] = React.useState("soc_analyst");
-  const [topology, setTopology] = React.useState("hybrid_ot");
-  const [safetyMode, setSafetyMode] = React.useState("strict_ot");
-  const [explanationStyle, setExplanationStyle] = React.useState("technical");
+  const [step, setStep] = React.useState<number>(1);
   const [isCompleted, setIsCompleted] = React.useState(false);
 
+  const steps = [
+    {
+      num: 1,
+      navTitle: "1. Welcome",
+      title: "Welcome to the Simulation Lab.",
+      subtitle: "Defensive research with synthetic incidents and virtual assets only. A human remains responsible for review.",
+      cardTitle: "Understand the response, not just the alert",
+      cardBody: (
+        <p className="text-xs text-[#A3A3A3] leading-relaxed">
+          Investigate → compare → inspect constraints → review. This short orientation introduces the workspace and its limits. No real credentials, production connections or automated remediation.
+        </p>
+      ),
+    },
+    {
+      num: 2,
+      navTitle: "2. Synthetic environment",
+      title: "A bounded, synthetic environment.",
+      subtitle: "Defensive research with synthetic incidents and virtual assets only. A human remains responsible for review.",
+      cardTitle: "Your synthetic environment",
+      cardBody: (
+        <div className="space-y-3 text-xs text-[#A3A3A3] leading-relaxed">
+          <p>One incident, three evidence records and six virtual IT/OT assets.</p>
+          <div className="font-mono text-[11px] text-[#F5F5F5]">
+            IDENTITY-SVC-01 / APP-GW-02 / MONITOR-01 / OPS-DASH-01 / OT-CONTROLLER-SIM-01 / TELEMETRY-SIM-01
+          </div>
+          <p>A → B means A depends on B. Virtual dependencies are assumptions, not measured infrastructure.</p>
+        </div>
+      ),
+    },
+    {
+      num: 3,
+      navTitle: "3. Evidence & simulation",
+      title: "Follow the evidence, then compare.",
+      subtitle: "Defensive research with synthetic incidents and virtual assets only. A human remains responsible for review.",
+      cardTitle: "Synthetic evidence path",
+      cardBody: (
+        <div className="space-y-3 text-xs text-[#A3A3A3] leading-relaxed font-mono">
+          <div className="text-[11px] text-[#737373]">2026-10-26 UTC</div>
+          <div className="space-y-1 text-xs text-[#F5F5F5]">
+            <div>EV-0042-01 / 09:14:00 / Role elevation requested</div>
+            <div>EV-0042-02 / 09:14:08 / Privileged token issued</div>
+            <div>EV-0042-03 / 09:15:10 / Privileged route accessed</div>
+          </div>
+          <p className="font-sans text-[#A3A3A3] pt-2">
+            Keep Synthetic Evidence separate from Derived Assessment. Compare hypothetical strategies, not real response actions.
+          </p>
+        </div>
+      ),
+    },
+    {
+      num: 4,
+      navTitle: "4. Constraints & review",
+      title: "Constraints and people have distinct roles.",
+      subtitle: "Defensive research with synthetic incidents and virtual assets only. A human remains responsible for review.",
+      cardTitle: "The review boundary",
+      cardBody: (
+        <div className="space-y-3 text-xs text-[#A3A3A3] leading-relaxed">
+          <p>
+            <strong className="text-[#F5F5F5]">AI-Generated Explanation:</strong> narrative specimen linked to evidence; provider integration unverified.
+          </p>
+          <p>
+            <strong className="text-[#F5F5F5]">Policy Validation:</strong> a separate proposed deterministic layer. Preserve monitoring, require review and protect the OT controller. No policy has been computed.
+          </p>
+          <p>
+            <strong className="text-[#F5F5F5]">Human review:</strong> Pending Review → Approved for Demonstration / Rejected / Requires More Evidence.
+          </p>
+        </div>
+      ),
+    },
+    {
+      num: 5,
+      navTitle: "5. Enter Simulation Lab",
+      title: "Ready to explore the lab.",
+      subtitle: "Defensive research with synthetic incidents and virtual assets only. A human remains responsible for review.",
+      cardTitle: "Your first investigation",
+      cardBody: (
+        <div className="space-y-2 text-xs text-[#A3A3A3] leading-relaxed">
+          <div className="text-sm font-semibold text-[#F5F5F5]">
+            INC-2026-0042 — Suspicious Privilege Escalation
+          </div>
+          <div className="font-mono text-[11px] text-[#737373]">
+            High / Awaiting Review / Simulation Lab
+            <br />
+            APP-GW-02 / analyst-demo-03
+          </div>
+          <p className="pt-2">
+            Illustrative confidence 0.82 is not calibrated probability. Inspect evidence before comparing hypothetical actions. No experiment run yet.
+          </p>
+        </div>
+      ),
+    },
+  ];
+
+  const current = steps[step - 1];
+
   const handleNext = () => {
-    if (currentStep < 5) {
-      setCurrentStep(currentStep + 1);
+    if (step < 5) {
+      setStep(step + 1);
     } else {
       setIsCompleted(true);
     }
   };
 
   const handlePrev = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+    if (isCompleted) {
+      setIsCompleted(false);
+      setStep(5);
+    } else if (step > 1) {
+      setStep(step - 1);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center px-4 bg-bg-primary text-text-primary py-12">
-      <div className="w-full max-w-2xl space-y-6">
-        {/* Brand header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/20 border border-accent/40 text-accent text-xs font-semibold">
-            <Shield className="w-4 h-4" />
-            <span>GARDA-SIM AI Setup Wizard</span>
-          </div>
-          <h1 className="text-2xl font-bold text-text-primary">
-            Configure Your Defensive Simulation Lab
-          </h1>
-          <p className="text-xs text-text-muted">
-            Step {currentStep} of 5 · Customize your synthetic evaluation environment
-          </p>
-        </div>
+    <div className="min-h-screen flex flex-col justify-between bg-[#171717] text-[#F5F5F5] font-sans antialiased">
+      {/* Top Header */}
+      <header className="px-6 md:px-12 py-5 border-b border-[#303030] flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 font-bold text-sm tracking-wide text-[#F5F5F5]">
+          <span className="w-3 h-0.5 bg-[#FF6B35]" />
+          <span>GARDA-SIM AI</span>
+        </Link>
+        <span className="text-[11px] font-mono text-[#FF6B35] uppercase tracking-wider">
+          · SIMULATION ONLY
+        </span>
+      </header>
 
-        {/* Step Progress Bar */}
-        <div className="grid grid-cols-5 gap-2">
-          {[1, 2, 3, 4, 5].map((step) => (
-            <div
-              key={step}
-              className={`h-1.5 rounded-full transition-all ${
-                step <= currentStep ? "bg-accent" : "bg-border"
+      {/* Main Content matching Figma */}
+      <div className="flex-1 max-w-[1440px] w-full mx-auto px-6 md:px-12 py-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        {/* Left Sidebar (3 cols) */}
+        <aside className="lg:col-span-3 space-y-6">
+          <div className="text-[11px] font-mono text-[#FF6B35] uppercase tracking-wider">
+            ORIENTATION / {isCompleted ? "5 OF 5" : `${step} OF 5`}
+          </div>
+
+          <nav className="space-y-3 text-xs">
+            {steps.map((s) => {
+              const isActive = !isCompleted && s.num === step;
+              return (
+                <button
+                  key={s.num}
+                  type="button"
+                  onClick={() => {
+                    setIsCompleted(false);
+                    setStep(s.num);
+                  }}
+                  className={`block text-left transition-colors ${
+                    isActive
+                      ? "text-[#F5F5F5] font-semibold"
+                      : "text-[#737373] hover:text-[#A3A3A3]"
+                  }`}
+                >
+                  {isActive ? `▸ ${s.navTitle}` : s.navTitle}
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
+
+        {/* Right Main Panel (9 cols) */}
+        <main className="lg:col-span-9 space-y-8 max-w-4xl">
+          {/* Title Area */}
+          <div className="space-y-3">
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-[#F5F5F5] leading-tight">
+              {isCompleted ? "Orientation complete — specimen." : current.title}
+            </h1>
+            <p className="text-sm md:text-base text-[#A3A3A3] leading-relaxed">
+              {isCompleted
+                ? "Defensive research with synthetic incidents and virtual assets only. A human remains responsible for review."
+                : current.subtitle}
+            </p>
+          </div>
+
+          {/* Orientation Specimen Box */}
+          <div className="bg-[#202020] border border-[#383838] rounded-xl p-8 space-y-4">
+            <div className="text-[11px] font-mono text-[#FF6B35] uppercase tracking-wider">
+              SIMULATION ONLY
+            </div>
+
+            <h2 className="text-lg font-bold text-[#F5F5F5]">
+              {isCompleted ? "Completion specimen, not saved progress" : current.cardTitle}
+            </h2>
+
+            {isCompleted ? (
+              <div className="space-y-3 text-xs text-[#A3A3A3] leading-relaxed">
+                <p>The intended orientation is complete. No account state or returning-user preference has been persisted.</p>
+                <p>Enter the lab at INC-2026-0042. Review evidence, assumptions and uncertainty. No experiment run yet.</p>
+              </div>
+            ) : (
+              current.cardBody
+            )}
+          </div>
+
+          {/* Visual onboarding disclaimer card */}
+          <div className="bg-[#202020] border border-[#383838] rounded-xl p-5 space-y-1.5">
+            <h3 className="text-xs font-bold text-[#F5F5F5]">
+              Visual onboarding, not saved progress
+            </h3>
+            <p className="text-xs text-[#737373] leading-relaxed">
+              Returning-user detection, previous/next/skip behavior and completion persistence require implementation.
+            </p>
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-wrap items-center gap-4 pt-2">
+            <button
+              type="button"
+              onClick={handlePrev}
+              disabled={step === 1 && !isCompleted}
+              className={`text-xs ${
+                step === 1 && !isCompleted
+                  ? "text-[#525252] cursor-not-allowed"
+                  : "text-[#A3A3A3] hover:text-[#F5F5F5]"
               }`}
-            />
-          ))}
-        </div>
+            >
+              Previous
+            </button>
 
-        {/* Step Card Content */}
-        <Card className="border-border bg-surface-card p-6 md:p-8 shadow-2xl">
-          <CardContent className="p-0 space-y-6">
-            {/* Step 1: Role Selection */}
-            {currentStep === 1 && (
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <h2 className="text-base font-bold text-text-primary">Select Your Operational Role</h2>
-                  <p className="text-xs text-text-muted">
-                    Tailors dashboard metric density and candidate strategy presentation.
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  {[
-                    { id: "soc_analyst", title: "SOC Incident Analyst", desc: "Fast evidence triage & candidate comparison" },
-                    { id: "ot_engineer", title: "OT / Industrial Engineer", desc: "Prioritizes controller safety & telemetry uptime" },
-                    { id: "incident_commander", title: "Incident Commander", desc: "Executive blast radius & downtime trade-offs" },
-                    { id: "security_architect", title: "Security Architect", desc: "Dependency graph & perimeter controls" },
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setRole(item.id)}
-                      className={`p-4 rounded-xl border text-left transition-all ${
-                        role === item.id
-                          ? "border-accent bg-accent/10 ring-1 ring-accent"
-                          : "border-border bg-surface-elevated/40 hover:bg-surface-elevated"
-                      }`}
-                    >
-                      <div className="font-semibold text-text-primary">{item.title}</div>
-                      <div className="text-[11px] text-text-muted mt-1">{item.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+            {isCompleted ? (
+              <Link
+                href="/app"
+                className="bg-[#FF6B35] text-white text-xs font-medium px-5 py-2.5 rounded-lg hover:bg-[#FF8255] transition-colors"
+              >
+                Enter Simulation Lab
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="bg-[#FF6B35] text-white text-xs font-medium px-5 py-2.5 rounded-lg hover:bg-[#FF8255] transition-colors"
+              >
+                {step === 5 ? "Enter Simulation Lab" : "Next"}
+              </button>
             )}
 
-            {/* Step 2: Topology Selection */}
-            {currentStep === 2 && (
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <h2 className="text-base font-bold text-text-primary">Select Virtual Topology Scenario</h2>
-                  <p className="text-xs text-text-muted">
-                    Preloads synthetic virtual assets and baseline network dependencies.
-                  </p>
-                </div>
-                <div className="space-y-3 text-xs">
-                  {[
-                    { id: "hybrid_ot", title: "Enterprise Gateway + Industrial OT Controller (Recommended)", desc: "APP-GW-02 edge gateway linked to Modbus OT-CONTROLLER-SIM-01 and telemetry sensors." },
-                    { id: "enterprise_cloud", title: "Cloud Microservices VPC", desc: "Identity providers, API gateways, and distributed database nodes." },
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setTopology(item.id)}
-                      className={`w-full p-4 rounded-xl border text-left transition-all ${
-                        topology === item.id
-                          ? "border-accent bg-accent/10 ring-1 ring-accent"
-                          : "border-border bg-surface-elevated/40 hover:bg-surface-elevated"
-                      }`}
-                    >
-                      <div className="font-semibold text-text-primary">{item.title}</div>
-                      <div className="text-[11px] text-text-muted mt-1">{item.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Step 3: Safety Policy Strictness */}
-            {currentStep === 3 && (
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <h2 className="text-base font-bold text-text-primary">Deterministic Safety Boundary Policy</h2>
-                  <p className="text-xs text-text-muted">
-                    Defines hard invariants that cannot be overridden by AI outputs.
-                  </p>
-                </div>
-                <div className="space-y-3 text-xs">
-                  {[
-                    { id: "strict_ot", title: "Strict Fail-Safe OT Constraint (SEC-OT-04 Enabled)", desc: "Hard blocks containment candidates that abruptly sever controller telemetry." },
-                    { id: "standard_enterprise", title: "Standard IT Containment Policy", desc: "Emphasizes rapid network isolation with warning alerts for downstream services." },
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setSafetyMode(item.id)}
-                      className={`w-full p-4 rounded-xl border text-left transition-all ${
-                        safetyMode === item.id
-                          ? "border-accent bg-accent/10 ring-1 ring-accent"
-                          : "border-border bg-surface-elevated/40 hover:bg-surface-elevated"
-                      }`}
-                    >
-                      <div className="font-semibold text-text-primary">{item.title}</div>
-                      <div className="text-[11px] text-text-muted mt-1">{item.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Step 4: AI Explanation Style */}
-            {currentStep === 4 && (
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <h2 className="text-base font-bold text-text-primary">AI Explanation & Synthesis Persona</h2>
-                  <p className="text-xs text-text-muted">
-                    Formats natural language summaries while authoritative metrics remain deterministic.
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  {[
-                    { id: "technical", title: "Concise Technical", desc: "Focuses on network packets, ports, process IDs, and hashes." },
-                    { id: "operational", title: "Operational Impact", desc: "Focuses on service availability, downtime, and recovery SLA." },
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setExplanationStyle(item.id)}
-                      className={`p-4 rounded-xl border text-left transition-all ${
-                        explanationStyle === item.id
-                          ? "border-accent bg-accent/10 ring-1 ring-accent"
-                          : "border-border bg-surface-elevated/40 hover:bg-surface-elevated"
-                      }`}
-                    >
-                      <div className="font-semibold text-text-primary">{item.title}</div>
-                      <div className="text-[11px] text-text-muted mt-1">{item.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Step 5: Verification & Final Confirmation */}
-            {currentStep === 5 && (
-              <div className="space-y-4 text-xs">
-                <div className="space-y-1">
-                  <h2 className="text-base font-bold text-text-primary">Confirm Simulation Lab Settings</h2>
-                  <p className="text-xs text-text-muted">
-                    Review selected configurations before launching the live console.
-                  </p>
-                </div>
-                <div className="p-4 rounded-xl bg-surface-elevated/40 border border-border space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-text-muted">Selected Role:</span>
-                    <span className="font-semibold text-text-primary capitalize">{role.replace("_", " ")}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-text-muted">Scenario Topology:</span>
-                    <span className="font-semibold text-accent">VIRTUAL-GRID-2026 (IT/OT)</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-text-muted">Safety Invariant Mode:</span>
-                    <span className="font-semibold text-status-success">Strict (Rule SEC-OT-04 Active)</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-text-muted">AI Synthesis:</span>
-                    <span className="font-semibold text-text-primary capitalize">{explanationStyle} Persona</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Navigation Buttons */}
-            <div className="pt-4 border-t border-border flex items-center justify-between">
-              {currentStep > 1 ? (
-                <Button variant="outline" size="sm" onClick={handlePrev} className="gap-1.5 text-xs">
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Previous</span>
-                </Button>
-              ) : (
-                <div />
-              )}
-              <Button variant="primary" size="sm" onClick={handleNext} className="gap-1.5 text-xs">
-                <span>{currentStep === 5 ? "Complete Setup" : "Next Step"}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Completion Modal / State */}
-        {isCompleted && (
-          <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="max-w-md w-full bg-surface-card border border-accent/40 rounded-2xl p-6 md:p-8 space-y-6 text-center shadow-2xl">
-              <div className="w-16 h-16 rounded-full bg-status-success/20 border-2 border-status-success flex items-center justify-center text-status-success mx-auto">
-                <CheckCircle2 className="w-8 h-8" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-text-primary">Simulation Lab Ready</h3>
-                <p className="text-xs text-text-muted leading-relaxed">
-                  Active scenario <strong>INC-2026-0042</strong> on <strong>APP-GW-02</strong> is loaded and ready for deterministic response evaluation.
-                </p>
-              </div>
-              <div className="pt-2">
-                <Link href="/app" className="block">
-                  <Button variant="primary" size="lg" className="w-full gap-2 text-sm">
-                    <span>Enter Command Console</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
+            <Link
+              href="/app"
+              className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors ml-2"
+            >
+              Skip orientation
+            </Link>
           </div>
-        )}
+        </main>
       </div>
+
+      {/* Footer */}
+      <footer className="px-6 md:px-12 py-6 border-t border-[#303030] text-xs text-[#737373]">
+        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
+      </footer>
     </div>
   );
 }
