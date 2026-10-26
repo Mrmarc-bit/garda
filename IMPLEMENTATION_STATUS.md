@@ -12,8 +12,8 @@
 | Phase / Milestone | Status | Completed Features | Blockers / Risks | Next Verification Gate |
 |---|---|---|---|---|
 | **Milestone 0: Audit & Governance** | **Verified** | Repository audit, Figma inventory (60 PNGs mapped), 10 Governance & Planning docs created | None | Milestone 0 exit criteria met |
-| **Milestone 1: Foundation & Design System** | **In Progress** | Tech stack decision finalized, design tokens extracted | None | Next.js App Router setup, token verification, responsive shell |
-| **Milestone 2: Core Screens** | **Not Started** | - | Awaiting Milestone 1 | Route rendering and Figma fidelity checks |
+| **Milestone 1: Foundation & Design System** | **Verified** | Next.js App Router scaffold, Tailwind design tokens, Reusable primitives (`Button`, `Badge`, `Card`, `Input`, `Tabs`), Shell layout (`AppSidebar`, `AppHeader`, `AppLayout`, `PublicHeader`, `PublicFooter`), persistent `SIMULATION ONLY` badge, standardized synthetic dataset, Landing page (`/`), Overview Dashboard (`/app`) | Browser automated testing blocked by offline environment; CLI build and HTTP curl verified | Proceeding to Milestone 2 (Core routes) |
+| **Milestone 2: Core Screens** | **In Progress** | Routing skeleton established | None | Building dedicated views for simulator, topology, incidents |
 | **Milestone 3: Backend & Persistence** | **Not Started** | - | Awaiting Milestone 2 | API schema and database tests |
 | **Milestone 4: Simulation & Safety Engine** | **Not Started** | - | Awaiting Milestone 3 | Safety policy unit tests |
 | **Milestone 5: AI Explanation & Review** | **Not Started** | - | Awaiting Milestone 4 | Schema validation & fallback checks |
@@ -39,6 +39,16 @@
   - `DECISIONS.md` (ADR-001 through ADR-005)
   - `IMPLEMENTATION_PLAN.md` (Milestones 0–7 with acceptance criteria)
   - `IMPLEMENTATION_STATUS.md` (This document)
+
+### Milestone 1: Foundation and Design-System Fidelity (Verified)
+- **Next.js App Router Structure:** Created `apps/web` with TypeScript strict mode, PostCSS, and Tailwind CSS.
+- **Design Tokens Integration:** Extracted color tokens (`#171717`, `#202020`, `#252525`, `#383838`, `#FF6B35`, `#4ADE80`, `#F87171`) in `globals.css` and `tailwind.config.ts`.
+- **Reusable Primitives:** Implemented `Button`, `Badge`, `Card`, `Input`, `Tabs` conforming strictly to Figma primitives.
+- **Application Shells:** Built responsive `AppSidebar` (248px), `AppHeader` (64px), `AppLayout` with mobile drawer backdrop, `PublicHeader`, and `PublicFooter`.
+- **Mandatory Safety Badge:** Persistent `SimulationBadge` (`SIMULATION ONLY`) integrated into headers and scenario cards.
+- **Synthetic Data Fixtures:** Standardized incident `INC-2026-0042` on `APP-GW-02`, 6 virtual IT/OT assets, and 3 response candidate strategies.
+- **Build Verification:** Production build `npm --workspace=@garda-sim/web run build` completed in 3.7s with zero errors or warnings.
+- **HTTP Server Verification:** Dev server verified responding `HTTP/1.1 200 OK` on `/` and `/app`.
 
 ---
 

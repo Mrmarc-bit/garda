@@ -1,0 +1,19 @@
+{
+  "name": "garda-sim-ai",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm --workspace=@garda-sim/web run dev",
+    "build": "npm --workspace=@garda-sim/web run build",
+    "start": "npm --workspace=@garda-sim/web run start",
+    "lint": "npm --workspace=@garda-sim/web run lint",
+    "typecheck": "npm --workspace=@garda-sim/web run typecheck"
+  },
+  "overrides": {
+    "postcss": "^8.5.31",
+    "postcss-selector-parser": "^7.1.7"
+  }
+}
