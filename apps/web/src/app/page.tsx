@@ -5,6 +5,7 @@ import Link from "next/link";
 import { PublicHeader } from "@/components/layout/public-header";
 import { PublicFooter } from "@/components/layout/public-footer";
 import { HeroInteractivePreview } from "@/components/landing/hero-interactive-preview";
+import { ResponseDilemmaVisualizer } from "@/components/landing/response-dilemma-visualizer";
 import { ArchitectureLayersVisualizer } from "@/components/landing/architecture-layers-visualizer";
 import { TimelineScrubber } from "@/components/landing/timeline-scrubber";
 import { TradeoffComparisonMatrix } from "@/components/landing/tradeoff-comparison-matrix";
@@ -21,7 +22,7 @@ export default function LandingPage() {
         <PublicHeader />
 
         {/* Hero Section with Ambient 3D Three.js Constellation & Technical Grid */}
-        <section className="relative px-6 md:px-12 lg:px-16 pt-12 pb-16 border-b border-[#303030] overflow-hidden">
+        <section className="relative px-6 md:px-12 lg:px-16 pt-16 pb-24 md:pt-20 md:pb-28 lg:pt-24 lg:pb-32 border-b border-[#303030] overflow-hidden">
           {/* Ambient Interactive 3D Three.js Constellation Canvas */}
           <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
             <CyberConstellation3D nodeCount={36} interactive={true} />
@@ -37,7 +38,7 @@ export default function LandingPage() {
             aria-hidden="true"
           />
 
-          <div className="relative z-10 max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="relative z-10 max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             {/* Left Column (5 cols) */}
             <div className="lg:col-span-5 space-y-6 lg:pt-4">
               <div className="text-[11px] font-mono font-bold tracking-wider text-[#FF6B35] uppercase flex items-center gap-2">
@@ -85,7 +86,7 @@ export default function LandingPage() {
         </section>
 
         {/* 3 Pillars Value Props Strip */}
-        <section className="px-6 md:px-12 lg:px-16 py-6 border-b border-[#303030] bg-[#1E1E1E]">
+        <section className="px-6 md:px-12 lg:px-16 py-8 md:py-10 border-b border-[#303030] bg-[#1E1E1E]">
           <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#A3A3A3]">
             <div className="flex items-center group">
               <span className="font-mono text-[#FF6B35] font-bold mr-2 group-hover:scale-110 transition-transform">01</span>
@@ -102,29 +103,34 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Section 01: The Response Problem */}
-        <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
-          <div className="max-w-[1440px] mx-auto space-y-4">
-            <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-              01 / THE RESPONSE PROBLEM
+        {/* Section 01: The Response Problem with Interactive Dilemma Simulator */}
+        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030]">
+          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
+            <div className="space-y-4">
+              <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
+                01 / THE RESPONSE PROBLEM
+              </div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
+                A response can stop a threat. It can also stop a service.
+              </h2>
+              <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
+                An alert alone does not explain operational consequences. A confident narrative does not validate a response. GARDA-SIM AI connects evidence, hypothetical actions and virtual dependencies before explicit human review.
+              </p>
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
-              A response can stop a threat. It can also stop a service.
-            </h2>
-            <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
-              An alert alone does not explain operational consequences. A confident narrative does not validate a response. GARDA-SIM AI connects evidence, hypothetical actions and virtual dependencies before explicit human review.
-            </p>
+
+            {/* Interactive Response Dilemma Simulator Component */}
+            <ResponseDilemmaVisualizer />
           </div>
         </section>
 
         {/* Section 02: Four Layers */}
-        <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
-          <div className="max-w-[1440px] mx-auto space-y-8">
+        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030] bg-[#1A1A1A]">
+          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
             <div className="space-y-4">
               <div className="text-xs font-mono text-[#FF6B35] tracking-wider uppercase font-bold">
                 KNOW WHAT YOU ARE READING
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
                 Four layers. No blurred boundaries.
               </h2>
               <p className="text-sm md:text-base text-[#A3A3A3] max-w-4xl leading-relaxed">
@@ -141,13 +147,13 @@ export default function LandingPage() {
         </section>
 
         {/* Section 03: Connected Workspace (8 Capabilities Grid - 2 columns matching Figma) */}
-        <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
-          <div className="max-w-[1440px] mx-auto space-y-8">
+        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030]">
+          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
             <div>
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
                 03 / A CONNECTED WORKSPACE
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5] mt-1">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5] mt-1">
                 Investigate. Compare. Review.
               </h2>
               <p className="text-sm text-[#A3A3A3] mt-2">
@@ -264,16 +270,16 @@ export default function LandingPage() {
         </section>
 
         {/* Section 04: How It Works */}
-        <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
-          <div className="max-w-[1440px] mx-auto space-y-8">
+        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030]">
+          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
             <div className="space-y-4">
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
                 04 / HOW IT WORKS
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
                 Evidence to a human decision.
               </h2>
-              <p className="text-sm text-[#A3A3A3] max-w-3xl leading-relaxed">
+              <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
                 Step through the six phases from synthetic scenario ingestion to human review, ensuring every recommendation is anchored in verifiable observations.
               </p>
             </div>
@@ -284,16 +290,16 @@ export default function LandingPage() {
         </section>
 
         {/* Section 05: Illustrative Comparison */}
-        <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
-          <div className="max-w-[1440px] mx-auto space-y-8">
+        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030] bg-[#1A1A1A]">
+          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
             <div>
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
                 05 / ILLUSTRATIVE COMPARISON — NOT A RECORDED RUN
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5] mt-1">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5] mt-1">
                 Not just “what works,” but “what changes?”
               </h2>
-              <p className="text-xs text-[#A3A3A3] mt-2">
+              <p className="text-xs md:text-sm text-[#A3A3A3] mt-2">
                 Evidence: EV-0042-01 / EV-0042-02 / EV-0042-03. All ratings are assumptions for layout comparison; no actual policy evaluation occurred.
               </p>
             </div>
@@ -311,13 +317,13 @@ export default function LandingPage() {
         </section>
 
         {/* Section 06: Safety Boundary (Structured into 3 distinct paragraphs matching Figma + Live Interceptor Terminal) */}
-        <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
-          <div className="max-w-[1440px] mx-auto space-y-8">
+        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030]">
+          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
             <div className="space-y-4">
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
                 06 / THE SAFETY BOUNDARY
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
                 AI explains. Constraints are separate. People decide.
               </h2>
 
@@ -340,13 +346,13 @@ export default function LandingPage() {
         </section>
 
         {/* Section 07: Research Plan (Structured into 4 method points matching Figma + Interactive Evaluation Matrix) */}
-        <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
-          <div className="max-w-[1440px] mx-auto space-y-8">
+        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030] bg-[#1A1A1A]">
+          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
             <div className="space-y-4">
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
                 07 / RESEARCH, NOT A PERFORMANCE CLAIM
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
                 Three approaches. One transparent evaluation plan.
               </h2>
               <p className="text-sm md:text-base text-[#A3A3A3] max-w-4xl leading-relaxed">
@@ -362,13 +368,13 @@ export default function LandingPage() {
         </section>
 
         {/* Section 08: Scope & Limitations (Structured into 3 distinct Q&As matching Figma + Interactive Boundary Visualizer) */}
-        <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
-          <div className="max-w-[1440px] mx-auto space-y-8">
+        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030]">
+          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
             <div className="space-y-4">
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
                 08 / QUESTIONS BEFORE YOU BEGIN
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
                 Clear scope. Clear limitations.
               </h2>
               <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
@@ -382,15 +388,15 @@ export default function LandingPage() {
         </section>
 
         {/* Section 09: Explore the Design CTA */}
-        <section className="px-6 md:px-12 lg:px-16 py-20 border-b border-[#303030] bg-[#202020]">
-          <div className="max-w-[1440px] mx-auto space-y-4 text-center">
+        <section className="px-6 md:px-12 lg:px-16 py-28 md:py-36 lg:py-40 border-b border-[#303030] bg-[#202020]">
+          <div className="max-w-[1440px] mx-auto space-y-6 text-center">
             <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
               09 / EXPLORE THE DESIGN
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#F5F5F5]">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#F5F5F5]">
               Make the reasoning visible.
             </h2>
-            <p className="text-sm text-[#A3A3A3] max-w-xl mx-auto leading-relaxed">
+            <p className="text-sm md:text-base text-[#A3A3A3] max-w-xl mx-auto leading-relaxed">
               Enter a bounded simulation workspace. Examine the evidence, the tradeoffs and the limits. Research prototype; no subscription or availability commitment.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">

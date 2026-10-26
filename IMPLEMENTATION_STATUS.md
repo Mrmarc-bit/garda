@@ -67,12 +67,14 @@
   4. `DecryptedText` (`apps/web/src/components/motion/decrypted-text.tsx`): Cyber security monospaced character scramble and decrypt reveal effect for technical badges and incident IDs.
   5. `Typography & Flow`: Natural, razor-sharp institutional typography without vertical word wrapping, eliminating redundant layer stacks while preserving Lenis smooth scroll and ambient Three.js constellation.
   6. `HeroInteractivePreview` (Section 01 / Hero): Interactive SVG Digital Twin topology graph with live pulse animations, 3 candidate strategy toggles (Session Revocation, Access Restriction, Simulated Asset Isolation with blast radius links severing), and JSON evidence drawer.
-  7. `ArchitectureLayersVisualizer` (Section 02): 4-tier interactive stacked architectural layers visualizer with live data specimens and isolation guarantees.
-  8. `TimelineScrubber` (Section 04): Forensic attack & response timeline scrubber spanning 6 phases from Scenario Ingestion to Human Review, with auto-play and forensic artifact payload viewer.
-  9. `TradeoffComparisonMatrix` (Section 05): Visual trade-off matrix with dynamic progress meters, gauge comparison, and interactive table view switcher.
-  10. `SafetyInterceptorTerminal` (Section 06): Split interactive terminal demonstrating real-time AI proposal stream vs deterministic policy interception (Rule `SEC-OT-01` blocking telemetry cutoff).
-  11. `ResearchEvaluationMatrix` (Section 07): 3-card architectural benchmark framework visualizer (Rule-based A vs AI-only B vs Hybrid Simulation C) with interactive criteria matrix and execution pipelines.
-  12. `ScopeLimitationsVisualizer` (Section 08): Interactive security boundary deck mapping the 3 core FAQ questions to active code invariants (`OUTBOUND_PRODUCTION_TRAFFIC == 0`, `AUTONOMOUS_EXECUTION == FALSE`, `RECORDED_BENCHMARK_RUNS == 0`).
+  7. `ResponseDilemmaVisualizer` (Section 01): Interactive split-outcome simulator visualizing the central response dilemma (Blind Host Isolation with SCADA blackout vs GARDA-SIM Context Simulation with continuous telemetry stream).
+  8. `ArchitectureLayersVisualizer` (Section 02): 4-tier interactive stacked architectural layers visualizer with live data specimens and isolation guarantees.
+  9. `TimelineScrubber` (Section 04): Forensic attack & response timeline scrubber spanning 6 phases from Scenario Ingestion to Human Review, with auto-play and forensic artifact payload viewer.
+  10. `TradeoffComparisonMatrix` (Section 05): Visual trade-off matrix with dynamic progress meters, gauge comparison, and interactive table view switcher.
+  11. `SafetyInterceptorTerminal` (Section 06): Split interactive terminal demonstrating real-time AI proposal stream vs deterministic policy interception (Rule `SEC-OT-01` blocking telemetry cutoff).
+  12. `ResearchEvaluationMatrix` (Section 07): 3-card architectural benchmark framework visualizer (Rule-based A vs AI-only B vs Hybrid Simulation C) with interactive criteria matrix and execution pipelines.
+  13. `ScopeLimitationsVisualizer` (Section 08): Interactive security boundary deck mapping the 3 core FAQ questions to active code invariants (`OUTBOUND_PRODUCTION_TRAFFIC == 0`, `AUTONOMOUS_EXECUTION == FALSE`, `RECORDED_BENCHMARK_RUNS == 0`).
+  14. `Modern Spacious Section Rhythm`: Generous vertical padding (`py-24 md:py-32 lg:py-36`) across all landing sections for a high-end enterprise layout.
 - **Verification Evidence:** `npm --workspace=@garda-sim/web run build` and `tsc --noEmit` passed with 0 errors. HTTP 200 OK verified across core paths.
 
 ### Milestones 3 & 4: Backend API & Deterministic Safety Engine (Verified)
