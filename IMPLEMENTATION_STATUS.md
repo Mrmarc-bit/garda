@@ -65,7 +65,7 @@
   2. `CyberConstellation3D` (`apps/web/src/components/motion/cyber-constellation-3d.tsx`): Three.js WebGL interactive 3D particle constellation & wireframe cage with real-time mouse parallax damping, alpha transparency, and dynamic laser link updates.
   3. `TextBlockAnimation` (`apps/web/src/components/motion/text-block-animation.tsx`): Masked slide-up, block-wipe, and blur-fade typography reveal with custom cubic-bezier spring curves.
   4. `DecryptedText` (`apps/web/src/components/motion/decrypted-text.tsx`): Cyber security monospaced character scramble and decrypt reveal effect for technical badges and incident IDs.
-  5. `StackedLayersSection` (`apps/web/src/components/motion/stacked-layers-section.tsx`): Sticky stacking cards (`sticky top-0 min-h-screen`) with depth shadows, technical grid backgrounds, and live JSON specimens for the 4 architectural layers.
+  5. `Typography & Flow`: Natural, razor-sharp institutional typography without vertical word wrapping, eliminating redundant layer stacks while preserving Lenis smooth scroll and ambient Three.js constellation.
   6. `HeroInteractivePreview` (Section 01 / Hero): Interactive SVG Digital Twin topology graph with live pulse animations, 3 candidate strategy toggles (Session Revocation, Access Restriction, Simulated Asset Isolation with blast radius links severing), and JSON evidence drawer.
   7. `ArchitectureLayersVisualizer` (Section 02): 4-tier interactive stacked architectural layers visualizer with live data specimens and isolation guarantees.
   8. `TimelineScrubber` (Section 04): Forensic attack & response timeline scrubber spanning 6 phases from Scenario Ingestion to Human Review, with auto-play and forensic artifact payload viewer.
