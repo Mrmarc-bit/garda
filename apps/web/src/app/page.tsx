@@ -10,10 +10,7 @@ import { TimelineScrubber } from "@/components/landing/timeline-scrubber";
 import { TradeoffComparisonMatrix } from "@/components/landing/tradeoff-comparison-matrix";
 import { SafetyInterceptorTerminal } from "@/components/landing/safety-interceptor-terminal";
 import { SmoothScrollProvider } from "@/components/motion/smooth-scroll-provider";
-import { TextBlockAnimation } from "@/components/motion/text-block-animation";
-import { DecryptedText } from "@/components/motion/decrypted-text";
 import { CyberConstellation3D } from "@/components/motion/cyber-constellation-3d";
-import { StackedLayersSection } from "@/components/motion/stacked-layers-section";
 
 export default function LandingPage() {
   return (
@@ -24,8 +21,8 @@ export default function LandingPage() {
         {/* Hero Section with Ambient 3D Three.js Constellation & Technical Grid */}
         <section className="relative px-6 md:px-12 lg:px-16 pt-12 pb-16 border-b border-[#303030] overflow-hidden">
           {/* Ambient Interactive 3D Three.js Constellation Canvas */}
-          <div className="absolute inset-0 pointer-events-none opacity-45 z-0">
-            <CyberConstellation3D nodeCount={42} interactive={true} />
+          <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
+            <CyberConstellation3D nodeCount={36} interactive={true} />
           </div>
 
           {/* Subtle hairline technical grid */}
@@ -41,23 +38,14 @@ export default function LandingPage() {
           <div className="relative z-10 max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left Column (5 cols) */}
             <div className="lg:col-span-5 space-y-6 lg:pt-4">
-              <div className="text-[11px] font-mono font-bold tracking-wider uppercase flex items-center gap-2">
+              <div className="text-[11px] font-mono font-bold tracking-wider text-[#FF6B35] uppercase flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#FF6B35] animate-pulse" />
-                <DecryptedText
-                  text="DEFENSIVE SIMULATION PLATFORM"
-                  speed={25}
-                  className="text-[#FF6B35]"
-                />
+                DEFENSIVE SIMULATION PLATFORM
               </div>
 
-              {/* Kinetic Masked Typography Headline */}
-              <TextBlockAnimation
-                as="h1"
-                text="Before you respond, understand the impact."
-                variant="mask"
-                staggerDelay={0.05}
-                className="text-4xl md:text-5xl lg:text-5.5xl font-bold tracking-tight text-[#F5F5F5] leading-[1.12]"
-              />
+              <h1 className="text-4xl md:text-5xl lg:text-5.5xl font-bold tracking-tight text-[#F5F5F5] leading-[1.12]">
+                Before you respond, understand the impact.
+              </h1>
 
               <p className="text-base md:text-lg text-[#A3A3A3] max-w-xl leading-relaxed">
                 AI-assisted cyber defense, grounded in synthetic evidence. Explore response strategies and their possible service impact before a human makes the call.
@@ -116,33 +104,27 @@ export default function LandingPage() {
         <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
           <div className="max-w-[1440px] mx-auto space-y-4">
             <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-              <DecryptedText text="01 / THE RESPONSE PROBLEM" speed={30} />
+              01 / THE RESPONSE PROBLEM
             </div>
-            <TextBlockAnimation
-              as="h2"
-              text="A response can stop a threat. It can also stop a service."
-              variant="mask"
-              className="text-2xl md:text-3xl font-bold text-[#F5F5F5]"
-            />
+            <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+              A response can stop a threat. It can also stop a service.
+            </h2>
             <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
               An alert alone does not explain operational consequences. A confident narrative does not validate a response. GARDA-SIM AI connects evidence, hypothetical actions and virtual dependencies before explicit human review.
             </p>
           </div>
         </section>
 
-        {/* Section 02: Four Layers Sticky Stacking Cards Section */}
-        <section className="border-b border-[#303030]">
-          <div className="px-6 md:px-12 lg:px-16 pt-16 pb-8 bg-[#181818] border-b border-[#303030]">
-            <div className="max-w-[1440px] mx-auto space-y-4">
+        {/* Section 02: Four Layers */}
+        <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
+          <div className="max-w-[1440px] mx-auto space-y-8">
+            <div className="space-y-4">
               <div className="text-xs font-mono text-[#FF6B35] tracking-wider uppercase font-bold">
-                <DecryptedText text="KNOW WHAT YOU ARE READING" speed={25} />
+                KNOW WHAT YOU ARE READING
               </div>
-              <TextBlockAnimation
-                as="h2"
-                text="Four layers. No blurred boundaries."
-                variant="mask"
-                className="text-2xl md:text-3xl font-bold text-[#F5F5F5]"
-              />
+              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+                Four layers. No blurred boundaries.
+              </h2>
               <p className="text-sm md:text-base text-[#A3A3A3] max-w-4xl leading-relaxed">
                 <strong className="text-[#F5F5F5]">Synthetic Evidence</strong> — fictional source observations.{" "}
                 <strong className="text-[#F5F5F5]">Derived Assessment</strong> — interpretations, not facts.{" "}
@@ -150,19 +132,9 @@ export default function LandingPage() {
                 <strong className="text-[#F5F5F5]">Policy Validation</strong> — a separately proposed deterministic layer, not an AI assertion.
               </p>
             </div>
-          </div>
 
-          {/* Sticky Stacking Motion Cards (Inertia Stack on Scroll) */}
-          <StackedLayersSection />
-
-          {/* Interactive Architectural Layers Visualizer Workbench */}
-          <div className="px-6 md:px-12 lg:px-16 py-12 bg-[#171717] border-t border-[#303030]">
-            <div className="max-w-[1440px] mx-auto space-y-4">
-              <div className="text-xs font-mono text-[#737373] uppercase tracking-wider">
-                EXPLORE SPECIMEN TAB WORKBENCH
-              </div>
-              <ArchitectureLayersVisualizer />
-            </div>
+            {/* Interactive Architectural Layers Visualizer Workbench */}
+            <ArchitectureLayersVisualizer />
           </div>
         </section>
 
@@ -171,14 +143,11 @@ export default function LandingPage() {
           <div className="max-w-[1440px] mx-auto space-y-8">
             <div>
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-                <DecryptedText text="03 / A CONNECTED WORKSPACE" speed={30} />
+                03 / A CONNECTED WORKSPACE
               </div>
-              <TextBlockAnimation
-                as="h2"
-                text="Investigate. Compare. Review."
-                variant="mask"
-                className="text-2xl md:text-3xl font-bold text-[#F5F5F5] mt-1"
-              />
+              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5] mt-1">
+                Investigate. Compare. Review.
+              </h2>
               <p className="text-sm text-[#A3A3A3] mt-2">
                 Eight capabilities for examining decisions in a bounded synthetic environment.
               </p>
@@ -297,14 +266,11 @@ export default function LandingPage() {
           <div className="max-w-[1440px] mx-auto space-y-8">
             <div className="space-y-4">
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-                <DecryptedText text="04 / HOW IT WORKS" speed={30} />
+                04 / HOW IT WORKS
               </div>
-              <TextBlockAnimation
-                as="h2"
-                text="Evidence to a human decision."
-                variant="mask"
-                className="text-2xl md:text-3xl font-bold text-[#F5F5F5]"
-              />
+              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+                Evidence to a human decision.
+              </h2>
               <p className="text-sm text-[#A3A3A3] max-w-3xl leading-relaxed">
                 Step through the six phases from synthetic scenario ingestion to human review, ensuring every recommendation is anchored in verifiable observations.
               </p>
@@ -320,14 +286,11 @@ export default function LandingPage() {
           <div className="max-w-[1440px] mx-auto space-y-8">
             <div>
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-                <DecryptedText text="05 / ILLUSTRATIVE COMPARISON — NOT A RECORDED RUN" speed={25} />
+                05 / ILLUSTRATIVE COMPARISON — NOT A RECORDED RUN
               </div>
-              <TextBlockAnimation
-                as="h2"
-                text="Not just “what works,” but “what changes?”"
-                variant="mask"
-                className="text-2xl md:text-3xl font-bold text-[#F5F5F5] mt-1"
-              />
+              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5] mt-1">
+                Not just “what works,” but “what changes?”
+              </h2>
               <p className="text-xs text-[#A3A3A3] mt-2">
                 Evidence: EV-0042-01 / EV-0042-02 / EV-0042-03. All ratings are assumptions for layout comparison; no actual policy evaluation occurred.
               </p>
@@ -350,14 +313,11 @@ export default function LandingPage() {
           <div className="max-w-[1440px] mx-auto space-y-8">
             <div className="space-y-4">
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-                <DecryptedText text="06 / THE SAFETY BOUNDARY" speed={30} />
+                06 / THE SAFETY BOUNDARY
               </div>
-              <TextBlockAnimation
-                as="h2"
-                text="AI explains. Constraints are separate. People decide."
-                variant="mask"
-                className="text-2xl md:text-3xl font-bold text-[#F5F5F5]"
-              />
+              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+                AI explains. Constraints are separate. People decide.
+              </h2>
 
               <div className="space-y-3 text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
                 <p>
@@ -381,7 +341,7 @@ export default function LandingPage() {
         <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
           <div className="max-w-[1440px] mx-auto space-y-6">
             <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-              <DecryptedText text="07 / RESEARCH, NOT A PERFORMANCE CLAIM" speed={25} />
+              07 / RESEARCH, NOT A PERFORMANCE CLAIM
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
               Three approaches. One transparent evaluation plan.
@@ -408,7 +368,7 @@ export default function LandingPage() {
         <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
           <div className="max-w-[1440px] mx-auto space-y-6">
             <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-              <DecryptedText text="08 / QUESTIONS BEFORE YOU BEGIN" speed={25} />
+              08 / QUESTIONS BEFORE YOU BEGIN
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
               Clear scope. Clear limitations.
@@ -441,14 +401,11 @@ export default function LandingPage() {
         <section className="px-6 md:px-12 lg:px-16 py-20 border-b border-[#303030] bg-[#202020]">
           <div className="max-w-[1440px] mx-auto space-y-4 text-center">
             <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-              <DecryptedText text="09 / EXPLORE THE DESIGN" speed={25} />
+              09 / EXPLORE THE DESIGN
             </div>
-            <TextBlockAnimation
-              as="h2"
-              text="Make the reasoning visible."
-              variant="mask"
-              className="text-3xl md:text-4xl font-bold text-[#F5F5F5]"
-            />
+            <h2 className="text-3xl md:text-4xl font-bold text-[#F5F5F5]">
+              Make the reasoning visible.
+            </h2>
             <p className="text-sm text-[#A3A3A3] max-w-xl mx-auto leading-relaxed">
               Enter a bounded simulation workspace. Examine the evidence, the tradeoffs and the limits. Research prototype; no subscription or availability commitment.
             </p>
