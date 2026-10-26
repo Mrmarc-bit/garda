@@ -6,20 +6,32 @@ import { PublicHeader } from "@/components/layout/public-header";
 import { PublicFooter } from "@/components/layout/public-footer";
 
 export default function LandingPage() {
+  const [selectedPreviewStrat, setSelectedPreviewStrat] = React.useState<"revocation" | "isolation">("revocation");
+
   return (
     <div className="min-h-screen flex flex-col bg-[#171717] text-[#F5F5F5] font-sans antialiased">
       <PublicHeader />
 
-      {/* Hero Section matching Figma */}
-      <section className="px-6 md:px-12 lg:px-16 pt-16 pb-20 border-b border-[#303030]">
-        <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      {/* Hero Section matching Figma with subtle technical grid */}
+      <section className="relative px-6 md:px-12 lg:px-16 pt-16 pb-20 border-b border-[#303030] overflow-hidden">
+        {/* Subtle hairline technical grid */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-20"
+          style={{
+            backgroundImage: "radial-gradient(#404040 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+          aria-hidden="true"
+        />
+
+        <div className="relative max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+            <div className="text-[11px] font-mono font-bold tracking-wider text-[#FF6B35] uppercase">
               DEFENSIVE SIMULATION PLATFORM
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#F5F5F5] leading-[1.15]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#F5F5F5] leading-[1.12]">
               Before you respond, understand the impact.
             </h1>
 
@@ -49,45 +61,74 @@ export default function LandingPage() {
 
           {/* Right Column: Interactive Workspace Preview Card (5 cols) */}
           <div className="lg:col-span-5">
-            <div className="bg-[#202020] border border-[#383838] rounded-2xl p-6 shadow-2xl">
-              <div className="flex items-center justify-between text-[10px] text-[#A3A3A3] pb-3 border-b border-[#383838]">
+            <div className="bg-[#202020] border border-[#383838] rounded-2xl p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between text-[10px] font-mono text-[#A3A3A3] pb-3 border-b border-[#383838]">
                 <span>GARDA-SIM AI / RESPONSE WORKSPACE</span>
                 <span className="text-[#FF6B35] font-semibold">· SIMULATION ONLY</span>
               </div>
 
-              <div className="mt-4">
-                <span className="text-[11px] text-[#737373] block">
+              <div>
+                <span className="text-[11px] font-mono text-[#737373] block">
                   Simulation Lab / Incident detail
                 </span>
                 <h2 className="text-lg font-bold text-[#F5F5F5] mt-0.5">
                   Suspicious Privilege Escalation
                 </h2>
-                <div className="flex items-center gap-2 text-xs text-[#A3A3A3] mt-1">
-                  <span className="font-mono">· INC-2026-0042</span>
+                <div className="flex items-center gap-2 text-xs text-[#A3A3A3] mt-1 font-mono">
+                  <span>· INC-2026-0042</span>
                   <span className="text-[#FBBF24]">· High</span>
-                  <span>· Awaiting Review</span>
+                  <span className="text-[#A3A3A3]">· Awaiting Review</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+              {/* Interactive Candidate Strategy Selector */}
+              <div className="flex items-center gap-2 pt-1 border-t border-[#303030]">
+                <span className="text-[10px] font-mono text-[#737373] uppercase tracking-wider mr-1">
+                  PREVIEW:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPreviewStrat("revocation")}
+                  className={`text-[11px] font-mono px-2.5 py-1 rounded transition-colors ${
+                    selectedPreviewStrat === "revocation"
+                      ? "bg-[#FF6B35]/20 text-[#FF6B35] border border-[#FF6B35]/40 font-semibold"
+                      : "bg-[#252525] text-[#A3A3A3] border border-[#383838] hover:text-[#F5F5F5]"
+                  }`}
+                >
+                  Session Revocation
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPreviewStrat("isolation")}
+                  className={`text-[11px] font-mono px-2.5 py-1 rounded transition-colors ${
+                    selectedPreviewStrat === "isolation"
+                      ? "bg-[#FF6B35]/20 text-[#FF6B35] border border-[#FF6B35]/40 font-semibold"
+                      : "bg-[#252525] text-[#A3A3A3] border border-[#383838] hover:text-[#F5F5F5]"
+                  }`}
+                >
+                  Simulated Asset Isolation
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
                 {/* Synthetic Evidence */}
-                <div className="bg-[#252525] border border-[#383838] rounded-xl p-3.5">
-                  <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+                <div className="bg-[#252525] border border-[#383838] rounded-xl p-3.5 space-y-2">
+                  <div className="text-[10px] font-bold text-[#FF6B35] font-mono tracking-wider uppercase">
                     SYNTHETIC EVIDENCE
                   </div>
-                  <h3 className="text-xs font-semibold text-[#F5F5F5] mt-1">
+                  <h3 className="text-xs font-semibold text-[#F5F5F5]">
                     Evidence, not assumptions
                   </h3>
-                  <div className="font-mono text-[11px] text-[#737373] mt-2">
+                  <div className="font-mono text-[11px] text-[#737373] pt-1">
                     EV-0042-01 / 09:14:00 UTC
                   </div>
-                  <p className="text-[11px] text-[#A3A3A3] mt-0.5">
+                  <p className="text-[11px] text-[#A3A3A3] leading-snug">
                     Role elevation requested by analyst-demo-03 on APP-GW-02.
                   </p>
-                  <div className="font-mono text-[11px] text-[#737373] mt-2">
+                  <div className="font-mono text-[11px] text-[#737373]">
                     EV-0042-02 / 09:14:08 UTC
                   </div>
-                  <p className="text-[11px] text-[#A3A3A3] mt-0.5">
+                  <p className="text-[11px] text-[#A3A3A3] leading-snug">
                     Synthetic privileged token issued.
                   </p>
                 </div>
@@ -95,7 +136,7 @@ export default function LandingPage() {
                 {/* Derived Assessment */}
                 <div className="bg-[#252525] border border-[#383838] rounded-xl p-3.5 flex flex-col justify-between">
                   <div>
-                    <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+                    <div className="text-[10px] font-bold text-[#FF6B35] font-mono tracking-wider uppercase">
                       DERIVED ASSESSMENT
                     </div>
                     <h3 className="text-xs font-semibold text-[#F5F5F5] mt-1">
@@ -110,9 +151,19 @@ export default function LandingPage() {
                         <span className="text-[#737373]">Confidence / </span>
                         <span className="font-mono text-[#F5F5F5]">0.82 illustrative</span>
                       </div>
+                      <div>
+                        <span className="text-[#737373]">Policy Specimen / </span>
+                        {selectedPreviewStrat === "revocation" ? (
+                          <span className="font-mono text-[#4ADE80] font-medium">Pass · POL-01</span>
+                        ) : (
+                          <span className="font-mono text-[#F87171] font-medium">Blocked · Rule POL-01</span>
+                        )}
+                      </div>
                     </div>
-                    <p className="text-[11px] text-[#737373] mt-2">
-                      Not a calibrated probability. Context remains incomplete.
+                    <p className="text-[11px] text-[#737373] mt-2 leading-snug">
+                      {selectedPreviewStrat === "revocation"
+                        ? "Preserves OT telemetry streams. Minimal operational disruption."
+                        : "Violates safety invariant: shuts down critical OT controller telemetry."}
                     </p>
                   </div>
                   <div className="text-[11px] text-[#FF6B35] font-mono mt-3">
@@ -121,7 +172,7 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-[#383838] flex items-center justify-between">
+              <div className="pt-3 border-t border-[#383838] flex items-center justify-between">
                 <Link
                   href="/app/simulator"
                   className="bg-[#FF6B35] text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-[#FF8255] transition-colors"
@@ -140,16 +191,16 @@ export default function LandingPage() {
       {/* 3 Pillars Value Props Strip */}
       <section className="px-6 md:px-12 lg:px-16 py-6 border-b border-[#303030] bg-[#1E1E1E]">
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#A3A3A3]">
-          <div>
-            <span className="font-mono text-[#FF6B35] mr-2">01</span>
+          <div className="flex items-center">
+            <span className="font-mono text-[#FF6B35] font-bold mr-2">01</span>
             <span className="text-[#F5F5F5] font-medium">Synthetic by design</span>
           </div>
-          <div>
-            <span className="font-mono text-[#FF6B35] mr-2">02</span>
+          <div className="flex items-center">
+            <span className="font-mono text-[#FF6B35] font-bold mr-2">02</span>
             <span className="text-[#F5F5F5] font-medium">Evidence before explanation</span>
           </div>
-          <div>
-            <span className="font-mono text-[#FF6B35] mr-2">03</span>
+          <div className="flex items-center">
+            <span className="font-mono text-[#FF6B35] font-bold mr-2">03</span>
             <span className="text-[#F5F5F5] font-medium">Human review, always</span>
           </div>
         </div>
@@ -158,7 +209,7 @@ export default function LandingPage() {
       {/* Section 01: The Response Problem */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
         <div className="max-w-[1440px] mx-auto space-y-4">
-          <div className="text-xs font-mono text-[#737373]">
+          <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
             01 / THE RESPONSE PROBLEM
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
@@ -173,23 +224,23 @@ export default function LandingPage() {
       {/* Section 02: Four Layers */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
         <div className="max-w-[1440px] mx-auto space-y-4">
-          <div className="text-xs font-mono text-[#FF6B35]">
+          <div className="text-xs font-mono text-[#FF6B35] tracking-wider uppercase font-bold">
             KNOW WHAT YOU ARE READING
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
             Four layers. No blurred boundaries.
           </h2>
           <p className="text-sm md:text-base text-[#A3A3A3] max-w-4xl leading-relaxed">
-            Synthetic Evidence — fictional source observations. Derived Assessment — interpretations, not facts. AI-Generated Explanation — a narrative specimen with unverified provider integration. Policy Validation — a separately proposed deterministic layer, not an AI assertion.
+            <strong className="text-[#F5F5F5]">Synthetic Evidence</strong> — fictional source observations. <strong className="text-[#F5F5F5]">Derived Assessment</strong> — interpretations, not facts. <strong className="text-[#F5F5F5]">AI-Generated Explanation</strong> — a narrative specimen with unverified provider integration. <strong className="text-[#F5F5F5]">Policy Validation</strong> — a separately proposed deterministic layer, not an AI assertion.
           </p>
         </div>
       </section>
 
-      {/* Section 03: Connected Workspace (8 Capabilities) */}
+      {/* Section 03: Connected Workspace (8 Capabilities Grid - 2 columns matching Figma) */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
         <div className="max-w-[1440px] mx-auto space-y-8">
           <div>
-            <div className="text-xs font-mono text-[#737373]">
+            <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
               03 / A CONNECTED WORKSPACE
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5] mt-1">
@@ -200,67 +251,107 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link href="/app/incidents" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
-              <span className="text-[11px] font-mono text-[#737373]">01 / Incidents → Incident detail</span>
-              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Incident investigation</h3>
-              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Link
+              href="/app/incidents"
+              className="bg-[#202020] border border-[#383838] rounded-xl p-6 hover:border-[#FF6B35] transition-colors block space-y-2 group"
+            >
+              <span className="text-[11px] font-mono text-[#737373] group-hover:text-[#FF6B35] transition-colors">
+                01 / Incidents → Incident detail ↗
+              </span>
+              <h3 className="text-base font-bold text-[#F5F5F5]">Incident investigation</h3>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
                 Trace a synthetic incident from identity to affected virtual services.
               </p>
             </Link>
 
-            <Link href="/app/evidence" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
-              <span className="text-[11px] font-mono text-[#737373]">02 / Evidence & Timeline</span>
-              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Evidence & timeline</h3>
-              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+            <Link
+              href="/app/evidence"
+              className="bg-[#202020] border border-[#383838] rounded-xl p-6 hover:border-[#FF6B35] transition-colors block space-y-2 group"
+            >
+              <span className="text-[11px] font-mono text-[#737373] group-hover:text-[#FF6B35] transition-colors">
+                02 / Evidence & Timeline ↗
+              </span>
+              <h3 className="text-base font-bold text-[#F5F5F5]">Evidence & timeline</h3>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
                 Keep source events, derived assessments and explanations distinct.
               </p>
             </Link>
 
-            <Link href="/app/simulator" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
-              <span className="text-[11px] font-mono text-[#737373]">03 / Response Simulator</span>
-              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Strategy comparison</h3>
-              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+            <Link
+              href="/app/simulator"
+              className="bg-[#202020] border border-[#383838] rounded-xl p-6 hover:border-[#FF6B35] transition-colors block space-y-2 group"
+            >
+              <span className="text-[11px] font-mono text-[#737373] group-hover:text-[#FF6B35] transition-colors">
+                03 / Response Simulator ↗
+              </span>
+              <h3 className="text-base font-bold text-[#F5F5F5]">Strategy comparison</h3>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
                 Compare hypothetical responses against explicit assumptions.
               </p>
             </Link>
 
-            <Link href="/app/digital-twin" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
-              <span className="text-[11px] font-mono text-[#737373]">04 / IT/OT Digital Twin</span>
-              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">IT/OT dependencies</h3>
-              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+            <Link
+              href="/app/digital-twin"
+              className="bg-[#202020] border border-[#383838] rounded-xl p-6 hover:border-[#FF6B35] transition-colors block space-y-2 group"
+            >
+              <span className="text-[11px] font-mono text-[#737373] group-hover:text-[#FF6B35] transition-colors">
+                04 / IT/OT Digital Twin ↗
+              </span>
+              <h3 className="text-base font-bold text-[#F5F5F5]">IT/OT dependencies</h3>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
                 Follow virtual service dependencies and examine possible propagation.
               </p>
             </Link>
 
-            <Link href="/app/recommendations" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
-              <span className="text-[11px] font-mono text-[#737373]">05 / AI Recommendations</span>
-              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Explainable AI</h3>
-              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+            <Link
+              href="/app/recommendations"
+              className="bg-[#202020] border border-[#383838] rounded-xl p-6 hover:border-[#FF6B35] transition-colors block space-y-2 group"
+            >
+              <span className="text-[11px] font-mono text-[#737373] group-hover:text-[#FF6B35] transition-colors">
+                05 / AI Recommendations ↗
+              </span>
+              <h3 className="text-base font-bold text-[#F5F5F5]">Explainable AI</h3>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
                 Read an explanation with evidence references and uncertainty.
               </p>
             </Link>
 
-            <Link href="/app/settings" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
-              <span className="text-[11px] font-mono text-[#737373]">06 / Settings → Safety policies</span>
-              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Policy validation</h3>
-              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+            <Link
+              href="/app/settings"
+              className="bg-[#202020] border border-[#383838] rounded-xl p-6 hover:border-[#FF6B35] transition-colors block space-y-2 group"
+            >
+              <span className="text-[11px] font-mono text-[#737373] group-hover:text-[#FF6B35] transition-colors">
+                06 / Settings → Safety policies ↗
+              </span>
+              <h3 className="text-base font-bold text-[#F5F5F5]">Policy validation</h3>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
                 Inspect a proposed deterministic boundary, separate from AI.
               </p>
             </Link>
 
-            <Link href="/app/experiments" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
-              <span className="text-[11px] font-mono text-[#737373]">07 / Experiments & Evaluation</span>
-              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Experiments</h3>
-              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+            <Link
+              href="/app/experiments"
+              className="bg-[#202020] border border-[#383838] rounded-xl p-6 hover:border-[#FF6B35] transition-colors block space-y-2 group"
+            >
+              <span className="text-[11px] font-mono text-[#737373] group-hover:text-[#FF6B35] transition-colors">
+                07 / Experiments & Evaluation ↗
+              </span>
+              <h3 className="text-base font-bold text-[#F5F5F5]">Experiments</h3>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
                 Configure rule-based, AI-only and constrained approaches.
               </p>
             </Link>
 
-            <Link href="/app/reports" className="bg-[#252525] border border-[#383838] rounded-xl p-5 hover:border-[#FF6B35] transition-colors block">
-              <span className="text-[11px] font-mono text-[#737373]">08 / Reports / Audit Trail</span>
-              <h3 className="text-sm font-semibold text-[#F5F5F5] mt-2">Reports & audit</h3>
-              <p className="text-xs text-[#A3A3A3] mt-1 leading-relaxed">
+            <Link
+              href="/app/reports"
+              className="bg-[#202020] border border-[#383838] rounded-xl p-6 hover:border-[#FF6B35] transition-colors block space-y-2 group"
+            >
+              <span className="text-[11px] font-mono text-[#737373] group-hover:text-[#FF6B35] transition-colors">
+                08 / Reports / Audit Trail ↗
+              </span>
+              <h3 className="text-base font-bold text-[#F5F5F5]">Reports & audit</h3>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
                 Inspect sample reporting and traceable synthetic event context.
               </p>
             </Link>
@@ -271,14 +362,14 @@ export default function LandingPage() {
       {/* Section 04: How It Works */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
         <div className="max-w-[1440px] mx-auto space-y-6">
-          <div className="text-xs font-mono text-[#737373]">
+          <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
             04 / HOW IT WORKS
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
             Evidence to a human decision.
           </h2>
 
-          <div className="space-y-4 text-xs md:text-sm text-[#A3A3A3] max-w-3xl leading-relaxed font-mono">
+          <div className="space-y-4 text-xs md:text-sm text-[#A3A3A3] max-w-4xl leading-relaxed font-mono">
             <div>1. Scenario — Choose INC-2026-0042 and the bounded virtual environment. <span className="text-[#737373]">[Incident context]</span></div>
             <div>2. Evidence — Inspect EV-0042-01 through EV-0042-03 and their provenance. <span className="text-[#737373]">[Synthetic Evidence]</span></div>
             <div>3. Candidates — Define session revocation, access restriction or more verification. <span className="text-[#737373]">[Candidate strategies]</span></div>
@@ -293,7 +384,7 @@ export default function LandingPage() {
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
         <div className="max-w-[1440px] mx-auto space-y-6">
           <div>
-            <div className="text-xs font-mono text-[#737373]">
+            <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
               05 / ILLUSTRATIVE COMPARISON — NOT A RECORDED RUN
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5] mt-1">
@@ -304,34 +395,46 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="bg-[#202020] border border-[#383838] rounded-xl p-6 overflow-x-auto">
+            <table className="w-full text-left text-xs font-mono">
               <thead>
                 <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] font-medium tracking-wider uppercase">
-                  <th className="pb-3 font-medium">STRATEGY</th>
-                  <th className="pb-3 font-medium">SECURITY BENEFIT</th>
-                  <th className="pb-3 font-medium">SERVICE IMPACT</th>
+                  <th className="pb-3 font-medium w-1/4">STRATEGY</th>
+                  <th className="pb-3 font-medium w-1/4">SECURITY BENEFIT</th>
+                  <th className="pb-3 font-medium w-1/4">SERVICE IMPACT</th>
                   <th className="pb-3 font-medium">POLICY SPECIMEN</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#383838]/40">
                 <tr>
-                  <td className="py-3 text-[#F5F5F5]">Session revocation</td>
-                  <td className="py-3 text-[#A3A3A3]">Moderate · assumed</td>
-                  <td className="py-3 text-[#A3A3A3]">Low · assumed</td>
-                  <td className="py-3 text-[#4ADE80]">Illustrative pass</td>
+                  <td className="py-3.5 text-[#F5F5F5] font-sans font-medium">Session revocation</td>
+                  <td className="py-3.5 text-[#A3A3A3]">Moderate · assumed</td>
+                  <td className="py-3.5 text-[#A3A3A3]">Low · assumed</td>
+                  <td className="py-3.5">
+                    <span className="px-2.5 py-1 rounded text-[11px] font-mono bg-[#4ADE80]/15 border border-[#4ADE80]/30 text-[#4ADE80]">
+                      Illustrative pass
+                    </span>
+                  </td>
                 </tr>
                 <tr>
-                  <td className="py-3 text-[#F5F5F5]">Virtual access restriction</td>
-                  <td className="py-3 text-[#A3A3A3]">Moderate · assumed</td>
-                  <td className="py-3 text-[#A3A3A3]">Medium · assumed</td>
-                  <td className="py-3 text-[#4ADE80]">Illustrative pass</td>
+                  <td className="py-3.5 text-[#F5F5F5] font-sans font-medium">Virtual access restriction</td>
+                  <td className="py-3.5 text-[#A3A3A3]">Moderate · assumed</td>
+                  <td className="py-3.5 text-[#A3A3A3]">Medium · assumed</td>
+                  <td className="py-3.5">
+                    <span className="px-2.5 py-1 rounded text-[11px] font-mono bg-[#4ADE80]/15 border border-[#4ADE80]/30 text-[#4ADE80]">
+                      Illustrative pass
+                    </span>
+                  </td>
                 </tr>
                 <tr>
-                  <td className="py-3 text-[#F5F5F5]">Simulated asset isolation</td>
-                  <td className="py-3 text-[#A3A3A3]">Broad containment</td>
-                  <td className="py-3 text-[#A3A3A3]">High · assumed</td>
-                  <td className="py-3 text-[#F87171]">Illustrative fail · POL-01</td>
+                  <td className="py-3.5 text-[#F5F5F5] font-sans font-medium">Simulated asset isolation</td>
+                  <td className="py-3.5 text-[#A3A3A3]">Broad containment</td>
+                  <td className="py-3.5 text-[#A3A3A3]">High · assumed</td>
+                  <td className="py-3.5">
+                    <span className="px-2.5 py-1 rounded text-[11px] font-mono bg-[#F87171]/15 border border-[#F87171]/30 text-[#F87171]">
+                      Illustrative fail · POL-01
+                    </span>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -346,50 +449,84 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Section 06: Safety Boundary */}
+      {/* Section 06: Safety Boundary (Structured into 3 distinct paragraphs matching Figma) */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
-        <div className="max-w-[1440px] mx-auto space-y-4">
-          <div className="text-xs font-mono text-[#737373]">
+        <div className="max-w-[1440px] mx-auto space-y-6">
+          <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
             06 / THE SAFETY BOUNDARY
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
             AI explains. Constraints are separate. People decide.
           </h2>
-          <p className="text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
-            No production path: synthetic incidents, virtual IT/OT assets and hypothetical actions only. Nothing connects to or changes a real environment. A proposed deterministic layer: policy definitions are explicit design artifacts. Server-side validation, fail-closed behavior and authorization require implementation. Review stays visible: Pending Review is the default. No generated explanation constitutes permission to act.
-          </p>
+
+          <div className="space-y-4 text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
+            <p>
+              <strong className="text-[#F5F5F5]">No production path:</strong> synthetic incidents, virtual IT/OT assets and hypothetical actions only. Nothing connects to or changes a real environment.
+            </p>
+            <p>
+              <strong className="text-[#F5F5F5]">A proposed deterministic layer:</strong> policy definitions are explicit design artifacts. Server-side validation, fail-closed behavior and authorization require implementation.
+            </p>
+            <p>
+              <strong className="text-[#F5F5F5]">Review stays visible:</strong> Pending Review is the default. No generated explanation constitutes permission to act.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Section 07: Research Plan */}
+      {/* Section 07: Research Plan (Structured into 4 method points matching Figma) */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
-        <div className="max-w-[1440px] mx-auto space-y-4">
-          <div className="text-xs font-mono text-[#737373]">
+        <div className="max-w-[1440px] mx-auto space-y-6">
+          <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
             07 / RESEARCH, NOT A PERFORMANCE CLAIM
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
             Three approaches. One transparent evaluation plan.
           </h2>
-          <p className="text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
-            A / Rule-based — predefined mappings; inspect rule coverage and missing context. B / AI-only — narrative-led proposal; inspect evidence grounding and unsupported actions. C / Simulation + constraints — hypothetical impact plus policy checks; inspect assumptions and constraint handling. No experiment run yet. No comparative results, measured improvements or superiority claims are available.
-          </p>
+
+          <div className="space-y-3 text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
+            <p>
+              <strong className="text-[#F5F5F5]">A / Rule-based</strong> — predefined mappings; inspect rule coverage and missing context.
+            </p>
+            <p>
+              <strong className="text-[#F5F5F5]">B / AI-only</strong> — narrative-led proposal; inspect evidence grounding and unsupported actions.
+            </p>
+            <p>
+              <strong className="text-[#F5F5F5]">C / Simulation + constraints</strong> — hypothetical impact plus policy checks; inspect assumptions and constraint handling.
+            </p>
+            <p className="text-xs text-[#737373] pt-2 border-t border-[#303030]">
+              No experiment run yet. No comparative results, measured improvements or superiority claims are available.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Section 08: Scope & Limitations */}
+      {/* Section 08: Scope & Limitations (Structured into 3 distinct Q&As matching Figma) */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
-        <div className="max-w-[1440px] mx-auto space-y-4">
-          <div className="text-xs font-mono text-[#737373]">
+        <div className="max-w-[1440px] mx-auto space-y-6">
+          <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
             08 / QUESTIONS BEFORE YOU BEGIN
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
             Clear scope. Clear limitations.
           </h2>
-          <p className="text-sm text-[#A3A3A3] max-w-3xl leading-relaxed">
-            Does this connect to production? No. Every incident and asset is synthetic or virtual. Can AI execute a response? No. Explanations do not authorize actions; human review is explicit. Are the example results measured? No. Comparisons are illustrative, not recorded experiments.
-          </p>
+
+          <div className="space-y-4 text-sm text-[#A3A3A3] max-w-3xl leading-relaxed">
+            <div>
+              <strong className="text-[#F5F5F5] block mb-1">Does this connect to production?</strong>
+              <p className="text-xs text-[#A3A3A3]">No. Every incident and asset is synthetic or virtual.</p>
+            </div>
+            <div>
+              <strong className="text-[#F5F5F5] block mb-1">Can AI execute a response?</strong>
+              <p className="text-xs text-[#A3A3A3]">No. Explanations do not authorize actions; human review is explicit.</p>
+            </div>
+            <div>
+              <strong className="text-[#F5F5F5] block mb-1">Are the example results measured?</strong>
+              <p className="text-xs text-[#A3A3A3]">No. Comparisons are illustrative, not recorded experiments.</p>
+            </div>
+          </div>
+
           <div className="pt-2">
-            <Link href="/faq" className="text-xs text-[#FF6B35] underline hover:text-[#FF8255]">
+            <Link href="/faq" className="text-xs text-[#FF6B35] underline hover:text-[#FF8255] transition-colors">
               View all FAQs ↗
             </Link>
           </div>
@@ -399,7 +536,7 @@ export default function LandingPage() {
       {/* Section 09: Explore the Design CTA */}
       <section className="px-6 md:px-12 lg:px-16 py-20 border-b border-[#303030] bg-[#202020]">
         <div className="max-w-[1440px] mx-auto space-y-4 text-center">
-          <div className="text-xs font-mono text-[#737373]">
+          <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
             09 / EXPLORE THE DESIGN
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-[#F5F5F5]">
@@ -411,12 +548,12 @@ export default function LandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link
               href="/app"
-              className="bg-[#FF6B35] text-white text-xs font-medium px-5 py-2.5 rounded-lg hover:bg-[#FF8255] transition-colors"
+              className="bg-[#FF6B35] text-white text-xs font-medium px-5 py-2.5 rounded-lg hover:bg-[#FF8255] transition-colors shadow-sm"
             >
               Get Started
             </Link>
             <Link
-              href="/docs"
+              href="/documentation"
               className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
             >
               Read the documentation
