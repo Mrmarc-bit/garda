@@ -60,7 +60,13 @@
 - **System Views (`/app/notifications`, `/app/settings`, `/app/profile`):** Notification center, simulator strictness/AI adapter toggles, and operator clearance credentials.
 - **Authentication & Account Specimen Suite (`/login`, `/signup`, `/forgot-password`, `/reset-password`, `/verify-email`, `/onboarding`):** 100% aligned with `docs ui/Account ·/` Figma desktop exports. Implements the signature two-column split layout, non-enumerating confirmation specimens, token validation error specimens, and the 5-step lab orientation walkthrough with specimen completion state.
 - **Public & Legal Full Suite (`/`, `/features`, `/how-it-works`, `/documentation`, `/about`, `/faq`, `/contact`, `/privacy`, `/terms`, `/security`, `not-found`):** 100% aligned with `docs ui/Public ·/` Figma desktop exports. Includes boundary FAQ with topic filtering, interactive contact specimen with warning banner, 7-card legal draft notices, and prominent 404 route outside the map view.
-- **Verification Evidence:** `npm --workspace=@garda-sim/web run build` successfully pre-rendered all 31 static pages. `tsc --noEmit` passed with 0 errors. HTTP 200 OK verified across core paths.
+- **Enhanced Landing Page Interactive Visualizers:**
+  1. `HeroInteractivePreview` (Section 01 / Hero): Interactive SVG Digital Twin topology graph with live pulse animations, 3 candidate strategy toggles (Session Revocation, Access Restriction, Simulated Asset Isolation with blast radius links severing), and JSON evidence drawer.
+  2. `ArchitectureLayersVisualizer` (Section 02): 4-tier interactive stacked architectural layers visualizer with live data specimens and isolation guarantees.
+  3. `TimelineScrubber` (Section 04): Forensic attack & response timeline scrubber spanning 6 phases from Scenario Ingestion to Human Review, with auto-play and forensic artifact payload viewer.
+  4. `TradeoffComparisonMatrix` (Section 05): Visual trade-off matrix with dynamic progress meters, gauge comparison, and interactive table view switcher.
+  5. `SafetyInterceptorTerminal` (Section 06): Split interactive terminal demonstrating real-time AI proposal stream vs deterministic policy interception (Rule `SEC-OT-01` blocking telemetry cutoff).
+- **Verification Evidence:** `npm --workspace=@garda-sim/web run build` and `tsc --noEmit` passed with 0 errors. HTTP 200 OK verified across core paths.
 
 ### Milestones 3 & 4: Backend API & Deterministic Safety Engine (Verified)
 - **FastAPI Service:** Created `apps/api` with typed Pydantic v2 schemas and REST endpoints.

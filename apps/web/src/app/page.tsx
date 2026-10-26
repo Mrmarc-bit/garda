@@ -4,16 +4,19 @@ import * as React from "react";
 import Link from "next/link";
 import { PublicHeader } from "@/components/layout/public-header";
 import { PublicFooter } from "@/components/layout/public-footer";
+import { HeroInteractivePreview } from "@/components/landing/hero-interactive-preview";
+import { ArchitectureLayersVisualizer } from "@/components/landing/architecture-layers-visualizer";
+import { TimelineScrubber } from "@/components/landing/timeline-scrubber";
+import { TradeoffComparisonMatrix } from "@/components/landing/tradeoff-comparison-matrix";
+import { SafetyInterceptorTerminal } from "@/components/landing/safety-interceptor-terminal";
 
 export default function LandingPage() {
-  const [selectedPreviewStrat, setSelectedPreviewStrat] = React.useState<"revocation" | "isolation">("revocation");
-
   return (
     <div className="min-h-screen flex flex-col bg-[#171717] text-[#F5F5F5] font-sans antialiased">
       <PublicHeader />
 
       {/* Hero Section matching Figma with subtle technical grid */}
-      <section className="relative px-6 md:px-12 lg:px-16 pt-16 pb-20 border-b border-[#303030] overflow-hidden">
+      <section className="relative px-6 md:px-12 lg:px-16 pt-12 pb-16 border-b border-[#303030] overflow-hidden">
         {/* Subtle hairline technical grid */}
         <div
           className="absolute inset-0 pointer-events-none opacity-20"
@@ -24,14 +27,14 @@ export default function LandingPage() {
           aria-hidden="true"
         />
 
-        <div className="relative max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Column (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
+        <div className="relative max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left Column (5 cols) */}
+          <div className="lg:col-span-5 space-y-6 lg:pt-4">
             <div className="text-[11px] font-mono font-bold tracking-wider text-[#FF6B35] uppercase">
               DEFENSIVE SIMULATION PLATFORM
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#F5F5F5] leading-[1.12]">
+            <h1 className="text-4xl md:text-5xl lg:text-5.5xl font-bold tracking-tight text-[#F5F5F5] leading-[1.12]">
               Before you respond, understand the impact.
             </h1>
 
@@ -59,131 +62,9 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right Column: Interactive Workspace Preview Card (5 cols) */}
-          <div className="lg:col-span-5">
-            <div className="bg-[#202020] border border-[#383838] rounded-2xl p-6 shadow-2xl space-y-4">
-              <div className="flex items-center justify-between text-[10px] font-mono text-[#A3A3A3] pb-3 border-b border-[#383838]">
-                <span>GARDA-SIM AI / RESPONSE WORKSPACE</span>
-                <span className="text-[#FF6B35] font-semibold">· SIMULATION ONLY</span>
-              </div>
-
-              <div>
-                <span className="text-[11px] font-mono text-[#737373] block">
-                  Simulation Lab / Incident detail
-                </span>
-                <h2 className="text-lg font-bold text-[#F5F5F5] mt-0.5">
-                  Suspicious Privilege Escalation
-                </h2>
-                <div className="flex items-center gap-2 text-xs text-[#A3A3A3] mt-1 font-mono">
-                  <span>· INC-2026-0042</span>
-                  <span className="text-[#FBBF24]">· High</span>
-                  <span className="text-[#A3A3A3]">· Awaiting Review</span>
-                </div>
-              </div>
-
-              {/* Interactive Candidate Strategy Selector */}
-              <div className="flex items-center gap-2 pt-1 border-t border-[#303030]">
-                <span className="text-[10px] font-mono text-[#737373] uppercase tracking-wider mr-1">
-                  PREVIEW:
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setSelectedPreviewStrat("revocation")}
-                  className={`text-[11px] font-mono px-2.5 py-1 rounded transition-colors ${
-                    selectedPreviewStrat === "revocation"
-                      ? "bg-[#FF6B35]/20 text-[#FF6B35] border border-[#FF6B35]/40 font-semibold"
-                      : "bg-[#252525] text-[#A3A3A3] border border-[#383838] hover:text-[#F5F5F5]"
-                  }`}
-                >
-                  Session Revocation
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedPreviewStrat("isolation")}
-                  className={`text-[11px] font-mono px-2.5 py-1 rounded transition-colors ${
-                    selectedPreviewStrat === "isolation"
-                      ? "bg-[#FF6B35]/20 text-[#FF6B35] border border-[#FF6B35]/40 font-semibold"
-                      : "bg-[#252525] text-[#A3A3A3] border border-[#383838] hover:text-[#F5F5F5]"
-                  }`}
-                >
-                  Simulated Asset Isolation
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                {/* Synthetic Evidence */}
-                <div className="bg-[#252525] border border-[#383838] rounded-xl p-3.5 space-y-2">
-                  <div className="text-[10px] font-bold text-[#FF6B35] font-mono tracking-wider uppercase">
-                    SYNTHETIC EVIDENCE
-                  </div>
-                  <h3 className="text-xs font-semibold text-[#F5F5F5]">
-                    Evidence, not assumptions
-                  </h3>
-                  <div className="font-mono text-[11px] text-[#737373] pt-1">
-                    EV-0042-01 / 09:14:00 UTC
-                  </div>
-                  <p className="text-[11px] text-[#A3A3A3] leading-snug">
-                    Role elevation requested by analyst-demo-03 on APP-GW-02.
-                  </p>
-                  <div className="font-mono text-[11px] text-[#737373]">
-                    EV-0042-02 / 09:14:08 UTC
-                  </div>
-                  <p className="text-[11px] text-[#A3A3A3] leading-snug">
-                    Synthetic privileged token issued.
-                  </p>
-                </div>
-
-                {/* Derived Assessment */}
-                <div className="bg-[#252525] border border-[#383838] rounded-xl p-3.5 flex flex-col justify-between">
-                  <div>
-                    <div className="text-[10px] font-bold text-[#FF6B35] font-mono tracking-wider uppercase">
-                      DERIVED ASSESSMENT
-                    </div>
-                    <h3 className="text-xs font-semibold text-[#F5F5F5] mt-1">
-                      Review the tradeoff
-                    </h3>
-                    <div className="space-y-1 text-[11px] mt-2">
-                      <div>
-                        <span className="text-[#737373]">Identity / </span>
-                        <span className="font-mono text-[#F5F5F5]">analyst-demo-03</span>
-                      </div>
-                      <div>
-                        <span className="text-[#737373]">Confidence / </span>
-                        <span className="font-mono text-[#F5F5F5]">0.82 illustrative</span>
-                      </div>
-                      <div>
-                        <span className="text-[#737373]">Policy Specimen / </span>
-                        {selectedPreviewStrat === "revocation" ? (
-                          <span className="font-mono text-[#4ADE80] font-medium">Pass · POL-01</span>
-                        ) : (
-                          <span className="font-mono text-[#F87171] font-medium">Blocked · Rule POL-01</span>
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-[11px] text-[#737373] mt-2 leading-snug">
-                      {selectedPreviewStrat === "revocation"
-                        ? "Preserves OT telemetry streams. Minimal operational disruption."
-                        : "Violates safety invariant: shuts down critical OT controller telemetry."}
-                    </p>
-                  </div>
-                  <div className="text-[11px] text-[#FF6B35] font-mono mt-3">
-                    · Pending Review
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-[#383838] flex items-center justify-between">
-                <Link
-                  href="/app/simulator"
-                  className="bg-[#FF6B35] text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-[#FF8255] transition-colors"
-                >
-                  Compare strategies
-                </Link>
-                <span className="text-[11px] text-[#737373]">
-                  Preview only. No simulation has been run.
-                </span>
-              </div>
-            </div>
+          {/* Right Column (7 cols): Interactive Digital Twin Topology & Strategy Simulator */}
+          <div className="lg:col-span-7">
+            <HeroInteractivePreview />
           </div>
         </div>
       </section>
@@ -223,16 +104,24 @@ export default function LandingPage() {
 
       {/* Section 02: Four Layers */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
-        <div className="max-w-[1440px] mx-auto space-y-4">
-          <div className="text-xs font-mono text-[#FF6B35] tracking-wider uppercase font-bold">
-            KNOW WHAT YOU ARE READING
+        <div className="max-w-[1440px] mx-auto space-y-8">
+          <div className="space-y-4">
+            <div className="text-xs font-mono text-[#FF6B35] tracking-wider uppercase font-bold">
+              KNOW WHAT YOU ARE READING
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+              Four layers. No blurred boundaries.
+            </h2>
+            <p className="text-sm md:text-base text-[#A3A3A3] max-w-4xl leading-relaxed">
+              <strong className="text-[#F5F5F5]">Synthetic Evidence</strong> — fictional source observations.{" "}
+              <strong className="text-[#F5F5F5]">Derived Assessment</strong> — interpretations, not facts.{" "}
+              <strong className="text-[#F5F5F5]">AI-Generated Explanation</strong> — a narrative specimen with unverified provider integration.{" "}
+              <strong className="text-[#F5F5F5]">Policy Validation</strong> — a separately proposed deterministic layer, not an AI assertion.
+            </p>
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
-            Four layers. No blurred boundaries.
-          </h2>
-          <p className="text-sm md:text-base text-[#A3A3A3] max-w-4xl leading-relaxed">
-            <strong className="text-[#F5F5F5]">Synthetic Evidence</strong> — fictional source observations. <strong className="text-[#F5F5F5]">Derived Assessment</strong> — interpretations, not facts. <strong className="text-[#F5F5F5]">AI-Generated Explanation</strong> — a narrative specimen with unverified provider integration. <strong className="text-[#F5F5F5]">Policy Validation</strong> — a separately proposed deterministic layer, not an AI assertion.
-          </p>
+
+          {/* Interactive Architectural Layers Visualizer */}
+          <ArchitectureLayersVisualizer />
         </div>
       </section>
 
@@ -361,28 +250,27 @@ export default function LandingPage() {
 
       {/* Section 04: How It Works */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
-        <div className="max-w-[1440px] mx-auto space-y-6">
-          <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-            04 / HOW IT WORKS
+        <div className="max-w-[1440px] mx-auto space-y-8">
+          <div className="space-y-4">
+            <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
+              04 / HOW IT WORKS
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+              Evidence to a human decision.
+            </h2>
+            <p className="text-sm text-[#A3A3A3] max-w-3xl leading-relaxed">
+              Step through the six phases from synthetic scenario ingestion to human review, ensuring every recommendation is anchored in verifiable observations.
+            </p>
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
-            Evidence to a human decision.
-          </h2>
 
-          <div className="space-y-4 text-xs md:text-sm text-[#A3A3A3] max-w-4xl leading-relaxed font-mono">
-            <div>1. Scenario — Choose INC-2026-0042 and the bounded virtual environment. <span className="text-[#737373]">[Incident context]</span></div>
-            <div>2. Evidence — Inspect EV-0042-01 through EV-0042-03 and their provenance. <span className="text-[#737373]">[Synthetic Evidence]</span></div>
-            <div>3. Candidates — Define session revocation, access restriction or more verification. <span className="text-[#737373]">[Candidate strategies]</span></div>
-            <div>4. Impact — Compare possible security benefit and virtual service disruption. <span className="text-[#737373]">[Derived Assessment]</span></div>
-            <div>5. Policy — Inspect proposed constraint checks, independent of generated text. <span className="text-[#737373]">[Policy Validation]</span></div>
-            <div>6. Review — A person approves for demonstration, rejects or asks for evidence. <span className="text-[#737373]">[Human review]</span></div>
-          </div>
+          {/* Interactive Timeline Scrubber with Live Forensics & Playback */}
+          <TimelineScrubber />
         </div>
       </section>
 
       {/* Section 05: Illustrative Comparison */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
-        <div className="max-w-[1440px] mx-auto space-y-6">
+        <div className="max-w-[1440px] mx-auto space-y-8">
           <div>
             <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
               05 / ILLUSTRATIVE COMPARISON — NOT A RECORDED RUN
@@ -395,50 +283,8 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="bg-[#202020] border border-[#383838] rounded-xl p-6 overflow-x-auto">
-            <table className="w-full text-left text-xs font-mono">
-              <thead>
-                <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] font-medium tracking-wider uppercase">
-                  <th className="pb-3 font-medium w-1/4">STRATEGY</th>
-                  <th className="pb-3 font-medium w-1/4">SECURITY BENEFIT</th>
-                  <th className="pb-3 font-medium w-1/4">SERVICE IMPACT</th>
-                  <th className="pb-3 font-medium">POLICY SPECIMEN</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#383838]/40">
-                <tr>
-                  <td className="py-3.5 text-[#F5F5F5] font-sans font-medium">Session revocation</td>
-                  <td className="py-3.5 text-[#A3A3A3]">Moderate · assumed</td>
-                  <td className="py-3.5 text-[#A3A3A3]">Low · assumed</td>
-                  <td className="py-3.5">
-                    <span className="px-2.5 py-1 rounded text-[11px] font-mono bg-[#4ADE80]/15 border border-[#4ADE80]/30 text-[#4ADE80]">
-                      Illustrative pass
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3.5 text-[#F5F5F5] font-sans font-medium">Virtual access restriction</td>
-                  <td className="py-3.5 text-[#A3A3A3]">Moderate · assumed</td>
-                  <td className="py-3.5 text-[#A3A3A3]">Medium · assumed</td>
-                  <td className="py-3.5">
-                    <span className="px-2.5 py-1 rounded text-[11px] font-mono bg-[#4ADE80]/15 border border-[#4ADE80]/30 text-[#4ADE80]">
-                      Illustrative pass
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3.5 text-[#F5F5F5] font-sans font-medium">Simulated asset isolation</td>
-                  <td className="py-3.5 text-[#A3A3A3]">Broad containment</td>
-                  <td className="py-3.5 text-[#A3A3A3]">High · assumed</td>
-                  <td className="py-3.5">
-                    <span className="px-2.5 py-1 rounded text-[11px] font-mono bg-[#F87171]/15 border border-[#F87171]/30 text-[#F87171]">
-                      Illustrative fail · POL-01
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          {/* Visual Matrix with Metric Gauges & Table Switcher */}
+          <TradeoffComparisonMatrix />
 
           <div className="bg-[#42271F]/40 border border-[#FF6B35] rounded-xl p-4 text-xs text-[#A3A3A3]">
             <span className="font-semibold text-[#F5F5F5] uppercase tracking-wider block mb-1">
@@ -449,27 +295,32 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Section 06: Safety Boundary (Structured into 3 distinct paragraphs matching Figma) */}
+      {/* Section 06: Safety Boundary (Structured into 3 distinct paragraphs matching Figma + Live Interceptor Terminal) */}
       <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
-        <div className="max-w-[1440px] mx-auto space-y-6">
-          <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-            06 / THE SAFETY BOUNDARY
-          </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
-            AI explains. Constraints are separate. People decide.
-          </h2>
+        <div className="max-w-[1440px] mx-auto space-y-8">
+          <div className="space-y-4">
+            <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
+              06 / THE SAFETY BOUNDARY
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+              AI explains. Constraints are separate. People decide.
+            </h2>
 
-          <div className="space-y-4 text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
-            <p>
-              <strong className="text-[#F5F5F5]">No production path:</strong> synthetic incidents, virtual IT/OT assets and hypothetical actions only. Nothing connects to or changes a real environment.
-            </p>
-            <p>
-              <strong className="text-[#F5F5F5]">A proposed deterministic layer:</strong> policy definitions are explicit design artifacts. Server-side validation, fail-closed behavior and authorization require implementation.
-            </p>
-            <p>
-              <strong className="text-[#F5F5F5]">Review stays visible:</strong> Pending Review is the default. No generated explanation constitutes permission to act.
-            </p>
+            <div className="space-y-3 text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
+              <p>
+                <strong className="text-[#F5F5F5]">No production path:</strong> synthetic incidents, virtual IT/OT assets and hypothetical actions only. Nothing connects to or changes a real environment.
+              </p>
+              <p>
+                <strong className="text-[#F5F5F5]">A proposed deterministic layer:</strong> policy definitions are explicit design artifacts. Server-side validation, fail-closed behavior and authorization require implementation.
+              </p>
+              <p>
+                <strong className="text-[#F5F5F5]">Review stays visible:</strong> Pending Review is the default. No generated explanation constitutes permission to act.
+              </p>
+            </div>
           </div>
+
+          {/* Interactive Split Terminal Interceptor */}
+          <SafetyInterceptorTerminal />
         </div>
       </section>
 
