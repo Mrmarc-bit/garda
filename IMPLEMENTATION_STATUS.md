@@ -12,9 +12,9 @@
 | Phase / Milestone | Status | Completed Features | Blockers / Risks | Next Verification Gate |
 |---|---|---|---|---|
 | **Milestone 0: Audit & Governance** | **Verified** | Repository audit, Figma inventory (60 PNGs mapped), 10 Governance & Planning docs created | None | Milestone 0 exit criteria met |
-| **Milestone 1: Foundation & Design System** | **Verified** | Next.js App Router scaffold, Tailwind design tokens, Reusable primitives (`Button`, `Badge`, `Card`, `Input`, `Tabs`), Shell layout (`AppSidebar`, `AppHeader`, `AppLayout`, `PublicHeader`, `PublicFooter`), persistent `SIMULATION ONLY` badge, standardized synthetic dataset, Landing page (`/`), Overview Dashboard (`/app`) | Browser automated testing blocked by offline environment; CLI build and HTTP curl verified | Proceeding to Milestone 2 (Core routes) |
-| **Milestone 2: Core Screens** | **In Progress** | Routing skeleton established | None | Building dedicated views for simulator, topology, incidents |
-| **Milestone 3: Backend & Persistence** | **Not Started** | - | Awaiting Milestone 2 | API schema and database tests |
+| **Milestone 1: Foundation & Design System** | **Verified** | Next.js App Router scaffold, Tailwind design tokens, Reusable primitives (`Button`, `Badge`, `Card`, `Input`, `Tabs`), Shell layout (`AppSidebar`, `AppHeader`, `AppLayout`, `PublicHeader`, `PublicFooter`), persistent `SIMULATION ONLY` badge, standardized synthetic dataset, Landing page (`/`), Overview Dashboard (`/app`) | None | CLI build and HTTP curl verified |
+| **Milestone 2: Core Screens** | **Verified** | All 23 unique application routes implemented across Public, Auth, and App groups. 100% pre-rendered and HTTP 200 OK verified. | None | Ready for Milestone 3 (Backend & Persistence) |
+| **Milestone 3: Backend & Persistence** | **In Progress** | FastAPI service skeleton and Pydantic schemas | None | API schema and database tests |
 | **Milestone 4: Simulation & Safety Engine** | **Not Started** | - | Awaiting Milestone 3 | Safety policy unit tests |
 | **Milestone 5: AI Explanation & Review** | **Not Started** | - | Awaiting Milestone 4 | Schema validation & fallback checks |
 | **Milestone 6: Experiments & Audit** | **Not Started** | - | Awaiting Milestone 5 | Audit trail and export tests |
@@ -47,8 +47,19 @@
 - **Application Shells:** Built responsive `AppSidebar` (248px), `AppHeader` (64px), `AppLayout` with mobile drawer backdrop, `PublicHeader`, and `PublicFooter`.
 - **Mandatory Safety Badge:** Persistent `SimulationBadge` (`SIMULATION ONLY`) integrated into headers and scenario cards.
 - **Synthetic Data Fixtures:** Standardized incident `INC-2026-0042` on `APP-GW-02`, 6 virtual IT/OT assets, and 3 response candidate strategies.
-- **Build Verification:** Production build `npm --workspace=@garda-sim/web run build` completed in 3.7s with zero errors or warnings.
-- **HTTP Server Verification:** Dev server verified responding `HTTP/1.1 200 OK` on `/` and `/app`.
+
+### Milestone 2: Core Application Screens (Verified)
+- **Response Simulator (`/app/simulator`):** Multi-candidate comparison matrix (STRAT-A, STRAT-B, STRAT-C), downtime estimation, recovery effort, and 5 deterministic safety invariant checks.
+- **IT/OT Virtual Digital Twin (`/app/digital-twin`):** Interactive 2D topology visualizer mapping directed dependencies from Identity -> Gateway -> OT Controller -> Telemetry feeds, with blast-radius toggle and node inspector.
+- **Incident Investigation (`/app/incidents`, `/app/incidents/:id`):** Filterable incident table, correlated synthetic evidence viewer (`EVD-101` through `EVD-104`) with JSON drawer, and chronological attack timeline.
+- **AI Decision Support & Review (`/app/recommendations`):** Explainable AI synthesis with evidence citations, uncertainty scores (±4.2%), and human review workflow (`Pending Review`, `Approved for Demonstration`, `Rejected`).
+- **Telemetry Workbench (`/app/evidence`):** Searchable synthetic logs categorized into Observed Facts, Derived Assessments, and Policy Validations.
+- **Evaluation Benchmark (`/app/experiments`):** Baseline heuristic containment vs GARDA-SIM multi-candidate comparison table.
+- **Reporting & Audit (`/app/reports`, `/app/audit-trail`):** Formatted report preview with JSON and Markdown download, and append-only cryptographic event log.
+- **System Views (`/app/notifications`, `/app/settings`, `/app/profile`):** Notification center, simulator strictness/AI adapter toggles, and operator clearance credentials.
+- **Authentication & Setup (`/login`, `/signup`, `/onboarding`, `/forgot-password`, `/reset-password`, `/verify-email`):** Labeled forms with validation and 5-step interactive onboarding lab setup wizard with completion state.
+- **Public & Legal (`/features`, `/how-it-works`, `/security`, `/documentation`, `/faq`, `/about`, `/contact`, `/privacy`, `/terms`, `not-found`):** Comprehensive public marketing, architecture documentation, security model, and custom 404 page.
+- **Verification Evidence:** `npm --workspace=@garda-sim/web run build` successfully pre-rendered all 31 static pages. `tsc --noEmit` passed with 0 errors. HTTP 200 OK verified across core paths.
 
 ---
 
