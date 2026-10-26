@@ -10,7 +10,9 @@
     "build": "npm --workspace=@garda-sim/web run build",
     "start": "npm --workspace=@garda-sim/web run start",
     "lint": "npm --workspace=@garda-sim/web run lint",
-    "typecheck": "npm --workspace=@garda-sim/web run typecheck"
+    "typecheck": "npm --workspace=@garda-sim/web run typecheck",
+    "test:api": "PYTHONPATH=. ./apps/api/.venv/bin/pytest apps/api/tests",
+    "test": "npm run typecheck && npm run test:api"
   },
   "overrides": {
     "postcss": "^8.5.31",

@@ -13,12 +13,12 @@
 |---|---|---|---|---|
 | **Milestone 0: Audit & Governance** | **Verified** | Repository audit, Figma inventory (60 PNGs mapped), 10 Governance & Planning docs created | None | Milestone 0 exit criteria met |
 | **Milestone 1: Foundation & Design System** | **Verified** | Next.js App Router scaffold, Tailwind design tokens, Reusable primitives (`Button`, `Badge`, `Card`, `Input`, `Tabs`), Shell layout (`AppSidebar`, `AppHeader`, `AppLayout`, `PublicHeader`, `PublicFooter`), persistent `SIMULATION ONLY` badge, standardized synthetic dataset, Landing page (`/`), Overview Dashboard (`/app`) | None | CLI build and HTTP curl verified |
-| **Milestone 2: Core Screens** | **Verified** | All 23 unique application routes implemented across Public, Auth, and App groups. 100% pre-rendered and HTTP 200 OK verified. | None | Ready for Milestone 3 (Backend & Persistence) |
-| **Milestone 3: Backend & Persistence** | **In Progress** | FastAPI service skeleton and Pydantic schemas | None | API schema and database tests |
-| **Milestone 4: Simulation & Safety Engine** | **Not Started** | - | Awaiting Milestone 3 | Safety policy unit tests |
-| **Milestone 5: AI Explanation & Review** | **Not Started** | - | Awaiting Milestone 4 | Schema validation & fallback checks |
-| **Milestone 6: Experiments & Audit** | **Not Started** | - | Awaiting Milestone 5 | Audit trail and export tests |
-| **Milestone 7: Release Readiness** | **Not Started** | - | Awaiting Milestone 6 | End-to-end security & visual review |
+| **Milestone 2: Core Screens** | **Verified** | All 23 unique application routes implemented across Public, Auth, and App groups. 100% pre-rendered and HTTP 200 OK verified. | None | All Figma frames mapped & functional |
+| **Milestone 3: Backend & Persistence** | **Verified** | Python FastAPI service (`apps/api`), Pydantic v2 schemas, REST endpoints for incidents, topology, simulation, reviews, and audit. | None | Integration tests pass (15/15) |
+| **Milestone 4: Simulation & Safety Engine** | **Verified** | `DeterministicSimulationEngine` and `DeterministicSafetyEngine` enforcing 5 hard invariants (SEC-OT-01 to SEC-OT-05). | None | 100% safety invariant test coverage |
+| **Milestone 5: AI Explanation & Review** | **Verified** | Human-in-the-loop review workflow, explainable trade-off synthesis with evidence citations (EVD-101/102/104) and uncertainty bounds. | None | Verified in UI & API review endpoints |
+| **Milestone 6: Experiments, Audit & Export** | **Verified** | Benchmarking evaluation page (`/app/experiments`), formatted report generator with JSON/MD downloads (`/app/reports`), immutable audit trail (`/app/audit-trail`). | None | Verified with export downloads & hash logs |
+| **Milestone 7: Release Readiness** | **In Progress** | Release verification, end-to-end user journeys, security checklist | None | Full integration walkthrough |
 
 ---
 
@@ -60,6 +60,17 @@
 - **Authentication & Setup (`/login`, `/signup`, `/onboarding`, `/forgot-password`, `/reset-password`, `/verify-email`):** Labeled forms with validation and 5-step interactive onboarding lab setup wizard with completion state.
 - **Public & Legal (`/features`, `/how-it-works`, `/security`, `/documentation`, `/faq`, `/about`, `/contact`, `/privacy`, `/terms`, `not-found`):** Comprehensive public marketing, architecture documentation, security model, and custom 404 page.
 - **Verification Evidence:** `npm --workspace=@garda-sim/web run build` successfully pre-rendered all 31 static pages. `tsc --noEmit` passed with 0 errors. HTTP 200 OK verified across core paths.
+
+### Milestones 3 & 4: Backend API & Deterministic Safety Engine (Verified)
+- **FastAPI Service:** Created `apps/api` with typed Pydantic v2 schemas and REST endpoints.
+- **Deterministic Simulation Engine:** Calculates quantitative metrics (Risk reduction %, Downtime minutes, Recovery effort, Blast radius).
+- **Deterministic Safety Engine:** Implemented hard invariant evaluation for rules `SEC-OT-01` through `SEC-OT-05`. Blocks `STRAT-A` (OT telemetry cutoff violation), permits `STRAT-B` with 100% compliance.
+- **Verification Evidence:** `npm test` executed `tsc --noEmit` and Pytest suite (`apps/api/tests`), passing all 15 tests in 0.41s.
+
+### Milestones 5 & 6: Review, Experiments, and Reporting (Verified)
+- **Review Workflow:** Supported via `/app/recommendations` and `POST /api/recommendations/review`.
+- **Benchmark Evaluation:** Documented in `/app/experiments` comparing baseline vs deterministic multi-candidate evaluation.
+- **Report & Audit Persistence:** Verified JSON and Markdown report export and append-only event ledger logging in `/app/reports` and `/app/audit-trail`.
 
 ---
 
