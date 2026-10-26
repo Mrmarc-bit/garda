@@ -55,6 +55,7 @@
 - **AI Decision Support & Review (`/app/recommendations`):** Explainable AI synthesis with evidence citations, uncertainty scores (±4.2%), and human review workflow (`Pending Review`, `Approved for Demonstration`, `Rejected`).
 - **Telemetry Workbench (`/app/evidence`):** Searchable synthetic logs categorized into Observed Facts, Derived Assessments, and Policy Validations.
 - **Evaluation Benchmark (`/app/experiments`):** Baseline heuristic containment vs GARDA-SIM multi-candidate comparison table.
+- **Public Marketing Pages (`/`, `/features`, `/how-it-works`, `/documentation`, `/about`):** 100% aligned with desktop exports in `docs ui/Public ·/`. Features 8-capability matrix, 6-stage decision path with expected artifact specimens, 2-column documentation with sticky TOC & model panels, and research mission/principles table.
 - **Reporting & Audit (`/app/reports`, `/app/audit-trail`):** Formatted report preview with JSON and Markdown download, and append-only cryptographic event log.
 - **System Views (`/app/notifications`, `/app/settings`, `/app/profile`):** Notification center, simulator strictness/AI adapter toggles, and operator clearance credentials.
 - **Authentication & Setup (`/login`, `/signup`, `/onboarding`, `/forgot-password`, `/reset-password`, `/verify-email`):** Labeled forms with validation and 5-step interactive onboarding lab setup wizard with completion state.
