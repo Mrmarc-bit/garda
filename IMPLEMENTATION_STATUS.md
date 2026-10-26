@@ -71,6 +71,8 @@
   8. `TimelineScrubber` (Section 04): Forensic attack & response timeline scrubber spanning 6 phases from Scenario Ingestion to Human Review, with auto-play and forensic artifact payload viewer.
   9. `TradeoffComparisonMatrix` (Section 05): Visual trade-off matrix with dynamic progress meters, gauge comparison, and interactive table view switcher.
   10. `SafetyInterceptorTerminal` (Section 06): Split interactive terminal demonstrating real-time AI proposal stream vs deterministic policy interception (Rule `SEC-OT-01` blocking telemetry cutoff).
+  11. `ResearchEvaluationMatrix` (Section 07): 3-card architectural benchmark framework visualizer (Rule-based A vs AI-only B vs Hybrid Simulation C) with interactive criteria matrix and execution pipelines.
+  12. `ScopeLimitationsVisualizer` (Section 08): Interactive security boundary deck mapping the 3 core FAQ questions to active code invariants (`OUTBOUND_PRODUCTION_TRAFFIC == 0`, `AUTONOMOUS_EXECUTION == FALSE`, `RECORDED_BENCHMARK_RUNS == 0`).
 - **Verification Evidence:** `npm --workspace=@garda-sim/web run build` and `tsc --noEmit` passed with 0 errors. HTTP 200 OK verified across core paths.
 
 ### Milestones 3 & 4: Backend API & Deterministic Safety Engine (Verified)

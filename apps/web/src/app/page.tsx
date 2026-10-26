@@ -9,6 +9,8 @@ import { ArchitectureLayersVisualizer } from "@/components/landing/architecture-
 import { TimelineScrubber } from "@/components/landing/timeline-scrubber";
 import { TradeoffComparisonMatrix } from "@/components/landing/tradeoff-comparison-matrix";
 import { SafetyInterceptorTerminal } from "@/components/landing/safety-interceptor-terminal";
+import { ResearchEvaluationMatrix } from "@/components/landing/research-evaluation-matrix";
+import { ScopeLimitationsVisualizer } from "@/components/landing/scope-limitations-visualizer";
 import { SmoothScrollProvider } from "@/components/motion/smooth-scroll-provider";
 import { CyberConstellation3D } from "@/components/motion/cyber-constellation-3d";
 
@@ -337,63 +339,45 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Section 07: Research Plan (Structured into 4 method points matching Figma) */}
+        {/* Section 07: Research Plan (Structured into 4 method points matching Figma + Interactive Evaluation Matrix) */}
         <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030] bg-[#1A1A1A]">
-          <div className="max-w-[1440px] mx-auto space-y-6">
-            <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-              07 / RESEARCH, NOT A PERFORMANCE CLAIM
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
-              Three approaches. One transparent evaluation plan.
-            </h2>
-
-            <div className="space-y-3 text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
-              <p>
-                <strong className="text-[#F5F5F5]">A / Rule-based</strong> — predefined mappings; inspect rule coverage and missing context.
-              </p>
-              <p>
-                <strong className="text-[#F5F5F5]">B / AI-only</strong> — narrative-led proposal; inspect evidence grounding and unsupported actions.
-              </p>
-              <p>
+          <div className="max-w-[1440px] mx-auto space-y-8">
+            <div className="space-y-4">
+              <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
+                07 / RESEARCH, NOT A PERFORMANCE CLAIM
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+                Three approaches. One transparent evaluation plan.
+              </h2>
+              <p className="text-sm md:text-base text-[#A3A3A3] max-w-4xl leading-relaxed">
+                <strong className="text-[#F5F5F5]">A / Rule-based</strong> — predefined mappings; inspect rule coverage and missing context.{" "}
+                <strong className="text-[#F5F5F5]">B / AI-only</strong> — narrative-led proposal; inspect evidence grounding and unsupported actions.{" "}
                 <strong className="text-[#F5F5F5]">C / Simulation + constraints</strong> — hypothetical impact plus policy checks; inspect assumptions and constraint handling.
               </p>
-              <p className="text-xs text-[#737373] pt-2 border-t border-[#303030]">
-                No experiment run yet. No comparative results, measured improvements or superiority claims are available.
-              </p>
             </div>
+
+            {/* Interactive Research Evaluation Matrix */}
+            <ResearchEvaluationMatrix />
           </div>
         </section>
 
-        {/* Section 08: Scope & Limitations (Structured into 3 distinct Q&As matching Figma) */}
+        {/* Section 08: Scope & Limitations (Structured into 3 distinct Q&As matching Figma + Interactive Boundary Visualizer) */}
         <section className="px-6 md:px-12 lg:px-16 py-16 border-b border-[#303030]">
-          <div className="max-w-[1440px] mx-auto space-y-6">
-            <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-              08 / QUESTIONS BEFORE YOU BEGIN
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
-              Clear scope. Clear limitations.
-            </h2>
-
-            <div className="space-y-4 text-sm text-[#A3A3A3] max-w-3xl leading-relaxed">
-              <div>
-                <strong className="text-[#F5F5F5] block mb-1">Does this connect to production?</strong>
-                <p className="text-xs text-[#A3A3A3]">No. Every incident and asset is synthetic or virtual.</p>
+          <div className="max-w-[1440px] mx-auto space-y-8">
+            <div className="space-y-4">
+              <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
+                08 / QUESTIONS BEFORE YOU BEGIN
               </div>
-              <div>
-                <strong className="text-[#F5F5F5] block mb-1">Can AI execute a response?</strong>
-                <p className="text-xs text-[#A3A3A3]">No. Explanations do not authorize actions; human review is explicit.</p>
-              </div>
-              <div>
-                <strong className="text-[#F5F5F5] block mb-1">Are the example results measured?</strong>
-                <p className="text-xs text-[#A3A3A3]">No. Comparisons are illustrative, not recorded experiments.</p>
-              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-[#F5F5F5]">
+                Clear scope. Clear limitations.
+              </h2>
+              <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
+                Review the core boundary conditions, human-in-the-loop guarantees, and synthetic data scope governing the platform.
+              </p>
             </div>
 
-            <div className="pt-2">
-              <Link href="/faq" className="text-xs text-[#FF6B35] underline hover:text-[#FF8255] transition-colors">
-                View all FAQs ↗
-              </Link>
-            </div>
+            {/* Interactive Scope & Limitations FAQ Visualizer */}
+            <ScopeLimitationsVisualizer />
           </div>
         </section>
 
