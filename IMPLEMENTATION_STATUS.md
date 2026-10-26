@@ -66,14 +66,12 @@
   3. `TextBlockAnimation` (`apps/web/src/components/motion/text-block-animation.tsx`): Masked slide-up, block-wipe, and blur-fade typography reveal with custom cubic-bezier spring curves.
   4. `DecryptedText` (`apps/web/src/components/motion/decrypted-text.tsx`): Cyber security monospaced character scramble and decrypt reveal effect for technical badges and incident IDs.
   5. `Typography & Flow`: Natural, razor-sharp institutional typography without vertical word wrapping, eliminating redundant layer stacks while preserving Lenis smooth scroll and ambient Three.js constellation.
-  6. `HeroInteractivePreview` (Hero / Act 1): Interactive SVG Digital Twin topology graph with live pulse animations, 3 candidate strategy toggles (Session Revocation, Access Restriction, Simulated Asset Isolation with blast radius links severing), and JSON evidence drawer.
-  7. `ResponseDilemmaVisualizer` (Section 01 / Act 2): Interactive split-outcome simulator visualizing the central response dilemma (Blind Host Isolation with SCADA blackout vs GARDA-SIM Context Simulation with continuous telemetry stream).
-  8. `ArchitectureLayersVisualizer` (Section 02 / Act 3): 4-tier interactive stacked architectural layers visualizer with live data specimens and isolation guarantees.
-  9. `BentoCapabilitiesGrid` (Section 03 / Act 4): Modern asymmetric Bento Grid showcasing the 8 platform capabilities with preview tags, route links, and mini visual specimens.
-  10. `TimelineScrubber` (Section 04 / Act 5): Forensic attack & response timeline scrubber spanning 6 phases from Scenario Ingestion to Human Review, with auto-play and forensic artifact payload viewer.
-  11. `SafetyInterceptorTerminal` (Section 05 / Act 6): Split interactive terminal demonstrating real-time AI proposal stream vs deterministic policy interception (Rule `SEC-OT-01` blocking telemetry cutoff).
-  12. `ScopeLimitationsVisualizer` & `ResearchEvaluationMatrix` (Section 06 / Act 7): Consolidated Trust, Scope & Research Rigor center combining air-gapped boundary invariants with transparent evaluation plan.
-  13. `Modern Spacious Section Rhythm`: Generous vertical padding (`py-24 md:py-32 lg:py-36`) across all landing sections for a high-end enterprise layout with zero scenario redundancy.
+  6. `Streamlined 4-Section Narrative`: Clean, comfortable, non-redundant landing page architecture:
+     - **Section 1: Hero & 3-Pillars**: Interactive Digital Twin Topology preview (`HeroInteractivePreview`) + Three.js constellation.
+     - **Section 2: The Response Dilemma**: Interactive simulation comparing blind host isolation against defensive simulation (`ResponseDilemmaVisualizer`).
+     - **Section 3: Bounded Workspace Bento Grid**: Asymmetric Bento Grid highlighting the 8 platform capabilities (`BentoCapabilitiesGrid`).
+     - **Section 4: Safety Guarantees & Direct Action**: Interactive boundary invariants (`ScopeLimitationsVisualizer`) + direct exploration CTA.
+  7. `Modern Comfortable Spacing`: Generous vertical padding (`py-20 md:py-28 lg:py-32`) ensuring clean, distraction-free reading comfort.
 - **Verification Evidence:** `npm --workspace=@garda-sim/web run build` and `tsc --noEmit` passed with 0 errors. HTTP 200 OK verified across core paths.
 
 ### Milestones 3 & 4: Backend API & Deterministic Safety Engine (Verified)

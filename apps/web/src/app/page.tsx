@@ -6,11 +6,7 @@ import { PublicHeader } from "@/components/layout/public-header";
 import { PublicFooter } from "@/components/layout/public-footer";
 import { HeroInteractivePreview } from "@/components/landing/hero-interactive-preview";
 import { ResponseDilemmaVisualizer } from "@/components/landing/response-dilemma-visualizer";
-import { ArchitectureLayersVisualizer } from "@/components/landing/architecture-layers-visualizer";
 import { BentoCapabilitiesGrid } from "@/components/landing/bento-capabilities-grid";
-import { TimelineScrubber } from "@/components/landing/timeline-scrubber";
-import { SafetyInterceptorTerminal } from "@/components/landing/safety-interceptor-terminal";
-import { ResearchEvaluationMatrix } from "@/components/landing/research-evaluation-matrix";
 import { ScopeLimitationsVisualizer } from "@/components/landing/scope-limitations-visualizer";
 import { SmoothScrollProvider } from "@/components/motion/smooth-scroll-provider";
 import { CyberConstellation3D } from "@/components/motion/cyber-constellation-3d";
@@ -22,9 +18,9 @@ export default function LandingPage() {
         <PublicHeader />
 
         {/* ========================================================================= */}
-        {/* ACT 1: HERO — The Hook & Instant Interactive Digital Twin Preview        */}
+        {/* SECTION 1: HERO — The Hook & Interactive Digital Twin Preview             */}
         {/* ========================================================================= */}
-        <section className="relative px-6 md:px-12 lg:px-16 pt-16 pb-24 md:pt-20 md:pb-28 lg:pt-24 lg:pb-32 border-b border-[#303030] overflow-hidden">
+        <section className="relative px-6 md:px-12 lg:px-16 pt-16 pb-20 md:pt-20 md:pb-24 lg:pt-24 lg:pb-28 border-b border-[#303030] overflow-hidden">
           {/* Ambient Interactive 3D Three.js Constellation Canvas */}
           <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
             <CyberConstellation3D nodeCount={36} interactive={true} />
@@ -59,7 +55,7 @@ export default function LandingPage() {
               <div className="flex flex-wrap items-center gap-4 pt-2">
                 <Link
                   href="/app"
-                  className="bg-[#FF6B35] text-white text-xs font-medium px-5 py-2.5 rounded-lg hover:bg-[#FF8255] transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2 shadow-lg shadow-[#FF6B35]/20 font-sans"
+                  className="bg-[#FF6B35] text-white text-xs font-medium px-6 py-3 rounded-lg hover:bg-[#FF8255] transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2 shadow-lg shadow-[#FF6B35]/20 font-sans"
                 >
                   <span>↗ Start Exploring</span>
                 </Link>
@@ -88,7 +84,7 @@ export default function LandingPage() {
         </section>
 
         {/* 3 Pillars Value Props Strip */}
-        <section className="px-6 md:px-12 lg:px-16 py-8 md:py-10 border-b border-[#303030] bg-[#1E1E1E]">
+        <section className="px-6 md:px-12 lg:px-16 py-6 md:py-8 border-b border-[#303030] bg-[#1E1E1E]">
           <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#A3A3A3]">
             <div className="flex items-center group">
               <span className="font-mono text-[#FF6B35] font-bold mr-2 group-hover:scale-110 transition-transform">01</span>
@@ -106,11 +102,11 @@ export default function LandingPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* ACT 2: THE DILEMMA — Threat Stopped vs Service Killed                    */}
+        {/* SECTION 2: THE DILEMMA — Threat Stopped vs Service Killed                 */}
         {/* ========================================================================= */}
-        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030]">
-          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
-            <div className="space-y-4">
+        <section className="px-6 md:px-12 lg:px-16 py-20 md:py-28 lg:py-32 border-b border-[#303030]">
+          <div className="max-w-[1440px] mx-auto space-y-8 md:space-y-10">
+            <div className="space-y-3">
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
                 01 / THE RESPONSE DILEMMA
               </div>
@@ -118,7 +114,7 @@ export default function LandingPage() {
                 A response can stop a threat. It can also stop a service.
               </h2>
               <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
-                An alert alone does not explain operational consequences. Blind host containment neutralizes attackers, but risks catastrophic plant telemetry blackouts. GARDA-SIM connects evidence, hypothetical actions and virtual dependencies before explicit human review.
+                An alert alone does not explain operational consequences. Blind host containment neutralizes attackers, but risks catastrophic plant telemetry blackouts. GARDA-SIM connects dependencies before human review.
               </p>
             </div>
 
@@ -128,43 +124,18 @@ export default function LandingPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* ACT 3: THE DEFENSIVE ENGINE — 4 Layers with Zero Blurred Boundaries      */}
+        {/* SECTION 3: THE CAPABILITIES — Modern Asymmetric Bento Grid                */}
         {/* ========================================================================= */}
-        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030] bg-[#1A1A1A]">
-          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
-            <div className="space-y-4">
-              <div className="text-xs font-mono text-[#FF6B35] tracking-wider uppercase font-bold">
-                02 / THE DEFENSIVE ARCHITECTURE
+        <section className="px-6 md:px-12 lg:px-16 py-20 md:py-28 lg:py-32 border-b border-[#303030] bg-[#1A1A1A]">
+          <div className="max-w-[1440px] mx-auto space-y-8 md:space-y-10">
+            <div className="space-y-3">
+              <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
+                02 / BOUNDED SIMULATION WORKSPACE
               </div>
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
-                Four layers. No blurred boundaries.
-              </h2>
-              <p className="text-sm md:text-base text-[#A3A3A3] max-w-4xl leading-relaxed">
-                <strong className="text-[#F5F5F5]">Synthetic Evidence</strong> — fictional source observations.{" "}
-                <strong className="text-[#F5F5F5]">Derived Assessment</strong> — interpretations, not facts.{" "}
-                <strong className="text-[#F5F5F5]">AI-Generated Explanation</strong> — a narrative specimen with unverified provider integration.{" "}
-                <strong className="text-[#F5F5F5]">Policy Validation</strong> — a separately proposed deterministic layer, not an AI assertion.
-              </p>
-            </div>
-
-            {/* Interactive Architectural Layers Visualizer Workbench */}
-            <ArchitectureLayersVisualizer />
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* ACT 4: THE CAPABILITIES — Modern Asymmetric Bento Grid                   */}
-        {/* ========================================================================= */}
-        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030]">
-          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
-            <div>
-              <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-                03 / BOUNDED SIMULATION WORKSPACE
-              </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5] mt-1">
                 Eight capabilities. Zero real-world risk.
               </h2>
-              <p className="text-sm md:text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
+              <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
                 Explore an integrated defensive environment designed for incident investigation, impact modeling, and transparent human review.
               </p>
             </div>
@@ -175,113 +146,53 @@ export default function LandingPage() {
         </section>
 
         {/* ========================================================================= */}
-        {/* ACT 5: HOW IT WORKS — Interactive Forensic Timeline Scrubber             */}
+        {/* SECTION 4: TRUST, SAFETY GUARANTEES & EXPLORE CTA                         */}
         {/* ========================================================================= */}
-        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030] bg-[#1A1A1A]">
-          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
-            <div className="space-y-4">
+        <section className="px-6 md:px-12 lg:px-16 py-20 md:py-28 lg:py-32 border-b border-[#303030]">
+          <div className="max-w-[1440px] mx-auto space-y-14">
+            <div className="space-y-3">
               <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-                04 / HOW IT WORKS
-              </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
-                Evidence to a human decision.
-              </h2>
-              <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
-                Step through the six phases from synthetic scenario ingestion to human review, ensuring every recommendation is anchored in verifiable observations.
-              </p>
-            </div>
-
-            {/* Interactive Timeline Scrubber with Live Forensics & Playback */}
-            <TimelineScrubber />
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* ACT 6: THE SAFETY GATE — AI Explains. Code Enforces. People Decide.       */}
-        {/* ========================================================================= */}
-        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030]">
-          <div className="max-w-[1440px] mx-auto space-y-10 md:space-y-12">
-            <div className="space-y-4">
-              <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-                05 / THE SAFETY BOUNDARY
+                03 / SAFETY GUARANTEES & SCOPE
               </div>
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
                 AI explains. Constraints are separate. People decide.
               </h2>
-
-              <div className="space-y-3 text-sm text-[#A3A3A3] max-w-4xl leading-relaxed">
-                <p>
-                  <strong className="text-[#F5F5F5]">No production path:</strong> synthetic incidents, virtual IT/OT assets and hypothetical actions only. Nothing connects to or changes a real environment.
-                </p>
-                <p>
-                  <strong className="text-[#F5F5F5]">A proposed deterministic layer:</strong> policy definitions are explicit design artifacts. Server-side validation, fail-closed behavior and authorization require implementation.
-                </p>
-                <p>
-                  <strong className="text-[#F5F5F5]">Review stays visible:</strong> Pending Review is the default. No generated explanation constitutes permission to act.
-                </p>
-              </div>
-            </div>
-
-            {/* Interactive Split Terminal Interceptor */}
-            <SafetyInterceptorTerminal />
-          </div>
-        </section>
-
-        {/* ========================================================================= */}
-        {/* ACT 7: TRUST & SCOPE CENTER — Research Plan + FAQs & Invariants           */}
-        {/* ========================================================================= */}
-        <section className="px-6 md:px-12 lg:px-16 py-24 md:py-32 lg:py-36 border-b border-[#303030] bg-[#1A1A1A]">
-          <div className="max-w-[1440px] mx-auto space-y-12">
-            <div className="space-y-4">
-              <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-                06 / TRUST, SCOPE & RESEARCH RIGOR
-              </div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
-                Clear scope. Clear limitations. Zero production path.
-              </h2>
-              <p className="text-sm md:text-base text-[#A3A3A3] max-w-4xl leading-relaxed">
-                Every asset is bounded within an isolated synthetic sandbox. We evaluate responses transparently across rule-based heuristics, unconstrained generative models, and constrained simulation architectures.
+              <p className="text-sm md:text-base text-[#A3A3A3] max-w-3xl leading-relaxed">
+                Every incident and asset is synthetic. Deterministic fail-closed policy checks operate independently of generative text, requiring mandatory human sign-off.
               </p>
             </div>
 
-            {/* 2-Part Trust & Scope Visual Deck */}
-            <div className="space-y-10">
-              {/* Part A: 3 Boundary Cards & Invariants */}
-              <ScopeLimitationsVisualizer />
+            {/* 3 Interactive Boundary Cards */}
+            <ScopeLimitationsVisualizer />
 
-              {/* Part B: Transparent 3-Approach Evaluation Plan */}
-              <ResearchEvaluationMatrix />
-            </div>
-          </div>
-        </section>
+            {/* Clean Direct Action CTA Box */}
+            <div className="bg-[#202020] border border-[#383838] rounded-2xl p-8 md:p-12 text-center space-y-5 shadow-2xl relative overflow-hidden">
+              <div className="space-y-3 max-w-2xl mx-auto">
+                <div className="text-xs font-mono text-[#FF6B35] tracking-wider uppercase font-bold">
+                  EXPLORE THE DESIGN
+                </div>
+                <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F5F5F5]">
+                  Make the reasoning visible.
+                </h3>
+                <p className="text-sm md:text-base text-[#A3A3A3] leading-relaxed">
+                  Enter a bounded simulation workspace. Examine the evidence, the tradeoffs and the limits. Research prototype; no subscription or availability commitment.
+                </p>
+              </div>
 
-        {/* ========================================================================= */}
-        {/* ACT 8: EXPLORE THE DESIGN CTA — Direct Action                            */}
-        {/* ========================================================================= */}
-        <section className="px-6 md:px-12 lg:px-16 py-28 md:py-36 lg:py-40 border-b border-[#303030] bg-[#202020]">
-          <div className="max-w-[1440px] mx-auto space-y-6 text-center">
-            <div className="text-xs font-mono text-[#737373] tracking-wider uppercase">
-              07 / EXPLORE THE DESIGN
-            </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#F5F5F5]">
-              Make the reasoning visible.
-            </h2>
-            <p className="text-sm md:text-base text-[#A3A3A3] max-w-xl mx-auto leading-relaxed">
-              Enter a bounded simulation workspace. Examine the evidence, the tradeoffs and the limits. Research prototype; no subscription or availability commitment.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-              <Link
-                href="/app"
-                className="bg-[#FF6B35] text-white text-xs font-medium px-6 py-3 rounded-lg hover:bg-[#FF8255] transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#FF6B35]/20 font-sans"
-              >
-                Start Exploring ↗
-              </Link>
-              <Link
-                href="/documentation"
-                className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
-              >
-                Read the documentation
-              </Link>
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                <Link
+                  href="/app"
+                  className="bg-[#FF6B35] text-white text-xs font-medium px-6 py-3 rounded-lg hover:bg-[#FF8255] transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#FF6B35]/20 font-sans"
+                >
+                  Start Exploring ↗
+                </Link>
+                <Link
+                  href="/documentation"
+                  className="text-xs text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors"
+                >
+                  Read the documentation
+                </Link>
+              </div>
             </div>
           </div>
         </section>
