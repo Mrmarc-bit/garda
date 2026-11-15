@@ -1,10 +1,6 @@
 import type { NextConfig } from "next";
 
-const backendUrl = (
-  process.env.BACKEND_API_URL ||
-  process.env.NEXT_PUBLIC_API_BASE ||
-  "http://127.0.0.1:8000"
-).replace(/\/$/, "");
+const backendUrl = process.env.BACKEND_API_URL?.replace(/\/$/, "");
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -18,17 +14,28 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  env: {
+    NEXT_PUBLIC_SUPABASE_URL:
+      process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      "https://gnulkgpthrklbkovwiay.supabase.co",
+    NEXT_PUBLIC_SUPABASE_ANON_KEY:
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      "sb_publishable_ZwUJMvgf4VnbAuhS8K4eoA_FzQUApSb",
+  },
   async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${backendUrl}/api/:path*`,
-      },
-      {
-        source: "/health",
-        destination: `${backendUrl}/health`,
-      },
-    ];
+    if (backendUrl) {
+      return [
+        {
+          source: "/api/:path*",
+          destination: `${backendUrl}/api/:path*`,
+        },
+        {
+          source: "/health",
+          destination: `${backendUrl}/health`,
+        },
+      ];
+    }
+    return [];
   },
 };
 
