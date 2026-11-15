@@ -1,6 +1,7 @@
 services:
   - type: web
     name: garda-api
+    plan: free
     runtime: python
     rootDir: apps/api
     buildCommand: pip install -r requirements.txt
@@ -9,12 +10,6 @@ services:
       - key: PYTHON_VERSION
         value: 3.12.0
       - key: GARDA_ENV
-        value: production
-      - key: GARDA_DATA_DIR
-        value: /var/data
+        value: development
       - key: GARDA_ALLOWED_ORIGINS
-        value: https://garda-sim.vercel.app,https://garda-sim-suntreearts-projects.vercel.app
-    disk:
-      name: garda-data
-      mountPath: /var/data
-      sizeGB: 1
+        value: https://garda-sim.vercel.app,https://garda-sim-suntreearts-projects.vercel.app,http://localhost:3000
