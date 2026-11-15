@@ -539,3 +539,47 @@ def test_production_mode_removes_interactive_api_docs(tmp_path):
     )
     assert result.returncode == 0, result.stderr
     assert result.stdout.strip() == "None None None"
+
+
+def test_ledger_key_replacement_surfaces_as_503(auth_client, monkeypatch, tmp_path):
+    """A key swapped underneath a running process must fail closed, not silently.
+
+    Reading stored rows still works — the rows are readable, they are simply no
+    longer verifiable — but anything that needs the key (chain verification, and
+    every append) must answer 503 with an actionable message rather than a 500,
+    a stack trace, or a success the next restart cannot verify.
+    """
+    from apps.api.src import config, storage
+
+    # The key this process booted with is cached in a module global, and that
+    # cache is what makes the mismatch detectable. Register it with monkeypatch
+    # so teardown restores it, and this test can never leave a foreign key
+    # cached and break appends in later tests.
+    monkeypatch.setattr(storage, "_AUDIT_KEY", storage._AUDIT_KEY)
+
+    other_key = tmp_path / "other-key"
+    other_key.write_bytes(b"a-completely-different-key-value")
+    monkeypatch.setattr(config, "AUDIT_SECRET_PATH", other_key)
+
+    # Stored rows are still listable.
+    assert auth_client.get("/api/audit-trail").status_code == 200
+
+    # Verification needs the key, so it fails closed.
+    verify = auth_client.get("/api/audit-trail/verify")
+    assert verify.status_code == 503
+    assert "signing key" in verify.json()["detail"].lower()
+
+    # A write is refused rather than appended with a key that no longer matches.
+    write = auth_client.post(
+        "/api/simulate",
+        json={
+            "scenario_id": "INC-2026-0042",
+            "strategy_code": "STRAT-B",
+            "target_asset": "APP-GW-02",
+        },
+    )
+    assert write.status_code == 503
+
+    # Neither failure may leak internals.
+    assert "Traceback" not in verify.text
+    assert "Traceback" not in write.text

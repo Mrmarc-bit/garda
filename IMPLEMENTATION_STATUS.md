@@ -16,7 +16,7 @@
 | **M0: Audit & Governance** | Verified | Repository audit, Figma inventory (60 PNGs), 10 governance documents | None | Documents exist and are reviewed |
 | **M1: Foundation & Design System** | Verified | Next.js App Router scaffold, Tailwind tokens, primitives, shell layout, persistent `SIMULATION ONLY` badge, landing page, `/app` overview | None | `tsc --noEmit` exit 0, `next build` 31 routes |
 | **M2: Core Screens** | Verified | 31 routes implemented; 14 authenticated `/app/*` routes render real API data | Screens are functional, not pixel-diffed against Figma (no automated screenshot comparison in the repo) | `next build` prerenders 31 routes |
-| **M3: Backend, Auth & Persistence** | Verified | FastAPI service, Pydantic v2 schemas, SQLite persistence, session-cookie authentication, security headers, rate limiting | Single-node SQLite; no PostgreSQL adapter | `pytest apps/api/tests` → 100 passed |
+| **M3: Backend, Auth & Persistence** | Verified | FastAPI service, Pydantic v2 schemas, SQLite persistence, session-cookie authentication, security headers, rate limiting | Single-node SQLite; no PostgreSQL adapter | `pytest apps/api/tests` → 101 passed |
 | **M4: Simulation & Safety Engine** | Verified | `DeterministicSimulationEngine` + `DeterministicSafetyEngine` enforcing SEC-OT-01…05 **server-side**, fail-closed, with a server-side approval gate | Invariants are string/inventory based over a *fixed synthetic* dataset; they are not a general OT policy engine | 96 backend tests incl. bypass cases |
 | **M5: AI Explanation** | **Not implemented** | Nothing. No provider, no SDK, no key handling. Candidate rationales are authored fixture text | PRD §6.7 FR-AI-01…07 are P0 and unmet | n/a |
 | **M6: Experiments, Audit & Export** | Partially verified | Audit ledger is real (SQLite + append-only triggers + HMAC chain + verify endpoint). Reports export real API data. Experiments harness measures real round-trip latency | Containment accuracy / blast-radius accuracy are **not** measured — no ground truth exists | 96 backend tests; browser pass |
@@ -163,17 +163,45 @@ below 1024px, checking every page for horizontal overflow, controls under the
 | Simulator strategy cards were a clickable `<div>` with a 24px radio inside | **Fixed** | Card is now a `<label>` wrapping the radio, so the whole card is the tap target and `focus-within` draws the focus ring |
 | Public pages had no `<main>` landmark, and the target-size floor was scoped to `main` only | **Fixed** | Floor is app-wide; FAQ categories and onboarding steps are real controls with a 40px box; FAQ categories are `role="tab"`/`aria-selected` |
 | Only sub-10px text in the app (`v1.0` at 9px) | **Fixed** | `components/layout/app-sidebar.tsx` now 10px |
-
 | Dense data tables (audit ledger, incident repository, experiment matrix) were `<table>` inside `overflow-x-auto`: at 390px only 310px of a 609px table was visible, so RESULT and ENTRY HASH were cut off and the reader had to scroll sideways to see one row | **Fixed** | `apps/web/src/app/app/audit-trail/page.tsx`, `incidents/page.tsx` and `experiments/page.tsx` now render a stacked card list below `md` (`md:hidden` `<ul>`) and the table from `md` up (`hidden md:block`). Measured after the change: audit and incident tables report width 0 at 390px (cards instead), and the reports key/value table fits at 310/310 with no clipping |
 
 **Result: 130/130 viewport checks pass** — 13 `/app` routes and 13 public routes
 × 5 viewports, with zero horizontal overflow, zero undersized controls and zero
-sub-10px text. `npx tsc --noEmit` exit 0, 100 pytest passing, production build
+sub-10px text. `npx tsc --noEmit` exit 0, 101 pytest passing, production build
 succeeds (31 routes).
 
 Note for anyone re-running this: Tailwind 3.4 has **no `pointer-coarse`
 variant**; a `pointer-coarse:` utility silently emits nothing, so coarse-pointer
 rules must be written as raw CSS media queries.
+
+---
+
+### 2.9 Navigation transitions and loading states (requested 2026-11-15)
+
+Requested as: page transitions out of the dashboard were not smooth, there was no
+shimmer, and the loading state looked poor. Three separate causes were measured,
+not guessed.
+
+| Defect | Status | Evidence |
+|---|---|---|
+| **The workspace shell was re-created on every navigation.** `apps/web/src/app/app/` had no `layout.tsx`, and all 13 pages wrapped their own content in `<AppLayout>`, so each client-side navigation unmounted and remounted the sidebar and header — the visible flash | **Fixed** | New `apps/web/src/app/app/layout.tsx` renders the shell once; the 13 pages now return fragments. Verified by tagging `aside.dataset.probe` and navigating: the attribute survived, so the shell was not remounted |
+| No transition between routes at all | **Fixed** | `apps/web/src/app/app/template.tsx` applies a pure-CSS `.workspace-enter` (220ms, `cubic-bezier(0.22,1,0.36,1)`, opacity + 6px rise). A framer-motion `initial={{opacity:0}}` was tried first and **rejected**: it left the page invisible until hydration finished, so a slow load showed an empty workspace |
+| No navigation feedback while a route loads | **Fixed** | `apps/web/src/components/layout/route-progress.tsx`: a 2px top bar driven by a capture-phase link click plus `usePathname` completion. Measured `{w:"22.76%", o:"1"}` 150ms after a click, `{w:"100%", o:"1"}` on completion, settling to `{w:"0%", o:"0"}` |
+| Loading states were a spinner plus a sentence ("Loading simulator context from the deterministic engine…") with one `animate-pulse` block | **Fixed** | New `apps/web/src/components/ui/skeleton.tsx` (`Skeleton`, `SkeletonText`, `SkeletonCard`, `SkeletonCardGrid`, `SkeletonRows`, `SkeletonPage`); applied to `app/loading.tsx` and the in-flight state of the dashboard, simulator, audit trail, evidence, incidents, settings, profile and notifications pages |
+| The audit-trail banner printed "Total Recorded Events: **0**" and "Chain verification unavailable" *while loading* — a false statement about a ledger that had not been read | **Fixed** | That banner now renders skeleton bars when `isLoading && chain === null && total === 0` |
+| Shimmer invisible on first attempt: animating `background-position` repainted every frame and stayed too faint | **Fixed** | The sweep is a `transform`-animated `::after` band (`@keyframes garda-shimmer`), which is GPU-composited. Measured `matrix(1,0,0,1,20.2147,0)` mid-sweep |
+| Placeholder blocks were *darker* than the card (`#1c1c1c` on `#252525`), so they read as holes punched in the panel | **Fixed** | `.skeleton-shimmer` base is `#343434`, i.e. lighter than the card, with a white 18%-peak band. Confirmed by screenshot at 1440x900 and 390x844 |
+| The progress bar could stick at 90% forever: completion is keyed on `usePathname()`, but a link that changes only the query string (`/app/simulator?incident=…` clicked from the incident list) does not change the pathname | **Fixed** | `route-progress.tsx` gained a 4s watchdog that completes and hides the bar. Reading `useSearchParams()` instead would force every workspace page into a Suspense boundary for a decorative element. Measured: bar visible at 300ms after the click, hidden again at 1.15s |
+| Audit ledger key replaced on disk under a running process returned **500** from `/api/audit-trail/verify` | **Fixed** | `storage.LedgerUnavailableError` plus an `@app.exception_handler` returning **503** with an actionable message; covered by `test_ledger_key_replacement_surfaces_as_503` |
+
+**Result:** `npx tsc --noEmit` exit 0, **101 pytest passing**, production build
+succeeds (31 routes), and the responsive sweep still reports **130/130** clean
+after the layout restructure.
+
+Note for anyone re-running this: a stale `apps/web/.next` will serve the *old*
+stylesheet, so a CSS change can look broken when it is not. Kill `next dev` and
+`next-server`, delete `.next`, restart, then assert `getComputedStyle(el).animationName`
+and the `::after` `transform` before judging the result.
 
 ---
 
@@ -183,7 +211,7 @@ All of the following were run in this working tree. Outcomes are the actual outp
 
 | Command | Outcome | Purpose |
 |---|---|---|
-| `rm -rf .garda && PYTHONPATH=. ./apps/api/.venv/bin/pytest apps/api/tests -q` | **100 passed, 1 warning** (StarletteDeprecationWarning: httpx with `starlette.testclient`) | Backend: auth, safety invariants, validation, storage, chain verification, rate limiting |
+| `rm -rf .garda && PYTHONPATH=. ./apps/api/.venv/bin/pytest apps/api/tests -q` | **101 passed, 1 warning** (StarletteDeprecationWarning: httpx with `starlette.testclient`) | Backend: auth, safety invariants, validation, storage, chain verification, rate limiting |
 | `npx --no-install tsc --noEmit -p apps/web/tsconfig.json` | **exit 0, no output** | TypeScript strict |
 | `npm --workspace=@garda-sim/web run build` | **Success** — 31 routes prerendered, Middleware 34.2 kB, shared JS 103 kB | Production build (previously failed) |
 | `curl` against the running API | `/health` 200 with `nosniff`, `DENY`, `no-referrer`, CSP, `no-store`; unauthenticated `/api/incidents` → 401; `STRAT-A ` → 422; approve `STRAT-A` → **403**; approve `STRAT-B` → 200 with `chain_verified: true` | Live security behaviour |

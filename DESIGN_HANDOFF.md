@@ -194,7 +194,23 @@ Before declaring any screen complete:
 - **Dense tables become stacked cards below `md`.** The Figma desktop frames draw the audit ledger, incident repository and experiment matrix as multi-column tables. Those layouts are unreadable at 390px without horizontal scrolling, so below `md` each row becomes a card that keeps every field visible (audit: timestamp, result badge, actor, event, resource, hash prefix, SYNTHETIC marker; incidents: id, status badge, title, summary, asset, severity, Simulate action; experiments: strategy, verdict badge, failed rules, median latency, modelled benefit and downtime). The table is restored from `md` up. This is a deliberate responsive deviation from the desktop frame, not a redesign.
 - Touch ergonomics are enforced in `globals.css` rather than per component: a 24px floor for every control at every viewport (WCAG 2.5.8 AA), raised to 40px for form controls and 32–44px for text buttons and tabs on coarse pointers.
 
-### 6.5 Still open
+
+### 6.5 Navigation transitions and loading states (2026-11-15)
+
+Not present in any Figma frame; implemented as a conservative extension of the
+approved visual language and recorded here per `AGENTS.md` §4.
+
+| Element | Decision | Rationale |
+|---|---|---|
+| Route transition | 220ms opacity + 6px rise, CSS-only (`template.tsx`) | A JS-driven `initial={{opacity:0}}` leaves the page invisible until hydration, which reads as a broken app on a slow connection |
+| Navigation progress bar | 2px `#FF6B35` bar at the top edge | The only brand-accent colour already used for primary actions; no new colour introduced |
+| Loading placeholders | Shaped skeletons in `#343434` (lighter than the `#252525` card) with a white 18% sweep | A placeholder darker than its surface reads as a hole; the convention is lighter-than-surface |
+| Skeleton shapes | Mirror the real layout: 4 KPI cards, 3 cards, 5 table rows, 2-col settings/profile cards | Keeps layout shift near zero when real content arrives |
+| Reduced motion | The existing `prefers-reduced-motion` block zeroes the transition and the shimmer | Required by `AGENTS.md` §4 |
+
+Still open: no automated screenshot comparison against Figma (§6.6).
+
+### 6.6 Still open
 
 - No automated screenshot comparison exists, so gates 1–3 of §5 are performed by hand and are not regression-proof.
 - Tablet and mobile frames were checked structurally through the shared shell and drawer, not pixel-compared.

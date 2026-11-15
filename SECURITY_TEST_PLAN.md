@@ -54,7 +54,7 @@ Verify the mandatory requirements of `SECURITY.md`: authentication safety, serve
 | Stack traces / secrets in error bodies | **Passed** — structured `detail` only; 404 does not echo the requested identifier |
 | Browser console across all 14 `/app` routes | **Passed** — no hydration errors, no unhandled exceptions, no failed API calls |
 
-**Backend suite total:** `PYTHONPATH=. ./apps/api/.venv/bin/pytest apps/api/tests -q` → **100 passed, 1 warning** (StarletteDeprecationWarning: httpx with `starlette.testclient`).
+**Backend suite total:** `PYTHONPATH=. ./apps/api/.venv/bin/pytest apps/api/tests -q` → **101 passed, 1 warning** (StarletteDeprecationWarning: httpx with `starlette.testclient`).
 
 ---
 

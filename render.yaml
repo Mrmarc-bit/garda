@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: garda-api
+    runtime: python
+    rootDir: apps/api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn src.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: GARDA_ENV
+        value: production
+      - key: GARDA_DATA_DIR
+        value: /var/data
+      - key: GARDA_ALLOWED_ORIGINS
+        value: https://garda-sim.vercel.app,https://garda-sim-suntreearts-projects.vercel.app
+    disk:
+      name: garda-data
+      mountPath: /var/data
+      sizeGB: 1

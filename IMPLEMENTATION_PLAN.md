@@ -113,7 +113,7 @@ gantt
     - `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`, `GET /health`
   - Session authentication, security headers, rate limiting.
 - **Acceptance Criteria:**
-  - [x] Automated API tests pass with Pytest / HTTPX (**100 passed**).
+  - [x] Automated API tests pass with Pytest / HTTPX (**101 passed**).
   - [x] Database initialisation is idempotent (seed only when the ledger is empty; `init_db` recreates triggers).
   - [x] Input validation rejects malformed payloads with 422 and referential failures with 400.
   - [x] Every `/api/*` route rejects an unauthenticated request with 401.

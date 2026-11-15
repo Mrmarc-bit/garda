@@ -5,10 +5,15 @@ location *before* ``config`` is imported, so the suite never touches a developer
 real ledger and never depends on ambient environment variables.
 """
 
+import atexit
 import os
+import shutil
 import tempfile
 
 _DATA_DIR = tempfile.mkdtemp(prefix="garda-test-")
+# Leftover directories accumulate in the system temp folder on every run, so
+# remove this one when the interpreter exits.
+atexit.register(shutil.rmtree, _DATA_DIR, True)
 os.environ["GARDA_DATA_DIR"] = _DATA_DIR
 os.environ["GARDA_ENV"] = "test"
 os.environ["GARDA_DEMO_PASSWORD"] = "test-password-123"

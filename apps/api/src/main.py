@@ -219,6 +219,29 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
             security.clear_session_cookie(response)
     return response
 
+@app.exception_handler(storage.LedgerUnavailableError)
+async def ledger_unavailable_handler(
+    request: Request, exc: storage.LedgerUnavailableError
+) -> JSONResponse:
+    """Report a broken ledger key as 503, never as a 500 or an empty ledger.
+
+    The condition is operational (the data directory was replaced under a running
+    process), so the honest answer is "service unavailable, restart the API" —
+    not an internal stack trace, and certainly not a successful write that would
+    be unverifiable after the next restart.
+    """
+    logger.error("Ledger unavailable: %s", exc)
+    return JSONResponse(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        content={
+            "detail": (
+                "The audit ledger is unavailable because its signing key changed "
+                "underneath this process. Restart the API against the intended "
+                "data directory."
+            )
+        },
+    )
+
 # --------------------------------------------------------------------------- #
 # Helpers
 # --------------------------------------------------------------------------- #
