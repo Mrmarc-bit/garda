@@ -1,40 +1,23 @@
-"use client";
-
-import * as React from "react";
-import { usePathname } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
-
 /**
- * Per-navigation transition for the workspace. Next.js remounts a `template.tsx`
- * on every route change, which is what makes an enter animation possible without
- * an exit animation fighting the router.
+ * Per-navigation enter transition for the workspace.
  *
- * The animation is a short fade with a 6px lift — enough to read as a deliberate
- * transition, short enough (180ms) that it never feels like waiting. It is keyed
- * on the pathname so a query-string-only change (for example the simulator's
- * `?incident=` deep link) does not replay it.
+ * Next.js mounts a fresh `template.tsx` for every route change, which is what
+ * makes a pure-CSS enter animation possible without an exit animation fighting
+ * the router.
+ *
+ * This is deliberately CSS (`.workspace-enter` in `globals.css`) and NOT a
+ * JavaScript animation library. A JS-driven `initial={{ opacity: 0 }}` leaves the
+ * page invisible until hydration finishes and the animation starts, which on a
+ * slow connection showed an empty workspace instead of the loading placeholder.
+ * A CSS keyframe is applied by the stylesheet the moment the element is painted,
+ * so the content is never stuck transparent, and the global
+ * `prefers-reduced-motion` block collapses it to an instant swap for users who
+ * ask for that.
  */
 export default function WorkspaceTemplate({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const prefersReducedMotion = useReducedMotion();
-
-  if (prefersReducedMotion) {
-    return <>{children}</>;
-  }
-
-  return (
-    <motion.div
-      key={pathname}
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-      className="min-w-0"
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className="workspace-enter min-w-0">{children}</div>;
 }

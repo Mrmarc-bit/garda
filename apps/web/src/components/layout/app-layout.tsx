@@ -4,6 +4,7 @@ import * as React from "react";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "./app-sidebar";
 import { AppHeader } from "./app-header";
+import { RouteProgress } from "./route-progress";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -13,6 +14,10 @@ interface AppLayoutProps {
 export const AppLayout: React.FC<AppLayoutProps> = ({ children, breadcrumb }) => {
   return (
     <SidebarProvider className="h-screen w-full flex bg-[#121212] text-[#F5F5F5] font-sans antialiased overflow-hidden selection:bg-[#FF6B35]/30 selection:text-white">
+      {/* Navigation feedback. Rendered above the shell so it is not clipped by
+          the scrolling <main>. */}
+      <RouteProgress />
+
       {/* Modern Sidebar System */}
       <AppSidebar />
 

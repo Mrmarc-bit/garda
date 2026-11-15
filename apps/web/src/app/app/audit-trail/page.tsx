@@ -20,7 +20,7 @@ import {
   loadFailureHint,
   verifyAuditChain,
 } from "@/lib/api-client";
-import { SkeletonRows } from "@/components/ui/skeleton";
+import { Skeleton, SkeletonRows } from "@/components/ui/skeleton";
 
 const PAGE_SIZE = 25;
 
@@ -151,37 +151,56 @@ export default function AuditTrailPage() {
         </div>
       ) : null}
 
-      {/* Chain verification banner: the real result, not a decorative badge. */}
+      {/* Chain verification banner: the real result, not a decorative badge.
+          While the first page is still loading this renders a placeholder rather
+          than "0 events / verification unavailable", which would be a false
+          statement about a ledger that simply has not been read yet. */}
       <div className="bg-[#252525] border border-[#383838] rounded-xl p-5 mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          {chain?.verified ? (
-            <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" aria-hidden="true" />
-          ) : (
-            <ShieldAlert className="w-5 h-5 text-red-400 shrink-0" aria-hidden="true" />
-          )}
-          <div>
-            <h2 className="text-xs font-semibold text-[#F5F5F5]">
-              {chain === null
-                ? "Chain verification unavailable"
-                : chain.verified
-                  ? "Chain verified"
-                  : `Chain broken at sequence ${chain.broken_seq ?? "unknown"}`}
-            </h2>
-            <p className="text-xs text-[#A3A3A3] mt-0.5 max-w-2xl">
-              {chain?.note ??
-                "The API verifies every entry hash against its predecessor on request."}
-            </p>
-            {chain ? (
-              <p className="text-[11px] font-mono text-[#737373] mt-1">
-                {chain.algorithm} · {chain.checked_entries} entries checked
-              </p>
-            ) : null}
-          </div>
-        </div>
-        <div className="text-xs font-mono text-[#737373] bg-[#1E1E1E] px-3 py-1.5 rounded-lg border border-[#333]">
-          Total Recorded Events:{" "}
-          <span className="text-emerald-400 font-bold">{total}</span>
-        </div>
+        {isLoading && chain === null && total === 0 ? (
+          <>
+            <div className="flex items-start gap-3">
+              <Skeleton className="h-5 w-5 shrink-0 rounded-full" />
+              <div className="space-y-2">
+                <Skeleton className="h-3 w-40" />
+                <Skeleton className="h-3 w-64 max-w-full" />
+                <Skeleton className="h-2.5 w-32" />
+              </div>
+            </div>
+            <Skeleton className="h-7 w-44 shrink-0" />
+          </>
+        ) : (
+          <>
+            <div className="flex items-start gap-3">
+              {chain?.verified ? (
+                <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" aria-hidden="true" />
+              ) : (
+                <ShieldAlert className="w-5 h-5 text-red-400 shrink-0" aria-hidden="true" />
+              )}
+              <div>
+                <h2 className="text-xs font-semibold text-[#F5F5F5]">
+                  {chain === null
+                    ? "Chain verification unavailable"
+                    : chain.verified
+                      ? "Chain verified"
+                      : `Chain broken at sequence ${chain.broken_seq ?? "unknown"}`}
+                </h2>
+                <p className="text-xs text-[#A3A3A3] mt-0.5 max-w-2xl">
+                  {chain?.note ??
+                    "The API verifies every entry hash against its predecessor on request."}
+                </p>
+                {chain ? (
+                  <p className="text-[11px] font-mono text-[#737373] mt-1">
+                    {chain.algorithm} · {chain.checked_entries} entries checked
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className="text-xs font-mono text-[#737373] bg-[#1E1E1E] px-3 py-1.5 rounded-lg border border-[#333]">
+              Total Recorded Events:{" "}
+              <span className="text-emerald-400 font-bold">{total}</span>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Filters: they actually filter the loaded page. */}

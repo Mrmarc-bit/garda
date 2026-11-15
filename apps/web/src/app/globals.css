@@ -191,6 +191,24 @@ aside [data-sidebar="menu-action"] {
   }
 }
 
+/* Route enter transition for the workspace shell (app/app/template.tsx).
+   CSS, not JS: the animation must start with the first paint so content can
+   never be stuck at opacity 0 while a bundle loads. */
+@keyframes garda-workspace-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.workspace-enter {
+  animation: garda-workspace-enter 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 /* Shimmer placeholder used by components/ui/skeleton.tsx. A gradient sweep
    reads as "content is arriving" more clearly than an opacity pulse, and it
    costs no JavaScript. */
@@ -203,19 +221,24 @@ aside [data-sidebar="menu-action"] {
   }
 }
 
+/* The highlight is deliberately brighter than the card it sits on: a shimmer
+   the same value as its container reads as a flat grey box, which is what makes
+   a loading state look broken rather than busy. */
 .skeleton-shimmer {
-  background-color: #232323;
+  background-color: #2a2a2a;
   background-image: linear-gradient(
-    90deg,
-    #232323 0%,
-    #2b2b2b 35%,
-    #383838 50%,
-    #2b2b2b 65%,
-    #232323 100%
+    100deg,
+    #2a2a2a 0%,
+    #2a2a2a 30%,
+    #4d4d4d 48%,
+    #5c5c5c 50%,
+    #4d4d4d 52%,
+    #2a2a2a 70%,
+    #2a2a2a 100%
   );
-  background-size: 200% 100%;
+  background-size: 220% 100%;
   background-repeat: no-repeat;
-  animation: garda-shimmer 1.4s ease-in-out infinite;
+  animation: garda-shimmer 1.25s linear infinite;
 }
 
 /* Respect the operating system's reduced-motion preference for every animation
