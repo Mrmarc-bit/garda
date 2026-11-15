@@ -32,6 +32,17 @@ _WRITE_LOCK = threading.Lock()
 _SECRET_LOCK = threading.Lock()
 _AUDIT_KEY: Optional[bytes] = None
 
+
+class LedgerUnavailableError(RuntimeError):
+    """The ledger cannot be read or extended safely right now.
+
+    Raised when the HMAC signing key this process loaded no longer matches the
+    key on disk (the data directory was replaced underneath a running process)
+    or when the key file has disappeared. Callers must surface this as a service
+    error, never as a successful write and never as an empty ledger: the entries
+    already stored cannot be verified with the wrong key.
+    """
+
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS operators (
     operator_id   TEXT PRIMARY KEY,
@@ -145,12 +156,12 @@ def _audit_key() -> bytes:
             try:
                 on_disk = path.read_bytes().strip()
             except OSError as exc:
-                raise RuntimeError(
+                raise LedgerUnavailableError(
                     "The audit signing key is missing from disk. Stop the API and "
                     "restart it against the intended data directory."
                 ) from exc
             if on_disk != _AUDIT_KEY:
-                raise RuntimeError(
+                raise LedgerUnavailableError(
                     "The audit signing key on disk no longer matches the key this "
                     "process loaded. The ledger cannot be extended safely; stop the "
                     "API and restart it."
