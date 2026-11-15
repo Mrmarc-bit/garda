@@ -48,9 +48,9 @@ export default function OnboardingPage() {
         <div className="space-y-3 text-xs text-[#A3A3A3] leading-relaxed font-mono">
           <div className="text-[11px] text-[#737373]">2026-10-26 UTC</div>
           <div className="space-y-1 text-xs text-[#F5F5F5]">
-            <div>EV-0042-01 / 09:14:00 / Role elevation requested</div>
-            <div>EV-0042-02 / 09:14:08 / Privileged token issued</div>
-            <div>EV-0042-03 / 09:15:10 / Privileged route accessed</div>
+            <div>EVD-101 / 14:10:12 / sudo elevation to UID 1004</div>
+            <div>EVD-102 / 14:11:05 / outbound TCP SYN to 198.51.100.44:443</div>
+            <div>EVD-103 / 14:11:42 / reused token hash at IDENTITY-SVC-01</div>
           </div>
           <p className="font-sans text-[#A3A3A3] pt-2">
             Keep Synthetic Evidence separate from Derived Assessment. Compare hypothetical strategies, not real response actions.

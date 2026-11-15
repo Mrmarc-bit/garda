@@ -1,355 +1,521 @@
 "use client";
 
 import * as React from "react";
-import { AppLayout } from "@/components/layout/app-layout";
-import { ChevronDown, X } from "lucide-react";
+import Link from "next/link";
+import {
+  AlertTriangle,
+  ArrowRight,
+  CheckCircle2,
+  Copy,
+  FileCode,
+  Search,
+  ShieldCheck,
+} from "lucide-react";
+import { ApiError, fetchEvidence, loadFailureHint, SyntheticEvidence } from "@/lib/api-client";
+import { SkeletonCard } from "@/components/ui/skeleton";
+
+type TabKey = "timeline" | "logs" | "correlations";
+
+const CATEGORY_TONE: Record<string, string> = {
+  "Observed Fact": "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  "Derived Assessment": "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  "Policy Validation": "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+};
+
+const formatTimestamp = (value: string): string => {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return `${parsed.toISOString().replace("T", " ").replace(".000Z", "")} UTC`;
+};
 
 export default function EvidencePage() {
-  const [selectedEvidenceId, setSelectedEvidenceId] = React.useState<string>("EV-0042-02");
-  const [activeTab, setActiveTab] = React.useState<"timeline" | "logs" | "correlations">("timeline");
+  const [evidenceList, setEvidenceList] = React.useState<SyntheticEvidence[]>([]);
+  const [selectedEvidenceId, setSelectedEvidenceId] = React.useState<string>("");
+  const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const [categoryFilter, setCategoryFilter] = React.useState<string>("all");
+  const [activeTab, setActiveTab] = React.useState<TabKey>("timeline");
+  const [copied, setCopied] = React.useState<boolean>(false);
+  const [copyError, setCopyError] = React.useState<string | null>(null);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [loadError, setLoadError] = React.useState<string | null>(null);
 
-  const evidenceRecords: Record<
-    string,
-    {
-      id: string;
-      ts: string;
-      source: string;
-      title: string;
-      desc: string;
-      actor: string;
-      asset: string;
-      event: string;
-      aiSpecimen: string;
+  React.useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const data = await fetchEvidence();
+        if (cancelled) return;
+        setEvidenceList(data);
+        setSelectedEvidenceId((current) => current || data[0]?.id || "");
+      } catch (err) {
+        if (cancelled) return;
+        setLoadError(
+          err instanceof ApiError ? loadFailureHint(err) : "Could not load the evidence repository."
+        );
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const categoryOptions = React.useMemo(
+    () => Array.from(new Set(evidenceList.map((item) => item.category))).sort(),
+    [evidenceList]
+  );
+
+  const filteredEvidence = React.useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return evidenceList.filter((item) => {
+      const matchesSearch =
+        query === "" ||
+        item.id.toLowerCase().includes(query) ||
+        item.description.toLowerCase().includes(query) ||
+        item.source.toLowerCase().includes(query) ||
+        item.associatedAsset.toLowerCase().includes(query);
+      const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
+      return matchesSearch && matchesCategory;
+    });
+  }, [evidenceList, searchQuery, categoryFilter]);
+
+  const selectedRecord =
+    filteredEvidence.find((item) => item.id === selectedEvidenceId) ??
+    evidenceList.find((item) => item.id === selectedEvidenceId) ??
+    filteredEvidence[0] ??
+    null;
+
+  /** The correlation view is the same records, ordered by observation time — no invented stages. */
+  const chronological = React.useMemo(
+    () =>
+      [...filteredEvidence].sort(
+        (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      ),
+    [filteredEvidence]
+  );
+
+  const handleCopyJSON = async () => {
+    if (!selectedRecord) return;
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(selectedRecord.rawPayload, null, 2));
+      setCopied(true);
+      setCopyError(null);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      setCopyError("Clipboard access was refused by the browser.");
     }
-  > = {
-    "EV-0042-01": {
-      id: "EV-0042-01",
-      ts: "2026-10-26 09:14:00 UTC",
-      source: "IDENTITY-SVC-01",
-      title: "Role elevation requested",
-      desc: "analyst-demo-03 requested the synthetic privileged role for APP-GW-02.",
-      actor: "analyst-demo-03",
-      asset: "APP-GW-02",
-      event: "role_elevation_requested",
-      aiSpecimen: "Role elevation initiates the privileged access workflow. Source observation only.",
-    },
-    "EV-0042-02": {
-      id: "EV-0042-02",
-      ts: "2026-10-26 09:14:08 UTC",
-      source: "IDENTITY-SVC-01",
-      title: "Privileged token issued",
-      desc: "IDENTITY-SVC-01 issued a synthetic privileged token to analyst-demo-03 for APP-GW-02.",
-      actor: "analyst-demo-03",
-      asset: "APP-GW-02",
-      event: "privileged_token_issued",
-      aiSpecimen:
-        "The token issue may support elevated access. This is interpretation, not additional evidence. Provider integration unverified.",
-    },
-    "EV-0042-03": {
-      id: "EV-0042-03",
-      ts: "2026-10-26 09:15:10 UTC",
-      source: "APP-GW-02",
-      title: "Privileged route accessed",
-      desc: "APP-GW-02 recorded synthetic access to /admin/config by analyst-demo-03.",
-      actor: "analyst-demo-03",
-      asset: "APP-GW-02",
-      event: "privileged_route_accessed",
-      aiSpecimen:
-        "Administrative route access represents the sensitive endpoint invocation in the scenario sequence.",
-    },
   };
 
-  const current = evidenceRecords[selectedEvidenceId] || evidenceRecords["EV-0042-02"];
+  const tabs: Array<[TabKey, string]> = [
+    ["timeline", `Timeline view · ${filteredEvidence.length}`],
+    ["logs", "Searchable raw grid"],
+    ["correlations", "Chronological correlation"],
+  ];
 
   return (
-    <AppLayout breadcrumb="Workspace / Evidence & Timeline">
-      {/* Top metadata tags */}
+    <>
       <div className="space-y-1">
-        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
-          SIMULATION ONLY
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+            SIMULATION ONLY
+          </span>
+          <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+            SYNTHETIC TELEMETRY
+          </span>
         </div>
         <div className="text-xs text-[#A3A3A3]">
-          Synthetic design/demo environment — not live
+          Defensive telemetry workbench · synthetic observations kept separate from interpretation
         </div>
-        <div className="text-xs font-mono text-[#737373]">
-          /app/evidence
-        </div>
+        <div className="text-xs font-mono text-[#737373]">/app/evidence</div>
       </div>
 
-      {/* Heading & Subtitle */}
-      <div className="mt-6">
-        <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
-          Evidence & Timeline
-        </h1>
-        <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
-          Three synthetic source records. UTC sequence and provenance stay separate from interpretation.
-        </p>
+      <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
+            Evidence &amp; Chronological Timeline
+          </h1>
+          <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
+            Inspect correlated synthetic probes and raw sensor payloads. Every record below is an
+            authored fixture; nothing here is captured from a real network.
+          </p>
+        </div>
+
+        <Link
+          href="/app/simulator"
+          className="bg-[#FF6B35] text-white text-xs font-medium px-4 py-2.5 rounded-lg hover:bg-[#FF8255] transition-colors inline-flex items-center gap-2 shrink-0 cursor-pointer shadow-sm"
+        >
+          <span>Simulate response</span>
+          <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+        </Link>
       </div>
 
-      {/* 3 Filter Boxes matching Figma */}
+      {loadError ? (
+        <div
+          role="alert"
+          className="mt-6 rounded-xl border border-red-500/40 bg-red-950/30 p-5 text-xs text-red-200 flex items-start gap-2"
+        >
+          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
+          <div>
+            <p className="font-semibold text-[#F5F5F5]">Evidence repository unavailable</p>
+            <p className="mt-1">{loadError}</p>
+            <p className="mt-1 text-[#A3A3A3]">
+              No local placeholder records are substituted.
+            </p>
+          </div>
+        </div>
+      ) : null}
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex items-center gap-2.5">
+          <Search className="w-4 h-4 text-[#737373] shrink-0" aria-hidden="true" />
+          <label htmlFor="ev-search" className="sr-only">
+            Search evidence records
+          </label>
+          <input
+            id="ev-search"
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Search records, assets, or probe text…"
+            className="w-full bg-transparent text-xs text-[#F5F5F5] placeholder-[#737373] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF6B35] rounded font-mono"
+          />
+        </div>
+
         <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between">
-          <span className="text-[11px] text-[#737373]">Search logs</span>
-          <span className="text-xs font-mono text-[#F5F5F5] mt-1">INC-2026-0042</span>
+          <label htmlFor="ev-category" className="text-[11px] text-[#737373] block mb-1">
+            Category filter
+          </label>
+          <select
+            id="ev-category"
+            value={categoryFilter}
+            onChange={(event) => setCategoryFilter(event.target.value)}
+            className="w-full bg-transparent text-xs text-[#F5F5F5] focus:outline-none cursor-pointer"
+          >
+            <option value="all" className="bg-[#252525]">
+              All categories
+            </option>
+            {categoryOptions.map((category) => (
+              <option key={category} value={category} className="bg-[#252525]">
+                {category}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between cursor-pointer">
-          <span className="text-[11px] text-[#737373]">Severity</span>
-          <div className="flex items-center justify-between text-xs text-[#F5F5F5] mt-1">
-            <span>All levels</span>
-            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
-          </div>
-        </div>
-
-        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between cursor-pointer">
-          <span className="text-[11px] text-[#737373]">Event type</span>
-          <div className="flex items-center justify-between text-xs text-[#F5F5F5] mt-1">
-            <span>All types</span>
-            <ChevronDown className="w-3.5 h-3.5 text-[#737373]" />
-          </div>
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-3 flex flex-col justify-between">
+          <span className="text-[11px] text-[#737373]">Records in repository</span>
+          <span className="text-xs font-mono text-emerald-400 mt-1">
+            {isLoading ? "loading…" : `${evidenceList.length} records`}
+          </span>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="mt-6 flex items-center gap-6 border-b border-[#383838] text-xs">
-        <button
-          type="button"
-          onClick={() => setActiveTab("timeline")}
-          className={`pb-2.5 transition-colors ${
-            activeTab === "timeline"
-              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
-              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
-          }`}
-        >
-          Timeline
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("logs")}
-          className={`pb-2.5 transition-colors ${
-            activeTab === "logs"
-              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
-              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
-          }`}
-        >
-          Searchable logs
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("correlations")}
-          className={`pb-2.5 transition-colors ${
-            activeTab === "correlations"
-              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
-              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
-          }`}
-        >
-          Correlations
-        </button>
+      <div className="mt-6 flex flex-wrap items-center gap-6 border-b border-[#383838] text-xs" role="tablist">
+        {tabs.map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === key}
+            onClick={() => setActiveTab(key)}
+            className={`pb-2.5 transition-colors cursor-pointer ${
+              activeTab === key
+                ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+                : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      {/* Main 2-Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 mt-6">
-        {/* Left Column (7 cols) */}
-        <div className="lg:col-span-7 space-y-4">
-          {/* Card 1: 26 October 2026 · UTC timeline */}
-          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
-            <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
-              SYNTHETIC EVIDENCE
+        <div className="lg:col-span-7 space-y-3">
+          {isLoading ? (
+            <div className="space-y-3">
+              <p role="status" aria-live="polite" className="sr-only">
+                Loading evidence records
+              </p>
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
             </div>
-            <h2 className="text-base font-semibold text-[#F5F5F5] mt-1 mb-5">
-              26 October 2026 · UTC
-            </h2>
+          ) : null}
 
-            <div className="space-y-6">
-              {/* Event 1 */}
-              <div
-                onClick={() => setSelectedEvidenceId("EV-0042-01")}
-                className="space-y-1 cursor-pointer group"
-              >
-                <div className="text-xs font-mono text-[#FF6B35]">
-                  · EV-0042-01 / 2026-10-26 09:14:00 UTC
+          {!isLoading && activeTab === "timeline" && (
+            <div className="space-y-3">
+              {filteredEvidence.length === 0 ? (
+                <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 text-xs text-[#737373]">
+                  No evidence records match the current filter.
                 </div>
-                <div className="text-sm font-semibold text-[#F5F5F5] group-hover:text-[#FF6B35] transition-colors">
-                  Role elevation requested
-                </div>
-                <p className="text-xs text-[#A3A3A3]">
-                  analyst-demo-03 requested the synthetic privileged role for APP-GW-02.
-                </p>
-                <div className="text-[11px] font-mono text-[#737373]">
-                  Synthetic Evidence / IDENTITY-SVC-01
-                </div>
-              </div>
+              ) : (
+                filteredEvidence.map((item) => {
+                  const isSelected = selectedRecord?.id === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() => setSelectedEvidenceId(item.id)}
+                      className={`w-full text-left bg-[#252525] rounded-xl p-5 border cursor-pointer transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF6B35] ${
+                        isSelected
+                          ? "border-[#FF6B35] bg-[#2A2421] ring-1 ring-[#FF6B35]/30"
+                          : "border-[#383838] hover:border-[#4E4E4E]"
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs font-bold text-[#FF6B35]">
+                            {item.id}
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1C1C1C] text-[#A3A3A3] border border-[#333]">
+                            {item.source}
+                          </span>
+                        </div>
+                        <span className="font-mono text-[11px] text-[#737373]">
+                          {formatTimestamp(item.timestamp)}
+                        </span>
+                      </div>
 
-              {/* Event 2 */}
-              <div
-                onClick={() => setSelectedEvidenceId("EV-0042-02")}
-                className="space-y-1 cursor-pointer group"
-              >
-                <div className="text-xs font-mono text-[#FF6B35]">
-                  · EV-0042-02 / 2026-10-26 09:14:08 UTC
-                </div>
-                <div className="text-sm font-semibold text-[#F5F5F5] group-hover:text-[#FF6B35] transition-colors">
-                  Privileged token issued
-                </div>
-                <p className="text-xs text-[#A3A3A3]">
-                  IDENTITY-SVC-01 issued a synthetic privileged token to analyst-demo-03 for APP-GW-02.
-                </p>
-                <div className="text-[11px] font-mono text-[#737373]">
-                  Synthetic Evidence / IDENTITY-SVC-01
-                </div>
-              </div>
+                      <p className="text-xs text-[#F5F5F5] mt-2.5 font-medium leading-relaxed">
+                        {item.description}
+                      </p>
 
-              {/* Event 3 */}
-              <div
-                onClick={() => setSelectedEvidenceId("EV-0042-03")}
-                className="space-y-1 cursor-pointer group"
-              >
-                <div className="text-xs font-mono text-[#FF6B35]">
-                  · EV-0042-03 / 2026-10-26 09:15:10 UTC
-                </div>
-                <div className="text-sm font-semibold text-[#F5F5F5] group-hover:text-[#FF6B35] transition-colors">
-                  Privileged route accessed
-                </div>
-                <p className="text-xs text-[#A3A3A3]">
-                  APP-GW-02 recorded synthetic access to /admin/config by analyst-demo-03.
-                </p>
-                <div className="text-[11px] font-mono text-[#737373]">
-                  Synthetic Evidence / APP-GW-02
-                </div>
-              </div>
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5 text-[11px] font-mono">
+                        <span className="text-[#A3A3A3]">
+                          Asset: <strong className="text-white">{item.associatedAsset}</strong>
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded font-semibold border ${
+                            CATEGORY_TONE[item.category] ??
+                            "bg-[#2C2C2C] text-[#A3A3A3] border-[#383838]"
+                          }`}
+                        >
+                          {item.category}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
             </div>
-          </div>
+          )}
 
-          {/* Card 2: Tabular Evidence List */}
-          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+          {!isLoading && activeTab === "logs" && (
+            <div className="bg-[#252525] border border-[#383838] rounded-xl p-5 overflow-x-auto">
+              <table className="w-full text-left text-xs font-mono">
                 <thead>
-                  <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] font-medium tracking-wider uppercase">
-                    <th className="pb-3 font-medium">ID</th>
-                    <th className="pb-3 font-medium">TYPE / LEVEL</th>
-                    <th className="pb-3 font-medium">SOURCE</th>
+                  <tr className="border-b border-[#383838] text-[#737373] uppercase">
+                    <th scope="col" className="pb-3">
+                      ID
+                    </th>
+                    <th scope="col" className="pb-3">
+                      Source
+                    </th>
+                    <th scope="col" className="pb-3">
+                      Asset
+                    </th>
+                    <th scope="col" className="pb-3">
+                      Category
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#383838]/40">
-                  <tr
-                    onClick={() => setSelectedEvidenceId("EV-0042-01")}
-                    className="hover:bg-[#2C2C2C]/50 cursor-pointer transition-colors"
-                  >
-                    <td className="py-3 font-mono text-[#F5F5F5]">EV-0042-01</td>
-                    <td className="py-3 text-[#A3A3A3]">Identity / Warning</td>
-                    <td className="py-3 font-mono text-[#A3A3A3]">IDENTITY-SVC-01</td>
-                  </tr>
-                  <tr
-                    onClick={() => setSelectedEvidenceId("EV-0042-02")}
-                    className="hover:bg-[#2C2C2C]/50 cursor-pointer transition-colors"
-                  >
-                    <td className="py-3 font-mono text-[#F5F5F5]">EV-0042-02</td>
-                    <td className="py-3 text-[#A3A3A3]">Token / High</td>
-                    <td className="py-3 font-mono text-[#A3A3A3]">IDENTITY-SVC-01</td>
-                  </tr>
-                  <tr
-                    onClick={() => setSelectedEvidenceId("EV-0042-03")}
-                    className="hover:bg-[#2C2C2C]/50 cursor-pointer transition-colors"
-                  >
-                    <td className="py-3 font-mono text-[#F5F5F5]">EV-0042-03</td>
-                    <td className="py-3 text-[#A3A3A3]">Access / High</td>
-                    <td className="py-3 font-mono text-[#A3A3A3]">APP-GW-02</td>
-                  </tr>
+                <tbody className="divide-y divide-[#383838]/60">
+                  {filteredEvidence.map((item) => (
+                    <tr key={item.id} className="hover:bg-[#2C2C2C]/50">
+                      <td className="py-3">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedEvidenceId(item.id)}
+                          className="font-bold text-[#FF6B35] hover:underline focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#FF6B35] cursor-pointer"
+                        >
+                          {item.id}
+                        </button>
+                      </td>
+                      <td className="py-3 text-[#A3A3A3]">{item.source}</td>
+                      <td className="py-3 text-[#F5F5F5]">{item.associatedAsset}</td>
+                      <td className="py-3 text-[11px]">{item.category}</td>
+                    </tr>
+                  ))}
+                  {filteredEvidence.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="py-6 text-center text-[#737373]">
+                        No records match the current filter.
+                      </td>
+                    </tr>
+                  ) : null}
                 </tbody>
               </table>
             </div>
-          </div>
+          )}
 
-          {/* Card 3: Correlation specimen */}
-          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
-            <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
-              DERIVED ASSESSMENT
-            </div>
-            <h2 className="text-base font-semibold text-[#F5F5F5] mt-1 mb-3">
-              Correlation specimen
-            </h2>
-            <p className="text-xs text-[#A3A3A3] leading-relaxed">
-              The same identity, analyst-demo-03, appears in all three records. EV-0042-01 precedes token issue by 8 seconds; EV-0042-03 follows by 62 seconds.
-            </p>
-            <p className="text-xs text-[#A3A3A3] mt-3 leading-relaxed">
-              A shared sequence is not proof of malicious intent. Authorization context is missing.
-            </p>
-          </div>
-        </div>
-
-        {/* Right Column: Evidence Detail Inspector (5 cols) */}
-        <div className="lg:col-span-5">
-          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 sticky top-24">
-            <div className="flex items-center justify-between pb-3 border-b border-[#383838]">
-              <h2 className="text-sm font-semibold text-[#F5F5F5]">
-                Evidence detail
-              </h2>
-              <button
-                type="button"
-                className="text-[#737373] hover:text-[#F5F5F5]"
-                aria-label="Close detail"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="text-xs text-[#A3A3A3] mt-4">
-              · Synthetic Evidence
-            </div>
-            <div className="font-mono text-sm font-bold text-[#F5F5F5] mt-1">
-              {current.id}
-            </div>
-            <div className="text-base font-bold text-[#F5F5F5] mt-1">
-              {current.title}
-            </div>
-
-            <div className="font-mono text-xs text-[#737373] mt-2">
-              {current.ts} Source: {current.source}
-            </div>
-
-            <p className="text-xs text-[#A3A3A3] mt-4 leading-relaxed">
-              {current.desc}
-            </p>
-
-            {/* Raw JSON Specimen */}
-            <div className="mt-5">
-              <div className="text-xs text-[#F5F5F5] font-medium mb-2">
-                Raw event specimen · expanded ^
+          {!isLoading && activeTab === "correlations" && (
+            <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-sm font-bold text-[#F5F5F5]">
+                  Chronological correlation
+                </h2>
+                <span className="text-[11px] font-mono text-[#737373]">
+                  Ordered by observation timestamp
+                </span>
               </div>
-              <pre className="bg-[#1D1D1D] border border-[#383838] rounded-lg p-3 text-[11px] font-mono text-[#A3A3A3] overflow-x-auto leading-relaxed">
-{`{
-  "id": "${current.id}",
-  "ts": "${current.ts.split(" ")[0]}T${current.ts.split(" ")[1]}Z",
-  "actor": "${current.actor}",
-  "asset": "${current.asset}",
-  "event": "${current.event}",
-  "synthetic": true
-}`}
-              </pre>
-            </div>
 
-            {/* AI-Generated Explanation Specimen Box */}
-            <div className="bg-[#1D1D1D] border border-[#383838] rounded-lg p-4 mt-4">
-              <div className="text-xs font-semibold text-[#F5F5F5]">
-                AI-Generated Explanation specimen
-              </div>
-              <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
-                {current.aiSpecimen}
+              {chronological.length === 0 ? (
+                <p className="text-xs text-[#737373]">No records to correlate.</p>
+              ) : (
+                <ol className="space-y-3 font-mono text-xs">
+                  {chronological.map((item, index) => (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedEvidenceId(item.id)}
+                        aria-pressed={selectedRecord?.id === item.id}
+                        className={`w-full text-left p-3.5 bg-[#1C1C1C] rounded-lg border cursor-pointer transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF6B35] ${
+                          selectedRecord?.id === item.id
+                            ? "border-[#FF6B35] ring-1 ring-[#FF6B35]/40"
+                            : "border-[#383838] hover:border-[#555]"
+                        }`}
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                          <span className="text-[#FF6B35] font-bold">
+                            Step {index + 1} · {item.id}
+                          </span>
+                          <span className="text-[10px] text-[#A3A3A3]">
+                            {formatTimestamp(item.timestamp)}
+                          </span>
+                        </div>
+                        <p className="text-[#A3A3A3] font-sans">{item.description}</p>
+                        <div className="text-[10px] text-[#737373] mt-1">
+                          {item.source} · {item.associatedAsset} · {item.category}
+                        </div>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              )}
+
+              <p className="text-[11px] text-[#737373] leading-relaxed">
+                Ordering reflects fixture timestamps only. No causal inference is drawn, and no
+                containment action is implied.
               </p>
             </div>
+          )}
+        </div>
 
-            <div className="font-mono text-[11px] text-[#737373] mt-4">
-              Related: EV-0042-01 / EV-0042-03 Incident: INC-2026-0042
+        <div className="lg:col-span-5 space-y-4">
+          {selectedRecord ? (
+            <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <span className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase font-mono">
+                    Evidence record inspector
+                  </span>
+                  <h2 className="text-lg font-bold font-mono text-[#F5F5F5] mt-0.5">
+                    {selectedRecord.id}
+                  </h2>
+                </div>
+                <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  SYNTHETIC RECORD
+                </span>
+              </div>
+
+              <div className="space-y-2 text-xs border-t border-[#383838] pt-3">
+                <div>
+                  <span className="text-[#737373] block">Observation timestamp:</span>
+                  <span className="font-mono text-[#F5F5F5]">
+                    {formatTimestamp(selectedRecord.timestamp)}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[#737373] block">Probe / detector:</span>
+                  <span className="font-mono text-[#F5F5F5]">{selectedRecord.source}</span>
+                </div>
+                <div>
+                  <span className="text-[#737373] block">Category:</span>
+                  <span className="font-mono text-[#F5F5F5]">{selectedRecord.category}</span>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <span className="text-[#737373] block">Associated asset:</span>
+                    <span className="font-mono text-emerald-400 font-bold">
+                      {selectedRecord.associatedAsset}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery(selectedRecord.associatedAsset)}
+                    className="text-[10px] font-mono text-[#A3A3A3] hover:text-[#FF6B35] underline cursor-pointer shrink-0"
+                  >
+                    Filter this asset
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <span className="text-xs text-[#737373] block mb-1">Description:</span>
+                <p className="text-xs text-[#F5F5F5] leading-relaxed bg-[#1C1C1C] p-3 rounded-lg border border-[#333]">
+                  {selectedRecord.description}
+                </p>
+              </div>
+
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[11px] font-mono text-[#737373] flex items-center gap-1.5">
+                    <FileCode className="w-3.5 h-3.5 text-[#FF6B35]" aria-hidden="true" />
+                    <span>Raw structured payload</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => void handleCopyJSON()}
+                    className="text-[11px] font-mono text-[#A3A3A3] hover:text-[#FF6B35] inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    {copied ? (
+                      <>
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400" aria-hidden="true" />
+                        <span className="text-emerald-400">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" aria-hidden="true" />
+                        <span>Copy JSON</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {copyError ? (
+                  <p role="alert" className="text-[11px] text-red-300 mb-1">
+                    {copyError}
+                  </p>
+                ) : null}
+
+                <pre className="bg-[#171717] border border-[#303030] rounded-lg p-3 text-[11px] font-mono text-emerald-300 overflow-x-auto max-h-56">
+                  {JSON.stringify(selectedRecord.rawPayload, null, 2)}
+                </pre>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 text-xs text-[#737373]">
+              Select an evidence record to inspect its raw payload.
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Persistent Disclaimer */}
-      <div className="text-xs text-[#737373] mt-8 mb-4">
-        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
+      <div className="mt-8 mb-4 p-4 rounded-xl bg-[#1C1C1C] border border-[#2E2E2E] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#737373]">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-400" aria-hidden="true" />
+          <span>GARDA-SIM AI evidence workbench · UTC timestamps</span>
+        </div>
+        <div className="flex items-center gap-4 font-mono text-[11px]">
+          <span>RECORDS: {evidenceList.length}</span>
+          <span>SHOWN: {filteredEvidence.length}</span>
+          <span>SOURCE: REST API</span>
+        </div>
       </div>
-    </AppLayout>
+    </>
   );
 }

@@ -49,6 +49,28 @@ const config: Config = {
           info: "var(--color-status-info, #60A5FA)",
           neutral: "var(--color-status-neutral, #A3A3A3)",
         },
+        sidebar: {
+          DEFAULT: "#171717",
+          foreground: "#F5F5F5",
+          primary: "#FF6B35",
+          "primary-foreground": "#FFFFFF",
+          accent: "#252525",
+          "accent-foreground": "#FFFFFF",
+          border: "#303030",
+          ring: "#FF6B35",
+        },
+        destructive: {
+          DEFAULT: "#F87171",
+          foreground: "#FFFFFF",
+        },
+        success: {
+          DEFAULT: "#4ADE80",
+          foreground: "#171717",
+        },
+        muted: {
+          DEFAULT: "#252525",
+          foreground: "#737373",
+        },
       },
       fontFamily: {
         sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],

@@ -8,12 +8,14 @@ export default function SignupPage() {
   const router = useRouter();
   const [displayName, setDisplayName] = React.useState("Demo Analyst");
   const [email, setEmail] = React.useState("analyst@example.test");
-  const [password, setPassword] = React.useState("••••••••••••");
-  const [confirmPassword, setConfirmPassword] = React.useState("••••••••••••");
+  const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [agreed, setAgreed] = React.useState(false);
 
+  // Account creation has no server implementation, so this control deliberately does not
+  // pretend to create one: it opens the read-only product tour instead.
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     router.push("/onboarding");
@@ -148,10 +150,23 @@ export default function SignupPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="bg-[#FF6B35] text-white text-xs font-medium px-6 py-2.5 rounded-lg hover:bg-[#FF8255] transition-colors"
+                disabled={!agreed}
+                title={
+                  agreed
+                    ? "Account creation is not implemented in this build."
+                    : "Accept the Terms to enable this control."
+                }
+                className="bg-[#2C2C2C] border border-[#383838] text-[#A3A3A3] text-xs font-medium px-6 py-2.5 rounded-lg hover:border-[#FF6B35] hover:text-[#F5F5F5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Create account
+                Take the product tour
               </button>
+              <p className="text-[11px] text-[#737373] mt-2 leading-relaxed">
+                Account creation is not implemented. Use{" "}
+                <Link href="/login" className="text-[#FF6B35] hover:underline">
+                  Sign in
+                </Link>{" "}
+                with a demo operator instead.
+              </p>
             </div>
 
             <div className="pt-2">
@@ -239,7 +254,7 @@ export default function SignupPage() {
                 <div>High / Awaiting Review</div>
               </div>
               <div className="font-mono text-xs text-[#737373] pt-2">
-                6 virtual assets / 3 synthetic events
+                6 virtual assets / 4 synthetic evidence records
                 <br />
                 No real action
               </div>

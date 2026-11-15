@@ -159,19 +159,19 @@ export default function DocumentationPage() {
                   </thead>
                   <tbody className="divide-y divide-[#383838]/40 text-xs">
                     <tr>
-                      <td className="py-3 text-[#FF6B35]">EV-0042-01</td>
-                      <td className="py-3 text-[#A3A3A3]">09:14:00</td>
-                      <td className="py-3 text-[#F5F5F5] font-sans">Role elevation requested</td>
+                      <td className="py-3 text-[#FF6B35]">EVD-101</td>
+                      <td className="py-3 text-[#A3A3A3]">14:10:12</td>
+                      <td className="py-3 text-[#F5F5F5] font-sans">sudo elevation to UID 1004 on APP-GW-02</td>
                     </tr>
                     <tr>
-                      <td className="py-3 text-[#FF6B35]">EV-0042-02</td>
-                      <td className="py-3 text-[#A3A3A3]">09:14:08</td>
-                      <td className="py-3 text-[#F5F5F5] font-sans">Privileged token issued</td>
+                      <td className="py-3 text-[#FF6B35]">EVD-102</td>
+                      <td className="py-3 text-[#A3A3A3]">14:11:05</td>
+                      <td className="py-3 text-[#F5F5F5] font-sans">outbound TCP SYN to 198.51.100.44:443</td>
                     </tr>
                     <tr>
-                      <td className="py-3 text-[#FF6B35]">EV-0042-03</td>
-                      <td className="py-3 text-[#A3A3A3]">09:15:10</td>
-                      <td className="py-3 text-[#F5F5F5] font-sans">Privileged route accessed</td>
+                      <td className="py-3 text-[#FF6B35]">EVD-103</td>
+                      <td className="py-3 text-[#A3A3A3]">14:11:42</td>
+                      <td className="py-3 text-[#F5F5F5] font-sans">reused token hash at IDENTITY-SVC-01</td>
                     </tr>
                   </tbody>
                 </table>
@@ -218,7 +218,7 @@ export default function DocumentationPage() {
                 </div>
                 <div className="bg-[#252525] border border-[#383838] rounded-lg p-3">
                   <span className="font-mono text-[#FF6B35] font-bold block mb-1">Policy Validation</span>
-                  <p className="text-[#A3A3A3]">Proposed deterministic rules (POL-01, POL-02, POL-03) outside AI.</p>
+                  <p className="text-[#A3A3A3]">Deterministic rules SEC-OT-01 to SEC-OT-05, evaluated outside the AI layer.</p>
                 </div>
               </div>
             </div>

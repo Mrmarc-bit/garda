@@ -1,73 +1,82 @@
+"""Deterministic simulation engine.
+
+Scores come from the canonical candidate-strategy registry in
+``synthetic_dataset``. There is no default/fallback branch: an unmodelled
+strategy is a contract violation, not a "Custom Candidate" that gets a made-up
+score of 50 (see SECURITY.md §F-01).
+"""
+
+from __future__ import annotations
+
 from datetime import datetime, timezone
-from typing import Dict, Any
+from typing import Optional
+
+from .safety_engine import DeterministicSafetyEngine, normalize
 from .schemas import SimulationRequestSchema, SimulationResultSchema
-from .safety_engine import DeterministicSafetyEngine
+from .synthetic_dataset import STRATEGY_BY_CODE
+
+
+class UnmodelledStrategyError(LookupError):
+    """Raised when a strategy code has no modelled effect profile."""
 
 
 class DeterministicSimulationEngine:
-    """
-    Authoritative simulation engine for GARDA-SIM AI.
-    Calculates security benefit, operational downtime, and blast radius deterministically.
+    """Authoritative simulation engine for GARDA-SIM AI.
+
+    Computes security benefit, operational downtime, and blast radius from the
+    modelled strategy profile, then asks the safety engine for a verdict. The
+    engine never invents metrics and never overrides a policy verdict.
     """
 
-    STRATEGY_CONFIGS = {
-        "STRAT-A": {
-            "name": "Full Network Isolation of APP-GW-02",
-            "security_benefit_score": 94,
-            "simulated_downtime_minutes": 45,
-            "recovery_effort": "High",
-            "impacted_services": ["OPS-DASH-01", "TELEMETRY-SIM-01", "APP-GW-02"]
-        },
-        "STRAT-B": {
-            "name": "Targeted Ingress Block & Credential Invalidation",
-            "security_benefit_score": 88,
-            "simulated_downtime_minutes": 0,
-            "recovery_effort": "Low",
-            "impacted_services": []
-        },
-        "STRAT-C": {
-            "name": "Host Process Termination & Re-authentication",
-            "security_benefit_score": 72,
-            "simulated_downtime_minutes": 5,
-            "recovery_effort": "Medium",
-            "impacted_services": ["APP-GW-02 (transient)"]
-        }
-    }
+    @staticmethod
+    def profile_for(strategy_code: str):
+        record = STRATEGY_BY_CODE.get(normalize(strategy_code))
+        if record is None:
+            raise UnmodelledStrategyError(
+                f"Strategy {strategy_code!r} has no modelled effect profile."
+            )
+        return record
 
     @classmethod
-    def simulate(cls, request: SimulationRequestSchema) -> SimulationResultSchema:
+    def simulate(
+        cls,
+        request: SimulationRequestSchema,
+        *,
+        operator_id: str,
+        operator_clearance: Optional[int],
+        audit_chain_verified: bool,
+        strict_ot_mode: bool = True,
+    ) -> SimulationResultSchema:
         timestamp = datetime.now(timezone.utc).isoformat()
-        config = cls.STRATEGY_CONFIGS.get(request.strategy_code, {
-            "name": "Custom Candidate",
-            "security_benefit_score": 50,
-            "simulated_downtime_minutes": 30,
-            "recovery_effort": "Medium",
-            "impacted_services": [request.target_asset]
-        })
+        profile = cls.profile_for(request.strategy_code)
 
-        # Evaluate safety invariants deterministically
         is_passed, rule_verdicts, violation_reason = DeterministicSafetyEngine.evaluate(
             strategy_code=request.strategy_code,
             target_asset=request.target_asset,
-            operator_id=request.operator_id
+            operator_id=operator_id,
+            operator_clearance=operator_clearance,
+            audit_chain_verified=audit_chain_verified,
+            strict_ot_mode=strict_ot_mode,
         )
 
         integrity_hash = DeterministicSafetyEngine.compute_integrity_hash(
             scenario_id=request.scenario_id,
             strategy_code=request.strategy_code,
-            timestamp=timestamp
+            timestamp=timestamp,
         )
 
         return SimulationResultSchema(
             scenario_id=request.scenario_id,
-            strategy_code=request.strategy_code,
-            security_benefit_score=config["security_benefit_score"],
-            simulated_downtime_minutes=config["simulated_downtime_minutes"],
-            recovery_effort=config["recovery_effort"],
-            impacted_services=config["impacted_services"],
+            strategy_code=profile.code,
+            target_asset=request.target_asset,
+            operator_id=operator_id,
+            security_benefit_score=profile.security_benefit_score,
+            simulated_downtime_minutes=profile.simulated_downtime_minutes,
+            recovery_effort=profile.recovery_effort,
+            impacted_services=list(profile.impacted_services),
             safety_policy_status="PASSED" if is_passed else "VIOLATION_BLOCKED",
             safety_violation_reason=violation_reason,
             evaluated_rules=rule_verdicts,
             integrity_hash=integrity_hash,
-            timestamp=timestamp
+            timestamp=timestamp,
         )

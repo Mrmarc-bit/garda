@@ -7,6 +7,7 @@
   ],
   "scripts": {
     "dev": "npm --workspace=@garda-sim/web run dev",
+    "api": "PYTHONPATH=. ./apps/api/.venv/bin/uvicorn apps.api.src.main:app --port 8000 --host 127.0.0.1 --reload",
     "build": "npm --workspace=@garda-sim/web run build",
     "start": "npm --workspace=@garda-sim/web run start",
     "lint": "npm --workspace=@garda-sim/web run lint",

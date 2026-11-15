@@ -54,7 +54,7 @@ export function BentoCapabilitiesGrid() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
             <div className="p-2 rounded bg-[#222222] border border-[#303030] flex items-center justify-between">
               <span className="text-[#D4D4D4]">STRAT-A (Isolation)</span>
-              <span className="text-[#F87171] font-semibold">BLOCKED · POL-01</span>
+              <span className="text-[#F87171] font-semibold">BLOCKED · SEC-OT-04</span>
             </div>
             <div className="p-2 rounded bg-[#222222] border border-[#303030] flex items-center justify-between">
               <span className="text-[#D4D4D4]">STRAT-B (Revocation)</span>
@@ -145,7 +145,7 @@ export function BentoCapabilitiesGrid() {
           </p>
         </div>
         <div className="text-[10px] font-mono text-[#737373] pt-2 border-t border-[#2B2B2B]">
-          EV-0042-01 · SHA-256 VERIFIED
+          EVD-101 · SYNTHETIC RECORD
         </div>
       </Link>
 
@@ -227,9 +227,9 @@ export function BentoCapabilitiesGrid() {
           <ArrowUpRight className="w-4 h-4 text-[#737373] group-hover:text-white transition-colors" />
         </div>
         <div>
-          <h3 className="text-base font-bold text-[#F5F5F5]">Immutable Audit Trail</h3>
+          <h3 className="text-base font-bold text-[#F5F5F5]">Append-Only Audit Trail</h3>
           <p className="text-xs text-[#A3A3A3] mt-1.5 leading-relaxed">
-            Inspect sample reporting and traceable synthetic event provenance with SHA-256 hashes.
+            Inspect sample reporting and traceable synthetic event provenance with HMAC-SHA256 chained hashes.
           </p>
         </div>
         <div className="text-[10px] font-mono text-[#737373] pt-2 border-t border-[#2B2B2B]">

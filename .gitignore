@@ -30,8 +30,9 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
+!apps/web/src/lib/
 parts/
 sdist/
 var/
@@ -49,6 +50,10 @@ htmlcov/
 .env.*.local
 *.pem
 *.key
+
+# Local runtime data: SQLite ledger, audit HMAC key, bootstrap credentials.
+# These must never be committed; they are generated on first boot.
+.garda/
 
 # IDE
 .vscode/

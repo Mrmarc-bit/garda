@@ -1,282 +1,419 @@
 "use client";
 
 import * as React from "react";
-import { AppLayout } from "@/components/layout/app-layout";
-import { ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  AlertTriangle,
+  ArrowRight,
+  Database,
+  Loader2,
+  Lock,
+  LogOut,
+  ShieldCheck,
+  User,
+} from "lucide-react";
+import {
+  ApiError,
+  loadFailureHint,
+  HealthInfo,
+  SessionInfo,
+  fetchHealth,
+  fetchSession,
+  logout,
+} from "@/lib/api-client";
+import { SkeletonCard } from "@/components/ui/skeleton";
+
+type TabKey = "session" | "safety" | "storage";
+
+/** The five deterministic invariants, described as they are actually evaluated server-side. */
+const INVARIANTS: Array<{ id: string; name: string; description: string; gate: string }> = [
+  {
+    id: "SEC-OT-01",
+    name: "Zero real-world containment",
+    description:
+      "The target must be a virtual asset in the synthetic inventory. No hostname resolution, socket or containment command is ever issued.",
+    gate: "Asset inventory membership",
+  },
+  {
+    id: "SEC-OT-02",
+    name: "Operator clearance verification",
+    description:
+      "The operator must be a registered account whose clearance meets the configured minimum. Identity is taken from the server session, never the request body.",
+    gate: "Session + clearance",
+  },
+  {
+    id: "SEC-OT-03",
+    name: "Core identity service availability",
+    description:
+      "Neither the target nor any asset the strategy would touch may be a protected identity service.",
+    gate: "Protected asset set",
+  },
+  {
+    id: "SEC-OT-04",
+    name: "Uninterrupted OT telemetry stream",
+    description:
+      "A strategy whose modelled impact severs a telemetry-critical OT asset is blocked when strict OT mode is enabled.",
+    gate: "Modelled impact ∩ OT-critical set",
+  },
+  {
+    id: "SEC-OT-05",
+    name: "Audit ledger integrity",
+    description:
+      "The HMAC-SHA256 chain is verified before a result is accepted. A broken chain fails the run instead of being reported as success.",
+    gate: "Ledger chain verification",
+  },
+];
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = React.useState<"general" | "environment" | "ai" | "safety" | "privacy">("general");
+  const router = useRouter();
+  const [activeTab, setActiveTab] = React.useState<TabKey>("session");
+  const [session, setSession] = React.useState<SessionInfo | null>(null);
+  const [health, setHealth] = React.useState<HealthInfo | null>(null);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [loadError, setLoadError] = React.useState<string | null>(null);
+  const [isSigningOut, setIsSigningOut] = React.useState<boolean>(false);
+  const [signOutError, setSignOutError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const [sessionData, healthData] = await Promise.all([fetchSession(), fetchHealth()]);
+        if (cancelled) return;
+        setSession(sessionData);
+        setHealth(healthData);
+      } catch (err) {
+        if (cancelled) return;
+        setLoadError(
+          err instanceof ApiError ? loadFailureHint(err) : "Could not read the workspace configuration."
+        );
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    setSignOutError(null);
+    try {
+      await logout();
+      router.replace("/login");
+    } catch (err) {
+      setSignOutError(
+        err instanceof ApiError ? err.message : "Sign-out failed. The session may still be active."
+      );
+      setIsSigningOut(false);
+    }
+  };
+
+  const tabs: Array<[TabKey, string]> = [
+    ["session", "Session & Operator"],
+    ["safety", "Safety Policy"],
+    ["storage", "Storage & Ledger"],
+  ];
 
   return (
-    <AppLayout breadcrumb="Workspace / Settings">
-      {/* Top metadata tags */}
+    <>
       <div className="space-y-1">
-        <div className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
-          SIMULATION ONLY
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold tracking-wider text-[#FF6B35] uppercase">
+            SIMULATION ONLY
+          </span>
+          <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+            {health ? `ENV ${health.environment.toUpperCase()}` : "READING RUNTIME"}
+          </span>
         </div>
         <div className="text-xs text-[#A3A3A3]">
-          Synthetic design/demo environment — not live
+          Runtime configuration reported by the API · nothing on this page is stored in the browser
         </div>
-        <div className="text-xs font-mono text-[#737373]">
-          /app/settings
+        <div className="text-xs font-mono text-[#737373]">/app/settings</div>
+      </div>
+
+      <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">Workspace Settings</h1>
+          <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
+            Operator identity, safety policy and storage facts are resolved from the running API.
+            They are not editable from the browser because the server is the only authority.
+          </p>
         </div>
       </div>
 
-      {/* Heading & Subtitle */}
-      <div className="mt-6">
-        <h1 className="text-3xl font-bold tracking-tight text-[#F5F5F5]">
-          Settings
-        </h1>
-        <p className="text-base text-[#A3A3A3] mt-2 max-w-3xl leading-relaxed">
-          Configuration reference. Unsupported controls are read-only or not connected; nothing is saved.
-        </p>
-      </div>
-
-      {/* Navigation Tabs */}
-      <div className="mt-6 flex flex-wrap items-center gap-6 border-b border-[#383838] text-xs">
-        <button
-          type="button"
-          onClick={() => setActiveTab("general")}
-          className={`pb-2.5 transition-colors ${
-            activeTab === "general"
-              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
-              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
-          }`}
+      {loadError ? (
+        <div
+          role="alert"
+          className="mt-6 rounded-xl border border-red-500/40 bg-red-950/30 p-5 text-xs text-red-200 flex items-start gap-2"
         >
-          General
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("environment")}
-          className={`pb-2.5 transition-colors ${
-            activeTab === "environment"
-              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
-              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
-          }`}
-        >
-          Environment
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("ai")}
-          className={`pb-2.5 transition-colors ${
-            activeTab === "ai"
-              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
-              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
-          }`}
-        >
-          AI & explanations
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("safety")}
-          className={`pb-2.5 transition-colors ${
-            activeTab === "safety"
-              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
-              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
-          }`}
-        >
-          Safety policies
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("privacy")}
-          className={`pb-2.5 transition-colors ${
-            activeTab === "privacy"
-              ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
-              : "text-[#A3A3A3] hover:text-[#F5F5F5]"
-          }`}
-        >
-          Privacy & export
-        </button>
-      </div>
-
-      {/* Row 1: General & Environment */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-        {/* Card: General */}
-        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
+          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" aria-hidden="true" />
           <div>
-            <h2 className="text-base font-semibold text-[#F5F5F5] mb-4">
-              General
-            </h2>
-            <div className="bg-[#1D1D1D] border border-[#383838] rounded-lg p-3">
-              <span className="block text-[11px] text-[#737373]">
-                Workspace name · read-only
-              </span>
-              <span className="text-xs text-[#F5F5F5] font-medium mt-0.5 block">
-                Simulation Lab
-              </span>
-            </div>
-
-            <div className="space-y-2 text-xs mt-4">
-              <div>
-                <span className="text-[#A3A3A3]">Time display / </span>
-                <span className="font-mono text-[#F5F5F5]">UTC · read-only</span>
-              </div>
-              <div>
-                <span className="text-[#A3A3A3]">Theme / </span>
-                <span className="text-[#F5F5F5]">Charcoal · specified</span>
-              </div>
-            </div>
-          </div>
-          <div className="text-xs text-[#737373] mt-6">
-            · Not connected
+            <p className="font-semibold text-[#F5F5F5]">Configuration unavailable</p>
+            <p className="mt-1">{loadError}</p>
           </div>
         </div>
+      ) : null}
 
-        {/* Card: Environment & dataset */}
-        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
-          <div>
-            <h2 className="text-base font-semibold text-[#F5F5F5] mb-4">
-              Environment & dataset
-            </h2>
-            <div className="space-y-2 text-xs">
-              <div>
-                <span className="text-[#A3A3A3]">Mode / </span>
-                <span className="text-[#F5F5F5]">Synthetic only</span>
-              </div>
-              <div>
-                <span className="text-[#A3A3A3]">Dataset / </span>
-                <span className="font-mono text-[#F5F5F5]">1 incident / 3 events</span>
-              </div>
-              <div>
-                <span className="text-[#A3A3A3]">Topology / </span>
-                <span className="font-mono text-[#F5F5F5]">6 virtual assets</span>
-              </div>
-            </div>
-          </div>
-          <div className="text-xs text-[#737373] mt-6 leading-relaxed">
-            Dataset import and topology editing are unavailable. Do not supply production data.
-          </div>
-        </div>
+      <div className="mt-6 flex flex-wrap items-center gap-6 border-b border-[#383838] text-xs" role="tablist">
+        {tabs.map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === key}
+            onClick={() => setActiveTab(key)}
+            className={`pb-2.5 transition-colors cursor-pointer ${
+              activeTab === key
+                ? "text-[#FF6B35] border-b-2 border-[#FF6B35] font-medium"
+                : "text-[#A3A3A3] hover:text-[#F5F5F5]"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      {/* Row 2: AI provider & Human review */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-        {/* Card: AI provider */}
-        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
-          <div>
-            <h2 className="text-base font-semibold text-[#F5F5F5]">
-              AI provider
-            </h2>
-            <div className="text-xs text-[#FF6B35] font-mono mt-1">
-              · Unavailable / integration unverified
-            </div>
-            <p className="text-xs text-[#A3A3A3] mt-3 leading-relaxed">
-              Fallback: locally authored explanation specimens. No provider credentials or live model response.
-            </p>
-
-            <div className="bg-[#1D1D1D] border border-[#383838] rounded-lg p-3 mt-4 flex items-center justify-between cursor-pointer">
-              <div>
-                <span className="block text-[11px] text-[#737373]">Explanation verbosity · specimen</span>
-                <span className="text-xs text-[#F5F5F5] font-medium mt-0.5 block">Detailed</span>
-              </div>
-              <ChevronDown className="w-4 h-4 text-[#737373]" />
-            </div>
-          </div>
-          <div className="text-xs text-[#737373] mt-6">
-            Connect provider — unavailable
-          </div>
+      {isLoading ? (
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <p role="status" aria-live="polite" className="sr-only">
+            Reading runtime configuration
+          </p>
+          <SkeletonCard />
+          <SkeletonCard />
         </div>
+      ) : null}
 
-        {/* Card: Human review */}
-        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
-          <div>
-            <h2 className="text-base font-semibold text-[#F5F5F5]">
-              Human review
+      {!isLoading && activeTab === "session" && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <h2 className="text-base font-semibold text-[#F5F5F5] mb-4 flex items-center gap-2">
+              <User className="w-4 h-4 text-[#FF6B35]" aria-hidden="true" />
+              <span>Authenticated operator</span>
             </h2>
-            <div className="text-xs text-[#FF6B35] font-mono mt-1">
-              · Required · read-only
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <span className="text-[#737373] block">Operator ID</span>
+                <span className="font-mono text-[#F5F5F5]">{session?.operator_id ?? "—"}</span>
+              </div>
+              <div>
+                <span className="text-[#737373] block">Display name</span>
+                <span className="font-mono text-[#F5F5F5]">{session?.display_name ?? "—"}</span>
+              </div>
+              <div>
+                <span className="text-[#737373] block">Clearance level</span>
+                <span className="font-mono text-[#F5F5F5]">
+                  {session ? `Level ${session.clearance}` : "—"}
+                </span>
+              </div>
+              <div>
+                <span className="text-[#737373] block">Session expires</span>
+                <span className="font-mono text-[#F5F5F5]">{session?.expires_at ?? "—"}</span>
+              </div>
             </div>
-            <p className="text-xs text-[#A3A3A3] mt-3 leading-relaxed">
-              Recommendations begin Pending Review. Demonstration decisions remain explicit; no automatic approval.
+
+            <p className="text-[11px] text-[#737373] mt-4 leading-relaxed">
+              Identity is resolved from the HttpOnly session cookie on every request. There is no
+              operator field in the simulation or review payloads, so a client cannot claim another
+              identity.
             </p>
           </div>
-          <div className="text-xs text-[#737373] mt-6 leading-relaxed">
-            Approved for Demonstration / Rejected / Requires More Evidence
+
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 flex flex-col justify-between">
+            <div>
+              <h2 className="text-base font-semibold text-[#F5F5F5] mb-2">End this session</h2>
+              <p className="text-xs text-[#A3A3A3] leading-relaxed">
+                Signing out revokes the session token on the server. The token is not merely dropped
+                from the browser, so a copied cookie stops working immediately.
+              </p>
+
+              {signOutError ? (
+                <p role="alert" className="text-xs text-red-300 mt-3">
+                  {signOutError}
+                </p>
+              ) : null}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => void handleSignOut()}
+              disabled={isSigningOut}
+              className="mt-4 self-start bg-red-950/40 border border-red-500/50 hover:bg-red-900/50 text-red-200 text-xs font-medium px-4 py-2.5 rounded-lg transition-colors inline-flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSigningOut ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                  <span>Signing out…</span>
+                </>
+              ) : (
+                <>
+                  <LogOut className="w-3.5 h-3.5 text-red-400" aria-hidden="true" />
+                  <span>Sign out</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Full-width Card: Safety policy definitions */}
-      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
-        <div className="text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
-          POLICY VALIDATION / PROPOSED DETERMINISTIC LAYER
+      {!isLoading && activeTab === "safety" && (
+        <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-6">
+          <div className="flex items-center gap-2 text-[10px] font-bold text-[#FF6B35] tracking-wider uppercase">
+            <Lock className="w-3 h-3" aria-hidden="true" />
+            <span>Enforced by the deterministic safety gate</span>
+          </div>
+          <h2 className="text-base font-semibold text-[#F5F5F5] mt-1 mb-1">
+            Active deterministic invariants (SEC-OT-01 to 05)
+          </h2>
+          <p className="text-xs text-[#A3A3A3] mb-4">
+            Evaluated on the server for every simulation run and every review decision. They are not
+            switchable from the browser.
+          </p>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-[#383838] text-[#737373] uppercase font-mono">
+                  <th scope="col" className="pb-3">
+                    Invariant
+                  </th>
+                  <th scope="col" className="pb-3">
+                    Safety specification
+                  </th>
+                  <th scope="col" className="pb-3">
+                    Evaluation gate
+                  </th>
+                  <th scope="col" className="pb-3">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#383838]/60">
+                {INVARIANTS.map((rule) => (
+                  <tr key={rule.id}>
+                    <td className="py-3 font-mono text-[#FF6B35] font-bold align-top">{rule.id}</td>
+                    <td className="py-3 align-top">
+                      <span className="text-[#F5F5F5] font-semibold block">{rule.name}</span>
+                      <span className="text-[#A3A3A3] text-[11px] leading-relaxed block mt-0.5">
+                        {rule.description}
+                      </span>
+                    </td>
+                    <td className="py-3 text-[#A3A3A3] font-mono text-[11px] align-top">
+                      {rule.gate}
+                    </td>
+                    <td className="py-3 font-mono text-[11px] align-top">
+                      <span className="text-emerald-400 font-bold">ENFORCED</span>
+                      {rule.id === "SEC-OT-04" && health && !health.strict_ot_mode ? (
+                        <span className="text-amber-400 font-bold block">
+                          PERMISSIVE MODE
+                        </span>
+                      ) : null}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-5 pt-4 border-t border-[#383838] grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div>
+              <span className="text-[#737373] block">Strict OT mode</span>
+              <span className="font-mono text-[#F5F5F5]">
+                {health ? (health.strict_ot_mode ? "ENABLED" : "DISABLED") : "—"}
+              </span>
+            </div>
+            <div>
+              <span className="text-[#737373] block">Minimum operator clearance</span>
+              <span className="font-mono text-[#F5F5F5]">
+                {health ? `Level ${health.min_operator_clearance}` : "—"}
+              </span>
+            </div>
+            <div>
+              <span className="text-[#737373] block">Session TTL</span>
+              <span className="font-mono text-[#F5F5F5]">
+                {health ? `${health.session_ttl_minutes} minutes` : "—"}
+              </span>
+            </div>
+          </div>
         </div>
-        <h2 className="text-base font-semibold text-[#F5F5F5] mt-1 mb-4">
-          Safety policy definitions
-        </h2>
+      )}
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] font-medium tracking-wider uppercase">
-                <th className="pb-3 font-medium">POLICY</th>
-                <th className="pb-3 font-medium">DEFINITION</th>
-                <th className="pb-3 font-medium">STATE</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#383838]/40">
-              <tr>
-                <td className="py-3.5 font-mono text-[#F5F5F5]">POL-01</td>
-                <td className="py-3.5 text-[#F5F5F5]">Preserve MONITOR-01 observability</td>
-                <td className="py-3.5 text-[#737373]">Read-only / not evaluated</td>
-              </tr>
-              <tr>
-                <td className="py-3.5 font-mono text-[#F5F5F5]">POL-02</td>
-                <td className="py-3.5 text-[#F5F5F5]">Require human review before demonstration action</td>
-                <td className="py-3.5 text-[#737373]">Read-only / not evaluated</td>
-              </tr>
-              <tr>
-                <td className="py-3.5 font-mono text-[#F5F5F5]">POL-03</td>
-                <td className="py-3.5 text-[#F5F5F5]">Do not isolate OT-CONTROLLER-SIM-01</td>
-                <td className="py-3.5 text-[#737373]">Read-only / not evaluated</td>
-              </tr>
-            </tbody>
-          </table>
+      {!isLoading && activeTab === "storage" && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <h2 className="text-base font-semibold text-[#F5F5F5] mb-4 flex items-center gap-2">
+              <Database className="w-4 h-4 text-[#FF6B35]" aria-hidden="true" />
+              <span>Storage backend</span>
+            </h2>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <span className="text-[#737373] block">Data backend</span>
+                <span className="font-mono text-[#F5F5F5]">{health?.data_backend ?? "—"}</span>
+              </div>
+              <div>
+                <span className="text-[#737373] block">Audit ledger</span>
+                <span className="font-mono text-[#F5F5F5]">append-only, HMAC-SHA256 chained</span>
+              </div>
+              <div>
+                <span className="text-[#737373] block">Simulation only</span>
+                <span className="font-mono text-[#F5F5F5]">
+                  {health ? (health.simulation_only ? "TRUE" : "FALSE") : "—"}
+                </span>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-[#737373] mt-4 leading-relaxed">
+              Ledger entries are protected by SQLite triggers that reject UPDATE and DELETE, and each
+              entry hash covers the previous hash. Verification is available from the audit trail.
+            </p>
+
+            <Link
+              href="/app/audit-trail"
+              className="mt-4 inline-flex items-center gap-1 text-xs text-[#FF6B35] hover:underline"
+            >
+              <span>Open the audit trail</span>
+              <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+            </Link>
+          </div>
+
+          <div className="bg-[#252525] border border-[#383838] rounded-xl p-6">
+            <h2 className="text-base font-semibold text-[#F5F5F5] mb-2">Resetting workspace data</h2>
+            <p className="text-xs text-[#A3A3A3] leading-relaxed">
+              This build exposes no destructive reset endpoint, by design: an append-only ledger that
+              any browser could truncate would not be append-only. To start from a clean baseline,
+              stop the API, remove the local <code className="font-mono">.garda/</code> directory,
+              and start it again.
+            </p>
+            <ul className="mt-4 space-y-1.5 text-[11px] text-[#737373] font-mono">
+              <li>· .garda/garda.db — operators, sessions, ledger</li>
+              <li>· .garda/audit-secret.key — HMAC key for the chain</li>
+              <li>· .garda/demo-credentials.txt — generated demo password</li>
+            </ul>
+            <p className="text-[11px] text-[#737373] mt-4 leading-relaxed">
+              The directory is git-ignored. Deleting it also invalidates every earlier entry hash, so
+              only do it in a development environment.
+            </p>
+          </div>
         </div>
+      )}
 
-        <div className="text-xs text-[#737373] mt-4">
-          Validation must be implemented separately from AI. Definitions do not demonstrate correct enforcement.
+      <div className="mt-8 mb-4 p-4 rounded-xl bg-[#1C1C1C] border border-[#2E2E2E] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#737373]">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-400" aria-hidden="true" />
+          <span>GARDA-SIM AI runtime configuration · server-resolved</span>
+        </div>
+        <div className="flex items-center gap-4 font-mono text-[11px]">
+          <span>ENV: {health?.environment?.toUpperCase() ?? "—"}</span>
+          <span>BACKEND: {health?.data_backend ?? "—"}</span>
+          <span>OPERATOR: {session?.operator_id ?? "—"}</span>
         </div>
       </div>
-
-      {/* Card: Privacy & export */}
-      <div className="bg-[#252525] border border-[#383838] rounded-xl p-6 mt-4">
-        <h2 className="text-base font-semibold text-[#F5F5F5]">
-          Privacy & export
-        </h2>
-        <p className="text-xs text-[#A3A3A3] mt-2 leading-relaxed">
-          Use synthetic content only. Retention, deletion, access requests and export authorization require a future implementation and reviewed privacy notice.
-        </p>
-        <div className="mt-4 flex items-center gap-4 text-xs">
-          <button type="button" className="text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors">
-            Export workspace
-          </button>
-          <button type="button" className="text-[#F5F5F5] underline hover:text-[#FF6B35] transition-colors">
-            Delete workspace data
-          </button>
-        </div>
-      </div>
-
-      {/* Card: Prototype limitations */}
-      <div className="bg-[#252525] border border-[#383838] rounded-xl p-5 mt-4">
-        <h2 className="text-xs font-semibold text-[#F5F5F5]">
-          Prototype limitations / visual version 0.1
-        </h2>
-        <p className="text-xs text-[#737373] mt-1 leading-relaxed">
-          Version label describes this design, not deployed software. No persistence, AI integration, safety computation, production connection or export service is verified.
-        </p>
-      </div>
-
-      <div className="text-xs text-[#737373] mt-5">
-        Save settings — not connected
-      </div>
-
-      {/* Persistent Disclaimer */}
-      <div className="text-xs text-[#737373] mt-8 mb-4">
-        Visual design only — navigation, authentication, simulation, policy evaluation, AI, persistence, exports and email delivery require implementation.
-      </div>
-    </AppLayout>
+    </>
   );
 }

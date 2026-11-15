@@ -19,7 +19,7 @@ interface PolicyRule {
   name: string;
   category: "OT Safety" | "Auth Boundary" | "Environment" | "Audit";
   invariant: string;
-  status: "PASSED" | "BLOCKED" | "PENDING_REVIEW";
+  status: "PASSED" | "BLOCKED";
   rationale: string;
 }
 
@@ -34,35 +34,43 @@ const SCENARIOS = {
     rules: [
       {
         id: "SEC-OT-01",
-        name: "OT Continuous Telemetry Invariant",
+        name: "Zero Real-World Containment",
+        category: "Environment" as const,
+        invariant: "TARGET_ASSET IN SYNTHETIC_INVENTORY",
+        status: "PASSED" as const,
+        rationale: "Target assets are bounded virtual entities in the synthetic inventory.",
+      },
+      {
+        id: "SEC-OT-02",
+        name: "Operator Clearance",
+        category: "Auth Boundary" as const,
+        invariant: "SESSION_CLEARANCE >= 2",
+        status: "PASSED" as const,
+        rationale: "Identity is resolved from the server session, never from the request body.",
+      },
+      {
+        id: "SEC-OT-03",
+        name: "Protected Identity Asset",
+        category: "Auth Boundary" as const,
+        invariant: "IDENTITY-SVC-01 NOT TARGETED",
+        status: "PASSED" as const,
+        rationale: "The core identity service is outside the targetable set.",
+      },
+      {
+        id: "SEC-OT-04",
+        name: "Uninterrupted OT Telemetry",
         category: "OT Safety" as const,
         invariant: "OT_TELEMETRY_STREAM_LOSS == 0",
         status: "BLOCKED" as const,
-        rationale: "VIOLATION: OT-CONTROLLER-SIM-01 telemetry loss risks physical sensor blindness.",
+        rationale: "VIOLATION: the modelled impact severs TELEMETRY-SIM-01 and OT-CONTROLLER-SIM-01.",
       },
       {
-        id: "SEC-AUTH-02",
-        name: "Dual-Key Human Review Invariant",
-        category: "Auth Boundary" as const,
-        invariant: "AUTONOMOUS_EXECUTION == FALSE",
-        status: "BLOCKED" as const,
-        rationale: "VIOLATION: Autonomous containment without human supervisor sign-off forbidden.",
-      },
-      {
-        id: "SEC-ENV-03",
-        name: "Synthetic Sandbox Boundary",
-        category: "Environment" as const,
-        invariant: "TARGET_ENV == 'SYNTHETIC_SIM'",
-        status: "PASSED" as const,
-        rationale: "Target assets are bounded virtual entities in local testbed.",
-      },
-      {
-        id: "SEC-AUDIT-04",
-        name: "Forensic Ledger Provenance",
+        id: "SEC-OT-05",
+        name: "Ledger Integrity",
         category: "Audit" as const,
-        invariant: "EVIDENCE_CHAIN_SIGNED == TRUE",
+        invariant: "AUDIT_CHAIN_VERIFIED == TRUE",
         status: "PASSED" as const,
-        rationale: "EV-0042-01 hash verified against incident bundle.",
+        rationale: "The HMAC-SHA256 chain verified before this run was accepted.",
       },
     ],
     gateResult: {
@@ -84,35 +92,43 @@ const SCENARIOS = {
     rules: [
       {
         id: "SEC-OT-01",
-        name: "OT Continuous Telemetry Invariant",
+        name: "Zero Real-World Containment",
+        category: "Environment" as const,
+        invariant: "TARGET_ASSET IN SYNTHETIC_INVENTORY",
+        status: "PASSED" as const,
+        rationale: "Target assets are bounded virtual entities in the synthetic inventory.",
+      },
+      {
+        id: "SEC-OT-02",
+        name: "Operator Clearance",
+        category: "Auth Boundary" as const,
+        invariant: "SESSION_CLEARANCE >= 2",
+        status: "PASSED" as const,
+        rationale: "Identity is resolved from the server session, never from the request body.",
+      },
+      {
+        id: "SEC-OT-03",
+        name: "Protected Identity Asset",
+        category: "Auth Boundary" as const,
+        invariant: "IDENTITY-SVC-01 NOT TARGETED",
+        status: "PASSED" as const,
+        rationale: "The core identity service is outside the targetable set.",
+      },
+      {
+        id: "SEC-OT-04",
+        name: "Uninterrupted OT Telemetry",
         category: "OT Safety" as const,
         invariant: "OT_TELEMETRY_STREAM_LOSS == 0",
         status: "PASSED" as const,
-        rationale: "COMPLIANT: Zero telemetry drop. SCADA control channels remain 100% active.",
+        rationale: "COMPLIANT: no modelled impact on the OT telemetry path.",
       },
       {
-        id: "SEC-AUTH-02",
-        name: "Dual-Key Human Review Invariant",
-        category: "Auth Boundary" as const,
-        invariant: "AUTONOMOUS_EXECUTION == FALSE",
-        status: "PENDING_REVIEW" as const,
-        rationale: "HELD: Queued for explicit SOC Human In The Loop authorization.",
-      },
-      {
-        id: "SEC-ENV-03",
-        name: "Synthetic Sandbox Boundary",
-        category: "Environment" as const,
-        invariant: "TARGET_ENV == 'SYNTHETIC_SIM'",
-        status: "PASSED" as const,
-        rationale: "Target assets are bounded virtual entities in local testbed.",
-      },
-      {
-        id: "SEC-AUDIT-04",
-        name: "Forensic Ledger Provenance",
+        id: "SEC-OT-05",
+        name: "Ledger Integrity",
         category: "Audit" as const,
-        invariant: "EVIDENCE_CHAIN_SIGNED == TRUE",
+        invariant: "AUDIT_CHAIN_VERIFIED == TRUE",
         status: "PASSED" as const,
-        rationale: "EV-0042-01 hash verified against incident bundle.",
+        rationale: "The HMAC-SHA256 chain verified before this run was accepted.",
       },
     ],
     gateResult: {
@@ -150,7 +166,7 @@ export function SafetyInterceptorTerminal() {
             Deterministic Safety Interceptor Gate
           </span>
           <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FF6B35]/15 border border-[#FF6B35]/30 text-[#FF6B35]">
-            GATE_ENGINE v2.4 · FAIL-CLOSED
+            GATE_ENGINE · FAIL-CLOSED · ILLUSTRATIVE
           </span>
         </div>
 
@@ -200,7 +216,7 @@ export function SafetyInterceptorTerminal() {
 
           <div className="p-3.5 bg-[#202020] border border-[#333333] rounded-xl space-y-2.5">
             <div className="flex items-center justify-between text-[11px] font-mono text-[#737373]">
-              <span>Model Specimen: Claude-3.5 / Synthetics</span>
+              <span>Model: not connected / fixture narrative</span>
               <span className="text-[#FF6B35]">{scenario.confidence}</span>
             </div>
             <div className="font-mono text-xs text-[#E5E5E5] leading-relaxed bg-[#141414] p-3 rounded-lg border border-[#2D2D2D]">
@@ -253,8 +269,6 @@ export function SafetyInterceptorTerminal() {
           <div className="space-y-2.5">
             {scenario.rules.map((rule) => {
               const isBlocked = rule.status === "BLOCKED";
-              const isPending = rule.status === "PENDING_REVIEW";
-              const isPassed = rule.status === "PASSED";
 
               return (
                 <div
@@ -262,8 +276,6 @@ export function SafetyInterceptorTerminal() {
                   className={`p-3 rounded-xl border transition-all ${
                     isBlocked
                       ? "bg-[#2B1B1B] border-[#F87171]/40"
-                      : isPending
-                      ? "bg-[#2B231B] border-[#FBBF24]/40"
                       : "bg-[#1F2520] border-[#4ADE80]/30"
                   }`}
                 >
@@ -286,11 +298,7 @@ export function SafetyInterceptorTerminal() {
                       </div>
                       <p
                         className={`text-xs mt-1 leading-snug ${
-                          isBlocked
-                            ? "text-[#FCA5A5]"
-                            : isPending
-                            ? "text-[#FCD34D]"
-                            : "text-[#86EFAC]"
+                          isBlocked ? "text-[#FCA5A5]" : "text-[#86EFAC]"
                         }`}
                       >
                         {rule.rationale}
@@ -303,12 +311,7 @@ export function SafetyInterceptorTerminal() {
                           <XCircle className="w-3.5 h-3.5" /> BLOCKED
                         </span>
                       )}
-                      {isPending && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-[#FBBF24]/20 text-[#FBBF24] border border-[#FBBF24]/40">
-                          <AlertTriangle className="w-3.5 h-3.5" /> HUMAN APPROVAL
-                        </span>
-                      )}
-                      {isPassed && (
+                      {!isBlocked && (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-[#4ADE80]/20 text-[#4ADE80] border border-[#4ADE80]/40">
                           <CheckCircle2 className="w-3.5 h-3.5" /> PASSED
                         </span>
@@ -356,7 +359,7 @@ export function SafetyInterceptorTerminal() {
           <span className="text-[#FF6B35]">SAFETY INVARIANTS:</span>
           <span>Zero real-world network packet transmission</span>
           <span>·</span>
-          <span>Immutable synthetic log audit</span>
+          <span>Append-only synthetic log audit</span>
         </div>
         <div className="text-[#A3A3A3]">
           Pending Review remains default in all execution pipelines.

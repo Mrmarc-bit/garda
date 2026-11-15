@@ -59,3 +59,174 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
 }
+
+/* WCAG 2.5.8 (AA) minimum target size.
+   Applies at every viewport: a 16px-tall native <select> or a bare 14px text
+   link is below the 24x24 CSS-pixel floor. Links flowing inside a sentence are
+   exempt from the criterion, so they are excluded to avoid disturbing prose. */
+select,
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+textarea {
+  min-height: 24px;
+}
+
+button,
+[role="button"],
+[role="tab"],
+a:not(p > a):not(li > a) {
+  min-height: 24px;
+}
+
+/* min-height has no effect on a non-replaced inline element, so a bare table
+   or toolbar link needs a box before the floor above can apply. */
+a:not(p > a):not(li > a) {
+  display: inline-block;
+}
+
+header a:not(p > a):not(li > a),
+footer a:not(p > a):not(li > a) {
+  min-width: 24px;
+  text-align: center;
+}
+
+button,
+[role="button"] {
+  min-width: 24px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+/* Touch ergonomics.
+   Native form controls are sized by the browser, which leaves <select> and
+   <input> around 16-17px tall — usable with a mouse, not with a thumb. Inside
+   the authenticated workspace we raise them to a 40px touch target whenever the
+   primary pointer is coarse (phones, tablets in either orientation) or the
+   viewport is below the desktop breakpoint, without changing the visual density
+   of a mouse-driven desktop layout. */
+@media (max-width: 1023px), (pointer: coarse) {
+  select,
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  textarea {
+    min-height: 40px;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 24px;
+    min-height: 24px;
+  }
+
+  /* Standalone action links (not links flowing inside a sentence, which WCAG
+     exempts from target-size rules) get a comfortable vertical hit area. */
+  a[class*="underline"]:not(p > a):not(li > a),
+  a[class*="text-[#FF6B35]"]:not(p > a):not(li > a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+  }
+
+  /* Bare text links and text buttons in toolbars: give them a hit area without
+     altering their visual weight. */
+  button[class*="text-xs"],
+  a[class*="text-xs"]:not(p > a):not(li > a) {
+    min-height: 32px;
+  }
+
+  /* Text-only buttons used as vertical navigation (FAQ categories, onboarding
+     steps) sit below the touch floor at 24px. */
+  button[class*="block"] {
+    min-height: 40px;
+  }
+
+  /* Small-caption buttons (Copy JSON, Filter this asset, …) are still real
+     controls and need a real target. */
+  button[class*="text-[10px]"],
+  button[class*="text-[11px]"] {
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Tab strips: a 26px tab is a miss-prone target on a phone. Keep the visual
+     underline by growing the box, not the padding. */
+  [role="tab"] {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Site navigation (header and footer): a 15px-tall text link is below the
+     touch floor even when it clears the 24px mouse floor. */
+  header a:not(p > a):not(li > a),
+  footer a:not(p > a):not(li > a),
+  header button,
+  footer button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    min-width: 24px;
+  }
+}
+
+/* Sidebar action buttons sit outside <main>, so they need their own floor:
+   24px keeps them WCAG 2.5.8 compliant with a mouse, and the coarse-pointer
+   block below raises them for a thumb. Tailwind 3 has no `pointer-coarse`
+   variant, so this is expressed directly. */
+aside [data-sidebar="group-action"],
+aside [data-sidebar="menu-action"] {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+@media (pointer: coarse) {
+  aside [data-sidebar="group-action"],
+  aside [data-sidebar="menu-action"] {
+    min-width: 36px;
+    min-height: 36px;
+  }
+}
+
+/* Shimmer placeholder used by components/ui/skeleton.tsx. A gradient sweep
+   reads as "content is arriving" more clearly than an opacity pulse, and it
+   costs no JavaScript. */
+@keyframes garda-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background-color: #232323;
+  background-image: linear-gradient(
+    90deg,
+    #232323 0%,
+    #2b2b2b 35%,
+    #383838 50%,
+    #2b2b2b 65%,
+    #232323 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: garda-shimmer 1.4s ease-in-out infinite;
+}
+
+/* Respect the operating system's reduced-motion preference for every animation
+   and transition, including the spinner/pulse utilities used across the app. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -31,8 +31,8 @@ export const ArchitectureLayersVisualizer: React.FC = () => {
       borderColor: "border-[#FF6B35]/40",
       bgLight: "bg-[#FF6B35]/10",
       specimenType: "FORENSIC LOG RECORD",
-      specimenContent: `{"id": "EV-0042-01", "utc": "2026-10-26T09:14:00Z", "actor": "analyst-demo-03", "asset": "APP-GW-02", "event": "privilege_elevation_request", "source": "synthetic_audit_probe"}`,
-      guarantee: "Immutable facts: IDs, hashes, and timestamps are fixed and cannot be altered by AI or simulator inferences.",
+      specimenContent: `{"id": "EVD-101", "utc": "2026-10-26T14:10:12Z", "actor": "analyst-demo-03", "asset": "APP-GW-02", "event": "privilege_elevation_request", "source": "synthetic_audit_probe"}`,
+      guarantee: "Append-only facts: ledger entries are hash-chained, and AI or simulator inference cannot rewrite them.",
     },
     {
       id: "layer-2",
@@ -57,7 +57,7 @@ export const ArchitectureLayersVisualizer: React.FC = () => {
       borderColor: "border-[#4ADE80]/40",
       bgLight: "bg-[#4ADE80]/10",
       specimenType: "SAFETY INVARIANT AUDIT",
-      specimenContent: `[CHECK: SEC-OT-04] Telemetry Uptime Invariant -> PASS\n[CHECK: SEC-OT-01] Real Network Isolation Block -> PASS\n[CHECK: POL-03] OT Controller Isolation Blocked -> ENFORCED`,
+      specimenContent: `[CHECK: SEC-OT-04] Telemetry Uptime Invariant -> PASS\n[CHECK: SEC-OT-01] Real Network Isolation Block -> PASS\n[CHECK: SEC-OT-03] Protected Asset Isolation Blocked -> ENFORCED`,
       guarantee: "Hard invariant: AI output has zero authority to override deterministic safety rules. Fail-closed by design.",
     },
     {

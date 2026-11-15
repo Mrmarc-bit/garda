@@ -145,7 +145,10 @@ export default function FeaturesPage() {
       <section className="px-6 md:px-12 lg:px-16 py-12">
         <div className="max-w-[1440px] mx-auto bg-[#202020] border border-[#383838] rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <p className="text-xs text-[#A3A3A3] max-w-2xl leading-relaxed">
-            <strong className="text-[#F5F5F5]">Design scope:</strong> All capabilities shown are editable visual specifications. No functional operation is implied.
+            <strong className="text-[#F5F5F5]">Scope:</strong> The simulation lab behind this page is
+            functional against synthetic fixtures. Capabilities that are not implemented — live data
+            ingestion, AI-authored rationale and containment — are labelled as such inside the app
+            and are never simulated as success.
           </p>
 
           <Link

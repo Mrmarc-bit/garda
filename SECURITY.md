@@ -12,6 +12,35 @@
 
 ---
 
+## 0. Implementation status of this baseline (reconciled 2026-11-14)
+
+This document is a *standard*, not a status report. The table below records which controls the current code actually implements, so that no reader mistakes a requirement for a control. The authoritative status detail is in `IMPLEMENTATION_STATUS.md`; accepted deviations are in `SECURITY_EXCEPTIONS.md`.
+
+| Control area | Requirement in this document | Status in this build | Where |
+|---|---|---|---|
+| Authentication | §7 | **Implemented** — session cookie, PBKDF2-HMAC-SHA256 (210 000 iterations, per-user salt), constant-work login path | `apps/api/src/security.py` |
+| Authorization | §8 | **Implemented** — `require_session` on every `/api/*` route; `require_clearance` on state-changing routes; server-side approval gate (403) | `apps/api/src/security.py`, `apps/api/src/main.py` |
+| Password hashing algorithm | §7 prefers Argon2id | **Deviation** — PBKDF2-HMAC-SHA256 is used because no maintained Argon2 binding exists in this stack's pinned dependency set. Documented here rather than silently substituted | `apps/api/src/security.py` |
+| Session storage | §7 | **Implemented** — only a SHA-256 of the token is stored; server-side revocation; TTL bound | `apps/api/src/storage.py` |
+| Multi-factor authentication | §7 | **Not implemented** — no MFA, no identity provider | see EXC-003 |
+| CSRF / origin control | §11 | **Implemented** — `require_trusted_origin` returns 403 on a disallowed `Origin` for state-changing calls | `apps/api/src/security.py` |
+| Input validation | §9 | **Implemented** — Pydantic `StrictModel(extra="forbid")`, bounded strings, referential validation against the synthetic inventory | `apps/api/src/schemas.py`, `apps/api/src/validation.py` |
+| Rate limiting | §17 | **Implemented, single-process** — fixed window per client+scope, 429 + `Retry-After`; no shared store | see EXC-004 |
+| Audit logging | §21 | **Implemented** — SQLite ledger, append-only triggers, HMAC-SHA256 chain, verification endpoint. Described as *append-only and chained*, never as immutable or certified | `apps/api/src/storage.py` |
+| Security headers | §10 | **Implemented** — CSP, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy: no-referrer`, `Cache-Control: no-store`, HSTS in production, `X-Request-ID` | `apps/api/src/main.py`, `apps/web/src/middleware.ts` |
+| Secret handling | §18 | **Implemented** — no secrets in source; `.garda/` gitignored; demo password generated at first boot with mode 0600 and refused in production | `apps/api/src/config.py`, `apps/api/src/security.py` |
+| Database hardening | §12 (PostgreSQL) | **Deviation** — single-node SQLite. See EXC-001 for the compensating controls that were verified | `apps/api/src/storage.py` |
+| AI provider controls | §13 | **Not applicable yet** — no provider exists, so no prompt-injection surface exists. The requirement stands for when the adapter is built | `IMPLEMENTATION_STATUS.md` §7 |
+| Dependency / vulnerability scanning | §19 | **Not run as a release gate** — no `npm audit` or SCA result is recorded in this repository | open item |
+| Independent penetration test | §25 | **Not performed** — no third-party assessment exists, and this document must not be read as one | open item |
+
+Two statements in this document deserve emphasis because they are easy to overclaim:
+
+- §21 already forbids calling a log immutable unless storage enforces it. The storage here enforces *append-only* via triggers and *tamper-evident* via an HMAC chain; it does **not** enforce immutability against someone who holds both the database file and the key. All UI and API copy matches that distinction.
+- §3 lists PostgreSQL and AI provider adapters as in-scope. Neither exists. They remain requirements, not controls.
+
+---
+
 ## 1. Purpose and security objectives
 
 This document establishes the minimum security requirements for designing, implementing, testing, deploying, and maintaining GARDA-SIM AI.

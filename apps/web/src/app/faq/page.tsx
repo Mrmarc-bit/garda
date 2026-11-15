@@ -114,39 +114,55 @@ export default function FaqPage() {
               className="w-full bg-transparent text-sm text-[#F5F5F5] placeholder-[#737373] focus:outline-none"
             />
             <div className="text-[11px] text-[#737373] pt-1 border-t border-[#303030]">
-              Search appearance only; filtering requires implementation.
+              Filters this page&apos;s questions as you type.
             </div>
           </div>
 
           {/* Category Tabs */}
-          <div className="flex flex-wrap items-center gap-6 text-xs border-b border-[#303030] pb-3 max-w-4xl">
+          <div
+            className="flex flex-wrap items-center gap-6 text-xs border-b border-[#303030] pb-3 max-w-4xl"
+            role="tablist"
+            aria-label="FAQ categories"
+          >
             <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "all"}
               onClick={() => setActiveTab("all")}
-              className={`transition-colors ${
+              className={`transition-colors cursor-pointer ${
                 activeTab === "all" ? "text-[#FF6B35] font-semibold" : "text-[#A3A3A3] hover:text-[#F5F5F5]"
               }`}
             >
               All questions
             </button>
             <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "scenarios"}
               onClick={() => setActiveTab("scenarios")}
-              className={`transition-colors ${
+              className={`transition-colors cursor-pointer ${
                 activeTab === "scenarios" ? "text-[#FF6B35] font-semibold" : "text-[#A3A3A3] hover:text-[#F5F5F5]"
               }`}
             >
               Scenarios & data
             </button>
             <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "ai"}
               onClick={() => setActiveTab("ai")}
-              className={`transition-colors ${
+              className={`transition-colors cursor-pointer ${
                 activeTab === "ai" ? "text-[#FF6B35] font-semibold" : "text-[#A3A3A3] hover:text-[#F5F5F5]"
               }`}
             >
               AI & safety
             </button>
             <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "results"}
               onClick={() => setActiveTab("results")}
-              className={`transition-colors ${
+              className={`transition-colors cursor-pointer ${
                 activeTab === "results" ? "text-[#FF6B35] font-semibold" : "text-[#A3A3A3] hover:text-[#F5F5F5]"
               }`}
             >

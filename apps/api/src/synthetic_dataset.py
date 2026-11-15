@@ -1,5 +1,18 @@
-from typing import List, Dict
-from .schemas import IncidentSchema, VirtualAssetSchema, SyntheticEvidenceSchema, CandidateStrategySchema, AuditEntrySchema
+"""Canonical synthetic dataset for GARDA-SIM AI.
+
+This module is the single source of truth for the synthetic fixtures on the
+backend. Every identifier the safety engine accepts is derived from here, so the
+policy cannot drift away from the inventory it is meant to protect.
+"""
+
+from typing import Dict, FrozenSet, List
+
+from .schemas import (
+    CandidateStrategySchema,
+    IncidentSchema,
+    SyntheticEvidenceSchema,
+    VirtualAssetSchema,
+)
 
 SYNTHETIC_INCIDENT = IncidentSchema(
     id="INC-2026-0042",
@@ -12,6 +25,19 @@ SYNTHETIC_INCIDENT = IncidentSchema(
     synthetic_identity="analyst-demo-03",
     summary="Anomalous privilege escalation detected originating from service account svc_worker on synthetic node APP-GW-02, accompanied by outbound telemetry probe attempts.",
     affected_services=["APP-GW-02", "OPS-DASH-01", "TELEMETRY-SIM-01"]
+)
+
+SYNTHETIC_INCIDENT_02 = IncidentSchema(
+    id="INC-2026-0043",
+    title="Anomalous Modbus Read Probe on OT-CONTROLLER",
+    severity="warning",
+    status="investigating",
+    target_asset="OT-CONTROLLER-SIM-01",
+    detected_at="2026-10-26T14:15:30Z",
+    confidence=0.91,
+    synthetic_identity="scada-probe-01",
+    summary="Repeated non-standard Modbus function code 0x08 (Diagnostics) probed across field bus towards virtual industrial controller port 502.",
+    affected_services=["OT-CONTROLLER-SIM-01", "TELEMETRY-SIM-01"]
 )
 
 VIRTUAL_ASSETS: List[VirtualAssetSchema] = [
@@ -153,25 +179,43 @@ CANDIDATE_STRATEGIES: List[CandidateStrategySchema] = [
     )
 ]
 
-INITIAL_AUDIT_LOGS: List[AuditEntrySchema] = [
-    AuditEntrySchema(
-        id="AUD-8849-01",
-        timestamp="2026-10-26T15:42:10Z",
-        actor="analyst-demo-03",
-        event_type="STRATEGY_APPROVED",
-        resource="STRAT-B (INC-2026-0042)",
-        result="SUCCESS",
-        details="Approved STRAT-B for demonstration review with verified OT telemetry continuity.",
-        integrity_hash="8f4a1c729b2e"
-    ),
-    AuditEntrySchema(
-        id="AUD-8849-02",
-        timestamp="2026-10-26T15:40:02Z",
-        actor="system-safety-engine",
-        event_type="POLICY_INVARIANT_EVAL",
-        resource="STRAT-A (INC-2026-0042)",
-        result="VIOLATION_BLOCKED",
-        details="Blocked candidate STRAT-A due to Rule SEC-OT-04 telemetry cutoff violation.",
-        integrity_hash="3d22bf106a4c"
-    )
-]
+SYNTHETIC_INCIDENTS: List[IncidentSchema] = [SYNTHETIC_INCIDENT, SYNTHETIC_INCIDENT_02]
+
+# Canonical strategy lookup. The keys are the exact registry codes; callers that
+# accept user input must normalise it first (see safety_engine.normalize).
+STRATEGY_BY_CODE: Dict[str, CandidateStrategySchema] = {
+    strategy.code: strategy for strategy in CANDIDATE_STRATEGIES
+}
+
+# --------------------------------------------------------------------------- #
+# Derived identifier inventories
+#
+# The safety engine accepts only these identifiers. Deriving them from the
+# fixtures above (instead of re-declaring them) is what keeps the policy and the
+# inventory from drifting apart.
+# --------------------------------------------------------------------------- #
+SYNTHETIC_ASSET_IDS: FrozenSet[str] = frozenset(asset.id for asset in VIRTUAL_ASSETS)
+
+KNOWN_SCENARIO_IDS: FrozenSet[str] = frozenset(
+    incident.id for incident in SYNTHETIC_INCIDENTS
+)
+
+KNOWN_STRATEGY_IDS: FrozenSet[str] = frozenset(
+    strategy.code for strategy in CANDIDATE_STRATEGIES
+)
+
+# The root identity controller is a single point of trust: isolating it would
+# strand every dependent service, so SEC-OT-03 protects it unconditionally.
+PROTECTED_ASSET_IDS: FrozenSet[str] = frozenset({"IDENTITY-SVC-01"})
+
+# Assets whose telemetry stream must never be severed without a fail-safe switch
+# (SEC-OT-04). A strategy is judged by the assets it would actually disconnect.
+TELEMETRY_CRITICAL_ASSET_IDS: FrozenSet[str] = frozenset(
+    {"TELEMETRY-SIM-01", "OT-CONTROLLER-SIM-01"}
+)
+
+# Scope of each scenario: the incident's own target plus its affected services.
+SCENARIO_ASSET_SCOPE: Dict[str, FrozenSet[str]] = {
+    incident.id: frozenset({incident.target_asset, *incident.affected_services})
+    for incident in SYNTHETIC_INCIDENTS
+}

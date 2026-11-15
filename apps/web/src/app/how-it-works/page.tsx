@@ -20,13 +20,13 @@ export default function HowItWorksPage() {
     {
       num: "02",
       title: "Evidence",
-      lead: "Inspect EV-0042-01 through EV-0042-03 and their provenance.",
+      lead: "Inspect EVD-101 through EVD-103 and their provenance.",
       artifact: {
         category: "EXPECTED ARTIFACT",
         title: "Synthetic Evidence",
-        main: "EV-0042-01 → EV-0042-02 → EV-0042-03",
-        status: "2026-10-26 / 09:14:00 → 09:14:08 → 09:15:10 UTC",
-        context: "Elevation request → token issued → privileged route accessed",
+        main: "EVD-101 → EVD-102 → EVD-103",
+        status: "2026-10-26 / 14:10:12 → 14:11:05 → 14:11:42 UTC",
+        context: "Sudo elevation → outbound C2 SYN → token reuse",
       },
     },
     {
@@ -60,9 +60,9 @@ export default function HowItWorksPage() {
       artifact: {
         category: "EXPECTED ARTIFACT",
         title: "Policy Validation",
-        main: "POL-01 Preserve monitoring / POL-02 Review before action",
-        status: "POL-03 Do not isolate the OT controller",
-        context: "Proposed deterministic checks; evaluation not connected",
+        main: "SEC-OT-04 Telemetry preserved / SEC-OT-02 Operator clearance",
+        status: "SEC-OT-03 Protected identity asset",
+        context: "Evaluated server-side before any result is returned",
       },
     },
     {

@@ -30,8 +30,8 @@ const LAYERS: LayerData[] = [
       "All logs, events, and metrics are deterministically generated synthetic artifacts. Zero connection to live SCADA, cloud production, or military infrastructure. Every event is cryptographic hash-linked.",
     guarantee: "INVARIANT: PRODUCTION_TRAFFIC_BYTES == 0",
     specimenJson: {
-      event_id: "EV-0042-01",
-      timestamp: "2026-10-26T09:14:00Z",
+      event_id: "EVD-101",
+      timestamp: "2026-10-26T14:10:12Z",
       source_host: "APP-GW-02 (Virtual)",
       action: "OAUTH_ELEVATION_REQUEST",
       actor: "analyst-demo-03",
@@ -70,11 +70,11 @@ const LAYERS: LayerData[] = [
       "Generates human-readable trade-off rationales grounded in synthetic evidence. Calibrates confidence scores (0.82) and highlights unverified assumptions. AI outputs are treated as proposals, not authorizations.",
     guarantee: "INVARIANT: AI_AUTONOMOUS_EXECUTION == FALSE",
     specimenJson: {
-      model_specimen: "Claude-3.5-Sonnet-Specimen",
+      model_specimen: "NOT_CONNECTED / authored_fixture",
       calibrated_confidence: 0.82,
       proposed_strategy: "Session Revocation + Target Challenge",
       why_narrow_response: "Preserves telemetry continuity while evicting unauthorized token",
-      grounded_evidence_ids: ["EV-0042-01", "EV-0042-02"],
+      grounded_evidence_ids: ["EVD-101", "EVD-102"],
     },
     bgColor: "bg-[#1A1A1A]",
   },
@@ -89,7 +89,7 @@ const LAYERS: LayerData[] = [
       "Hardcoded invariant checks (SEC-OT-01 to SEC-OT-05) run independently of LLM reasoning. Vetoes any proposal that cuts critical OT telemetry. Enforces mandatory Level-2 Human In The Loop sign-off.",
     guarantee: "INVARIANT: OT_TELEMETRY_STREAM_LOSS == 0",
     specimenJson: {
-      gate_engine: "DETERMINISTIC_V2.4",
+      gate_engine: "DETERMINISTIC_FAIL_CLOSED",
       rule_id: "SEC-OT-01",
       result: "PASSED (Compliant with Telemetry Preservation)",
       enforcement: "HARD_FAIL_CLOSED",

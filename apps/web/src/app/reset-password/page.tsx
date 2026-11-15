@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const [newPassword, setNewPassword] = React.useState("••••••••••••");
-  const [confirmPassword, setConfirmPassword] = React.useState("••••••••••••");
+  const [newPassword, setNewPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 

@@ -113,7 +113,7 @@ export const HeroInteractivePreview: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab("topology")}
-            className={`px-3 py-1 rounded transition-colors ${
+            className={`px-3 py-1 min-h-9 rounded transition-colors ${
               activeTab === "topology"
                 ? "bg-[#FF6B35] text-white font-medium shadow-sm"
                 : "text-[#A3A3A3] hover:text-[#F5F5F5]"
@@ -124,7 +124,7 @@ export const HeroInteractivePreview: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab("specimen")}
-            className={`px-3 py-1 rounded transition-colors ${
+            className={`px-3 py-1 min-h-9 rounded transition-colors ${
               activeTab === "specimen"
                 ? "bg-[#FF6B35] text-white font-medium shadow-sm"
                 : "text-[#A3A3A3] hover:text-[#F5F5F5]"
@@ -328,17 +328,17 @@ export const HeroInteractivePreview: React.FC = () => {
             {strategy === "isolation" ? (
               <div className="flex items-center gap-1.5 text-[#F87171]">
                 <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
-                <span>POL-01 VIOLATION: OT-CONTROLLER Telemetry severed!</span>
+                <span>SEC-OT-04 VIOLATION: OT-CONTROLLER telemetry severed</span>
               </div>
             ) : strategy === "restriction" ? (
               <div className="flex items-center gap-1.5 text-[#4ADE80]">
                 <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                <span>POL-01 PASS: Gateway filtered; OT equipment unaffected.</span>
+                <span>SEC-OT-04 PASS: gateway filtered; OT equipment unaffected</span>
               </div>
             ) : (
               <div className="flex items-center gap-1.5 text-[#4ADE80]">
                 <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                <span>POL-01 PASS: 1 session revoked; 0 downtime on OT.</span>
+                <span>SEC-OT-04 PASS: 1 session revoked; 0 downtime on OT</span>
               </div>
             )}
 
@@ -359,13 +359,13 @@ export const HeroInteractivePreview: React.FC = () => {
               Evidence, not assumptions
             </h3>
             <div className="font-mono text-[11px] text-[#737373] pt-1">
-              EV-0042-01 / 09:14:00 UTC
+              EVD-101 / 14:10:12 UTC
             </div>
             <p className="text-[11px] text-[#A3A3A3] leading-snug">
               Role elevation requested by analyst-demo-03 on APP-GW-02.
             </p>
             <div className="font-mono text-[11px] text-[#737373]">
-              EV-0042-02 / 09:14:08 UTC
+              EVD-102 / 14:11:05 UTC
             </div>
             <p className="text-[11px] text-[#A3A3A3] leading-snug">
               Synthetic privileged token issued.

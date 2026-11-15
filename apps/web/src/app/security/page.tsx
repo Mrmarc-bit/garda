@@ -6,19 +6,29 @@ import { PublicFooter } from "@/components/layout/public-footer";
 export default function SecurityPage() {
   const policies = [
     {
-      code: "POL-01",
-      intent: "Preserve MONITOR-01 observability",
-      status: "Not connected",
+      code: "SEC-OT-01",
+      intent: "Zero real-world containment — the target must be a virtual asset in the synthetic inventory",
+      status: "Enforced server-side",
     },
     {
-      code: "POL-02",
-      intent: "Human review before demonstration action",
-      status: "Not connected",
+      code: "SEC-OT-02",
+      intent: "Operator clearance — identity comes from the server session, never the request body",
+      status: "Enforced server-side",
     },
     {
-      code: "POL-03",
-      intent: "Block OT-CONTROLLER-SIM-01 isolation",
-      status: "Not connected",
+      code: "SEC-OT-03",
+      intent: "Core identity service availability — protected assets cannot be targeted",
+      status: "Enforced server-side",
+    },
+    {
+      code: "SEC-OT-04",
+      intent: "Uninterrupted OT telemetry — a strategy whose modelled impact severs a telemetry-critical asset is blocked",
+      status: "Enforced server-side",
+    },
+    {
+      code: "SEC-OT-05",
+      intent: "Ledger integrity — the audit chain is verified before a run is accepted",
+      status: "Enforced server-side",
     },
   ];
 
@@ -51,7 +61,7 @@ export default function SecurityPage() {
                 Synthetic data only
               </h2>
               <p className="text-xs text-[#A3A3A3] leading-relaxed">
-                The supplied dataset contains one fictional incident, three evidence records and six virtual assets. No real sensitive data is needed.
+                The supplied dataset contains two fictional incidents, four evidence records and six virtual assets. No real sensitive data is needed, and nothing in the API resolves a hostname or opens a socket.
               </p>
             </div>
 
@@ -60,7 +70,7 @@ export default function SecurityPage() {
                 Access control requirements
               </h2>
               <p className="text-xs text-[#A3A3A3] leading-relaxed">
-                A future service needs server-validated identity, least privilege, protected sessions, authorization checks and abuse controls. Form designs do not implement these.
+                Implemented: PBKDF2-SHA256 password hashing, HttpOnly SameSite session cookies (only a SHA-256 of the token is stored), server-side session resolution on every route, a minimum-clearance gate on simulation and review, an Origin check on state-changing calls, and a fixed-window rate limit. The rate limiter is per-process, so it does not compose across multiple workers.
               </p>
             </div>
 
@@ -78,7 +88,7 @@ export default function SecurityPage() {
                 Deterministic safety boundary
               </h2>
               <p className="text-xs text-[#A3A3A3] leading-relaxed">
-                Policy rules must be evaluated by a separate deterministic implementation, not inferred from an AI explanation. Fail-closed behavior requires engineering and testing.
+                The five invariants below are evaluated in code before any result is returned, and the approval endpoint returns 403 for a blocked strategy even if the browser is bypassed. Unknown strategies are rejected with 422 rather than scored.
               </p>
             </div>
           </div>
@@ -88,8 +98,8 @@ export default function SecurityPage() {
             <table className="w-full text-left text-xs font-mono">
               <thead>
                 <tr className="border-b border-[#FF6B35]/40 text-[#FF6B35] tracking-wider uppercase">
-                  <th className="pb-3 font-medium w-1/4">PROPOSED POLICY</th>
-                  <th className="pb-3 font-medium w-1/2">DESIGN INTENT</th>
+                  <th className="pb-3 font-medium w-1/5">INVARIANT</th>
+                  <th className="pb-3 font-medium w-1/2">RULE</th>
                   <th className="pb-3 font-medium">IMPLEMENTATION STATUS</th>
                 </tr>
               </thead>
@@ -111,7 +121,12 @@ export default function SecurityPage() {
               What this design does not establish
             </h2>
             <p className="text-xs text-[#A3A3A3] leading-relaxed">
-              No penetration testing, cryptographic validation, secure persistence, immutable auditing, calibrated model performance or policy correctness is verified. Sample logs and notifications are synthetic examples, not live telemetry.
+              No independent penetration test, third-party cryptographic audit or policy-correctness
+              certification has been performed. Persistence is a local SQLite file with
+              append-only triggers and an HMAC-SHA256 chain — useful for detecting edits, but not an
+              external notarisation. AI provider data handling and email delivery remain
+              unimplemented. Sample logs and notifications are synthetic examples, not live
+              telemetry.
             </p>
             <p className="text-xs text-[#A3A3A3] leading-relaxed">
               AI provider data handling and email delivery remain unverified. A real implementation needs a threat model, secure development process, independent testing and operational ownership.
@@ -124,7 +139,7 @@ export default function SecurityPage() {
               No verified disclosure channel
             </h2>
             <p className="text-xs text-[#A3A3A3] leading-relaxed">
-              The contact screen is an unconnected form specimen. Do not send sensitive vulnerability details or credentials through it.
+              The contact screen validates and prepares text but has no delivery endpoint. Do not send sensitive vulnerability details or credentials through it.
             </p>
           </div>
 

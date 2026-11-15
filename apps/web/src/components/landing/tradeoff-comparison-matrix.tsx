@@ -53,8 +53,8 @@ export const TradeoffComparisonMatrix: React.FC = () => {
       downtimeMinutes: 180,
       blastRadiusNodes: 5,
       policyStatus: "fail",
-      policyLabel: "Illustrative fail · POL-01",
-      summary: "Aggressive perimeter isolation cuts all network ingress/egress, triggering critical Rule POL-01 telemetry violation.",
+      policyLabel: "Illustrative fail · SEC-OT-04",
+      summary: "Aggressive perimeter isolation cuts all network ingress/egress, triggering the SEC-OT-04 telemetry violation.",
     },
   ];
 
@@ -70,7 +70,7 @@ export const TradeoffComparisonMatrix: React.FC = () => {
             Not just “what works,” but “what changes?”
           </h3>
           <p className="text-xs text-[#A3A3A3] mt-1">
-            Evidence: EV-0042-01 / EV-0042-02 / EV-0042-03. All ratings are assumptions for layout comparison.
+            Evidence: EVD-101 / EVD-102 / EVD-103. All ratings are assumptions for layout comparison.
           </p>
         </div>
 
